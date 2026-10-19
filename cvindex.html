@@ -1,0 +1,2286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#04060a">
+<meta name="description" content="NEXUS CV — a holographic CV strategist. Speaks English, Arabic, and Roman Urdu. ATS-aware, human-led.">
+<title>NEXUS CV — Your Next Move Starts Here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+:root{
+  --bg:#04060a;
+  --bg-2:#080b12;
+  --panel:#0a0e15;
+  --panel-2:#0f141d;
+  --gold:#f0c869;
+  --gold-bright:#ffd97a;
+  --gold-deep:#a98435;
+  --cyan:#5ff0ff;
+  --cyan-bright:#8fffff;
+  --cyan-deep:#0a7f8c;
+  --purple:#a78bfa;
+  --magenta:#ff5fc8;
+  --red:#ff4d6a;
+  --white:#f6f8fc;
+  --text:#e2e8f0;
+  --muted:#8b95a5;
+  --dimmer:#5a6472;
+  --line:rgba(255,255,255,.08);
+  --line-bright:rgba(95,240,255,.28);
+  --glass:rgba(10,14,21,.72);
+  --radius:20px;
+  --mx:0;--my:0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"DM Sans",system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Cinematic layered background */
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:-2;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(95,240,255,.14), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 15% 40%, rgba(167,139,250,.10), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 70%, rgba(240,200,105,.09), transparent 55%),
+    linear-gradient(180deg, #05070c 0%, #04060a 55%, #020306 100%);
+}
+/* Fine scanlines */
+body::after{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:100;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.022) 4px);
+  opacity:.85;
+}
+
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.wrap{width:min(1200px,calc(100% - 40px));margin:0 auto;position:relative;z-index:1}
+
+/* ============================================================
+   2. TOPBAR
+   ============================================================ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 0;position:relative;z-index:20;
+}
+.brand{
+  display:flex;gap:12px;align-items:center;
+  font:700 1.02rem "Space Grotesk",sans-serif;
+  letter-spacing:.18em;cursor:pointer;user-select:none;
+}
+.brand-mark{
+  width:36px;height:36px;
+  border:1px solid rgba(95,240,255,.6);
+  border-radius:11px;display:grid;place-items:center;
+  color:var(--cyan);font-size:1.15rem;
+  box-shadow:0 0 24px rgba(95,240,255,.3),inset 0 0 12px rgba(95,240,255,.12);
+  transform:rotate(-8deg);
+  transition:all .35s ease;
+}
+.brand:hover .brand-mark{transform:rotate(0deg);box-shadow:0 0 36px rgba(95,240,255,.55)}
+.brand-mark span{transform:rotate(8deg);transition:transform .35s ease}
+.brand:hover .brand-mark span{transform:rotate(0deg)}
+.brand .gold{color:var(--gold);text-shadow:0 0 20px rgba(240,200,105,.5)}
+.nav{display:flex;gap:30px;color:var(--muted);font-size:.84rem;letter-spacing:.02em}
+.nav a{transition:color .2s}
+.nav a:hover{color:var(--gold)}
+.top-cta{
+  border:1px solid rgba(240,200,105,.4);
+  border-radius:999px;padding:10px 18px;
+  font-size:.82rem;font-weight:600;color:var(--gold);
+  background:rgba(240,200,105,.04);
+  transition:all .25s ease;
+}
+.top-cta:hover{
+  background:rgba(240,200,105,.12);
+  box-shadow:0 0 24px rgba(240,200,105,.25);
+  transform:translateY(-1px);
+}
+
+/* ============================================================
+   3. HERO
+   ============================================================ */
+.hero{
+  min-height:100vh;
+  padding:30px 0 90px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;position:relative;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid rgba(95,240,255,.35);
+  background:rgba(95,240,255,.06);
+  padding:7px 14px;border-radius:999px;
+  color:var(--cyan-bright);font-size:.72rem;
+  letter-spacing:.14em;text-transform:uppercase;
+  font-weight:500;
+  box-shadow:0 0 20px rgba(95,240,255,.12);
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cyan-bright);
+  box-shadow:0 0 14px var(--cyan-bright);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+
+.hero h1{
+  font:600 clamp(2.5rem,6.4vw,5.2rem)/.98 "Space Grotesk",sans-serif;
+  letter-spacing:-.055em;
+  margin:24px 0 0;max-width:920px;
+}
+.hero h1 .gold{
+  background:linear-gradient(120deg,var(--gold-bright) 10%,var(--gold) 45%,var(--gold-deep) 90%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 40px rgba(240,200,105,.35));
+}
+.hero-sub{
+  max-width:600px;color:var(--muted);
+  font-size:clamp(.98rem,1.6vw,1.08rem);
+  margin:22px auto 0;
+  line-height:1.7;
+}
+.hero-sub strong{color:var(--white);font-weight:600}
+
+/* ============================================================
+   4. HOLOGRAM STAGE
+   ============================================================ */
+.stage{
+  position:relative;
+  width:clamp(320px,46vw,500px);
+  aspect-ratio:1;margin:56px auto 0;
+  display:grid;place-items:center;
+  transform-style:preserve-3d;
+  transform:rotateX(calc(var(--my) * -4deg)) rotateY(calc(var(--mx) * 4deg));
+  transition:transform .3s ease-out;
+  cursor:pointer;
+  perspective:1100px;
+}
+@media (hover:none){.stage{transform:none!important}}
+
+.ring{position:absolute;border-radius:50%;pointer-events:none}
+
+/* Outer bright conic sweep */
+.ring-1{
+  inset:0;
+  background:conic-gradient(from 0deg,
+    transparent 0%,
+    rgba(95,240,255,.75) 15%,
+    rgba(95,240,255,.15) 22%,
+    transparent 30%,
+    rgba(240,200,105,.65) 55%,
+    rgba(240,200,105,.15) 62%,
+    transparent 70%,
+    rgba(167,139,250,.55) 88%,
+    transparent 100%);
+  -webkit-mask:radial-gradient(circle, transparent 70%, #000 72%);
+  mask:radial-gradient(circle, transparent 70%, #000 72%);
+  animation:spin 18s linear infinite;
+  filter:drop-shadow(0 0 12px rgba(95,240,255,.5));
+}
+/* Middle reverse sweep */
+.ring-2{
+  inset:9%;
+  background:conic-gradient(from 180deg,
+    transparent 0%,
+    rgba(240,200,105,.55) 22%,
+    transparent 42%,
+    rgba(167,139,250,.45) 70%,
+    transparent 100%);
+  -webkit-mask:radial-gradient(circle, transparent 74%, #000 76%);
+  mask:radial-gradient(circle, transparent 74%, #000 76%);
+  animation:spin 13s linear infinite reverse;
+}
+/* Pulsing halo */
+.ring-3{
+  inset:-7%;
+  border:1px solid rgba(95,240,255,.22);
+  animation:pulseRing 4s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(95,240,255,.08);
+}
+/* Dashed orbit */
+.ring-4{
+  inset:19%;
+  border:1px dashed rgba(240,200,105,.25);
+  animation:spin 30s linear infinite;
+}
+/* Inner glow */
+.aura{
+  position:absolute;inset:6%;border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(95,240,255,.28),
+    rgba(240,200,105,.12) 45%,
+    transparent 72%);
+  filter:blur(32px);
+  animation:breathe 5s ease-in-out infinite;
+  pointer-events:none;
+}
+
+/* Avatar */
+.avatar-halo{
+  position:relative;
+  width:56%;aspect-ratio:1;
+  display:grid;place-items:center;z-index:2;
+}
+.avatar-inner{
+  position:relative;width:100%;height:100%;
+  border-radius:50%;overflow:hidden;
+  border:1.5px solid rgba(95,240,255,.7);
+  background:#020408;
+  box-shadow:
+    0 0 40px rgba(95,240,255,.4),
+    0 0 90px rgba(95,240,255,.15),
+    0 0 140px rgba(240,200,105,.08),
+    inset 0 0 40px rgba(0,0,0,.7),
+    inset 0 0 30px rgba(95,240,255,.1);
+  transition:box-shadow .4s, transform .4s;
+  cursor:pointer;
+}
+.avatar-inner::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
+  background:
+    repeating-linear-gradient(0deg, rgba(95,240,255,.06) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, transparent 55%, rgba(95,240,255,.15));
+  mix-blend-mode:screen;
+}
+.avatar{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.05)}
+.holo-scan{
+  position:absolute;left:0;right:0;height:24%;
+  background:linear-gradient(180deg, transparent, rgba(95,240,255,.28), transparent);
+  animation:scanDown 4.5s linear infinite;
+  pointer-events:none;z-index:3;
+}
+
+.stage.speaking .avatar-inner{
+  box-shadow:
+    0 0 50px rgba(95,240,255,.7),
+    0 0 120px rgba(95,240,255,.35),
+    0 0 180px rgba(95,240,255,.12),
+    inset 0 0 45px rgba(95,240,255,.2);
+  transform:scale(1.03);
+}
+.stage.speaking .aura{
+  background:radial-gradient(circle,
+    rgba(95,240,255,.5),
+    rgba(240,200,105,.22) 45%,
+    transparent 72%);
+}
+.stage.activating .avatar-inner{animation:activatePulse 1s ease-out}
+@keyframes activatePulse{
+  0%{transform:scale(1);filter:brightness(1)}
+  40%{transform:scale(1.12);filter:brightness(1.8)}
+  100%{transform:scale(1);filter:brightness(1)}
+}
+
+/* Waveform */
+.waveform{
+  position:absolute;bottom:-12%;left:50%;transform:translateX(-50%);
+  display:flex;gap:4px;align-items:center;height:32px;
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.stage.speaking .waveform{opacity:1}
+.waveform i{
+  display:block;width:3px;height:100%;border-radius:2px;
+  background:linear-gradient(180deg,var(--cyan-bright),var(--gold));
+  transform-origin:center;
+  animation:wv 1s ease-in-out infinite;
+  box-shadow:0 0 10px rgba(95,240,255,.7);
+}
+.waveform i:nth-child(1){animation-delay:-.9s}
+.waveform i:nth-child(2){animation-delay:-.5s}
+.waveform i:nth-child(3){animation-delay:-.2s}
+.waveform i:nth-child(4){animation-delay:0s}
+.waveform i:nth-child(5){animation-delay:-.3s}
+.waveform i:nth-child(6){animation-delay:-.6s}
+.waveform i:nth-child(7){animation-delay:-.85s}
+
+/* Mode badge */
+.mode-badge{
+  position:absolute;top:4px;right:-10px;
+  padding:7px 14px;border-radius:11px;
+  background:rgba(4,8,14,.94);
+  border:1px solid rgba(240,200,105,.4);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  font-family:"Space Grotesk",sans-serif;
+  letter-spacing:.16em;text-transform:uppercase;
+  z-index:6;transition:all .35s;
+  text-align:left;min-width:88px;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.mode-badge .lbl{display:block;color:var(--dimmer);font-size:.48rem;margin-bottom:2px;letter-spacing:.2em}
+.mode-badge .val{display:block;color:var(--gold);font-weight:700;font-size:.62rem}
+.mode-badge.mode-coach{border-color:rgba(95,240,255,.55);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 24px rgba(95,240,255,.15)}
+.mode-badge.mode-coach .val{color:var(--cyan-bright)}
+.mode-badge.mode-savage{border-color:rgba(255,77,106,.55);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 24px rgba(255,77,106,.15)}
+.mode-badge.mode-savage .val{color:var(--red)}
+.mode-badge.shift{animation:shiftPop .5s ease}
+@keyframes shiftPop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* ============================================================
+   5. STATUS PILL
+   ============================================================ */
+.status-pill{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:30px;padding:8px 18px;border-radius:999px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.08);
+  font-family:"Space Grotesk",sans-serif;
+  font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);transition:all .3s;
+}
+.status-pill .dot{
+  width:7px;height:7px;border-radius:50%;background:var(--dimmer);
+  transition:all .3s;
+}
+.status-pill.online{color:var(--white);border-color:rgba(74,222,128,.3)}
+.status-pill.online .dot{background:#4ade80;box-shadow:0 0 12px #4ade80}
+.status-pill.speaking{color:var(--cyan-bright);border-color:rgba(95,240,255,.4);background:rgba(95,240,255,.04)}
+.status-pill.speaking .dot{background:var(--cyan-bright);box-shadow:0 0 14px var(--cyan-bright);animation:blink .8s infinite}
+.status-pill.listening{color:#ff8792;border-color:rgba(255,77,106,.4);background:rgba(255,77,106,.04)}
+.status-pill.listening .dot{background:var(--red);box-shadow:0 0 14px var(--red);animation:blink .6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ============================================================
+   6. CONTROL BAR (only Female/Male + Close + Exit)
+   ============================================================ */
+.control-bar{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+  margin:24px auto 0;max-width:760px;
+}
+.ctrl-group{
+  display:flex;gap:4px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--line);
+  border-radius:999px;padding:4px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  align-items:center;
+}
+.ctrl-pill{
+  border:1px solid transparent;background:transparent;
+  color:var(--muted);font-size:.74rem;font-weight:600;
+  padding:8px 14px;border-radius:999px;cursor:pointer;
+  transition:all .2s;letter-spacing:.02em;
+  font-family:"DM Sans",sans-serif;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.ctrl-pill:hover{color:var(--white);background:rgba(255,255,255,.05)}
+.ctrl-pill.active{
+  color:var(--cyan-bright);
+  background:rgba(95,240,255,.12);
+  border-color:rgba(95,240,255,.4);
+  box-shadow:0 0 16px rgba(95,240,255,.15);
+}
+.ctrl-pill.icon-only{padding:8px 12px;font-size:.85rem}
+.ctrl-pill.danger{color:#ff8792}
+.ctrl-pill.danger:hover{background:rgba(255,77,106,.12);color:var(--red);border-color:rgba(255,77,106,.3)}
+
+/* ============================================================
+   7. TRANSCRIPT + INPUT
+   ============================================================ */
+.transcript{
+  width:min(760px,100%);margin:20px auto 0;
+  min-height:84px;max-height:240px;overflow-y:auto;
+  padding:18px 22px;border-radius:16px;
+  background:rgba(8,12,18,.6);
+  border:1px solid rgba(255,255,255,.06);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-size:.92rem;line-height:1.7;text-align:left;
+  scrollbar-width:thin;scrollbar-color:rgba(240,200,105,.4) transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+.transcript.hidden{display:none}
+.transcript::-webkit-scrollbar{width:5px}
+.transcript::-webkit-scrollbar-thumb{background:rgba(240,200,105,.4);border-radius:3px}
+.t-line{
+  margin-bottom:14px;display:flex;gap:12px;
+  opacity:0;transform:translateY(6px);
+  animation:tIn .45s ease forwards;
+}
+.t-line:last-child{margin-bottom:0}
+.t-line .who{
+  font-family:"Space Grotesk",sans-serif;font-size:.6rem;
+  letter-spacing:.16em;text-transform:uppercase;
+  flex-shrink:0;margin-top:4px;width:42px;
+  font-weight:700;
+}
+.t-line.bot .who{color:var(--cyan-bright);text-shadow:0 0 12px rgba(95,240,255,.4)}
+.t-line.user .who{color:var(--gold-bright);text-shadow:0 0 12px rgba(240,200,105,.4)}
+.t-line .txt{flex:1;color:var(--white);word-wrap:break-word}
+.t-line.user .txt{color:#fff1c8}
+.t-line .lang-tag{
+  font-size:.58rem;color:var(--cyan);opacity:.65;margin-left:8px;
+  font-family:"JetBrains Mono",monospace;font-weight:500;
+  letter-spacing:.06em;
+}
+@keyframes tIn{to{opacity:1;transform:translateY(0)}}
+
+.input-bar{
+  width:min(760px,100%);margin:14px auto 0;display:flex;gap:10px;
+}
+.input-bar input{
+  flex:1;min-width:0;
+  padding:16px 24px;border-radius:999px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.09);
+  color:var(--white);font-family:inherit;font-size:.92rem;
+  outline:none;
+  transition:border-color .25s,background .25s,box-shadow .25s;
+}
+.input-bar input:focus{
+  border-color:rgba(95,240,255,.55);
+  background:rgba(95,240,255,.035);
+  box-shadow:0 0 24px rgba(95,240,255,.12);
+}
+.input-bar input::placeholder{color:var(--dimmer)}
+.ibtn{
+  width:54px;height:54px;flex-shrink:0;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);cursor:pointer;transition:all .25s;
+}
+.ibtn:hover{color:var(--cyan-bright);border-color:rgba(95,240,255,.5);box-shadow:0 0 20px rgba(95,240,255,.15)}
+.ibtn.send{
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
+  color:#04060a;border-color:transparent;
+  box-shadow:0 4px 20px rgba(240,200,105,.25);
+}
+.ibtn.send:hover{transform:scale(1.06);box-shadow:0 6px 30px rgba(240,200,105,.5)}
+.ibtn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+.ibtn.mic.listening{
+  background:rgba(255,77,106,.15);
+  border-color:var(--red);color:#ff8792;
+  animation:micPulse 1s infinite;
+}
+.ibtn.mic.hidden{display:none}
+@keyframes micPulse{50%{box-shadow:0 0 22px rgba(255,77,106,.5)}}
+
+/* ============================================================
+   8. CTA BUTTONS
+   ============================================================ */
+.actions{
+  display:flex;gap:14px;flex-wrap:wrap;margin:30px auto 0;justify-content:center;
+}
+.btn{
+  border:0;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  border-radius:14px;padding:15px 22px;
+  font-weight:700;font-size:.9rem;cursor:pointer;
+  transition:transform .22s,box-shadow .22s,border-color .22s,background .22s;
+  text-decoration:none;letter-spacing:.01em;
+}
+.btn:hover{transform:translateY(-3px)}
+.btn-gold{
+  color:#04060a;
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
+  box-shadow:0 8px 30px rgba(240,200,105,.22);
+}
+.btn-gold:hover{box-shadow:0 12px 45px rgba(240,200,105,.45)}
+.btn-outline{
+  color:var(--white);background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+}
+.btn-outline:hover{
+  border-color:rgba(95,240,255,.6);
+  background:rgba(95,240,255,.05);
+  box-shadow:0 0 26px rgba(95,240,255,.15);
+}
+.btn-outline.active{
+  border-color:rgba(95,240,255,.7);
+  background:rgba(95,240,255,.1);
+  color:var(--cyan-bright);
+}
+
+/* Entrance animations */
+.anim-up{opacity:0;transform:translateY(22px);animation:aU .9s cubic-bezier(.2,.7,.2,1) forwards}
+.d1{animation-delay:.05s}.d2{animation-delay:.2s}.d3{animation-delay:.35s}.d4{animation-delay:.55s}.d5{animation-delay:.75s}
+@keyframes aU{to{opacity:1;transform:translateY(0)}}
+
+/* ============================================================
+   9. SECTIONS
+   ============================================================ */
+.section{padding:100px 0;position:relative}
+.section-kicker{
+  text-align:center;color:var(--cyan);
+  font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.24em;margin-bottom:14px;font-weight:600;
+}
+.section-title{
+  text-align:center;
+  font:600 clamp(2rem,4.2vw,3.6rem)/1.08 "Space Grotesk",sans-serif;
+  letter-spacing:-.05em;margin-bottom:16px;
+}
+.section-title .gold{
+  background:linear-gradient(120deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 30px rgba(240,200,105,.3));
+}
+.section-sub{
+  text-align:center;max-width:600px;margin:0 auto 56px;
+  color:var(--muted);font-size:1rem;line-height:1.7;
+}
+
+/* SERVICES */
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.service{
+  border:1px solid rgba(255,255,255,.06);
+  background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
+  border-radius:20px;padding:28px;min-height:210px;
+  transition:all .3s ease;
+  position:relative;overflow:hidden;
+}
+.service::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at var(--px,50%) var(--py,50%),rgba(95,240,255,.1),transparent 45%);
+  opacity:0;transition:opacity .4s;
+}
+.service:hover::before{opacity:1}
+.service:hover{
+  transform:translateY(-6px);
+  border-color:rgba(240,200,105,.4);
+  box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(240,200,105,.08);
+}
+.service .symbol{
+  width:46px;height:46px;display:grid;place-items:center;
+  border-radius:14px;
+  background:linear-gradient(135deg,rgba(240,200,105,.15),rgba(240,200,105,.04));
+  border:1px solid rgba(240,200,105,.22);
+  color:var(--gold);font-size:1.3rem;margin-bottom:22px;
+  box-shadow:0 0 20px rgba(240,200,105,.08);
+}
+.service h3{font:600 1.1rem "Space Grotesk",sans-serif;margin-bottom:10px;color:var(--white)}
+.service p{color:var(--muted);font-size:.88rem;margin-bottom:0;line-height:1.65}
+
+/* CV SAMPLE */
+.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.split-copy h2{
+  font:600 clamp(2.2rem,4vw,3.6rem)/1.05 "Space Grotesk",sans-serif;
+  letter-spacing:-.055em;
+}
+.split-copy h2 .gold{
+  background:linear-gradient(120deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.split-copy p{color:var(--muted);margin-top:14px;line-height:1.7}
+.feature-list{display:grid;gap:16px;margin:28px 0}
+.feature{display:flex;gap:14px;color:var(--text);font-size:.92rem;line-height:1.6}
+.feature .check{
+  color:var(--cyan);font-size:1rem;flex-shrink:0;margin-top:2px;
+  text-shadow:0 0 14px rgba(95,240,255,.5);
+}
+.feature b{color:var(--white);display:block;margin-bottom:2px}
+
+/* CV Card — Umar Faruq */
+.cv-card{
+  padding:34px;
+  border:1px solid rgba(240,200,105,.28);
+  border-radius:22px;
+  background:
+    linear-gradient(145deg, rgba(20,16,10,.6), rgba(8,10,14,.85)),
+    radial-gradient(ellipse at top right, rgba(240,200,105,.06), transparent 60%);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.6),
+    0 0 60px rgba(240,200,105,.06),
+    inset 0 1px 0 rgba(240,200,105,.12);
+  position:relative;overflow:hidden;
+}
+.cv-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--cyan),var(--gold),transparent);
+  opacity:.8;
+}
+.cv-top{border-bottom:1px solid rgba(240,200,105,.15);padding-bottom:22px;margin-bottom:24px}
+.cv-top .fake-name{
+  font:700 1.75rem "Space Grotesk",sans-serif;
+  letter-spacing:.02em;color:var(--white);
+  text-shadow:0 0 30px rgba(240,200,105,.2);
+}
+.cv-top .fake-role{
+  color:var(--gold);
+  font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
+  margin-top:4px;font-weight:600;
+}
+.cv-meta{color:var(--muted);font-size:.72rem;margin-top:10px;font-family:"JetBrains Mono",monospace}
+.cv-section{margin-top:22px}
+.cv-section h4{
+  font-size:.66rem;color:var(--cyan);
+  letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;
+  font-weight:600;
+}
+.cv-section p,.cv-section li{
+  font-size:.8rem;color:#c5cdd8;line-height:1.7;
+}
+.cv-section b{color:var(--white);font-size:.85rem}
+.cv-section ul{padding-left:20px;margin:6px 0}
+.cv-section li{margin-bottom:4px}
+.cv-job-meta{color:var(--dimmer);font-size:.7rem;margin:2px 0 6px;font-family:"JetBrains Mono",monospace}
+
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.price{
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:22px;padding:32px;
+  background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
+  display:flex;flex-direction:column;
+  transition:all .3s ease;position:relative;
+}
+.price:hover{transform:translateY(-4px);border-color:rgba(240,200,105,.3)}
+.price.featured{
+  border-color:rgba(240,200,105,.5);
+  box-shadow:0 0 60px rgba(240,200,105,.1),0 20px 50px rgba(0,0,0,.5);
+  background:linear-gradient(155deg,rgba(240,200,105,.06),rgba(255,255,255,.01));
+}
+.price .label{
+  font-size:.7rem;color:var(--cyan);
+  letter-spacing:.18em;text-transform:uppercase;
+  font-weight:600;
+}
+.price h3{font:600 1.4rem "Space Grotesk",sans-serif;margin:12px 0 4px;color:var(--white)}
+.price .amount{
+  font:700 2.2rem "Space Grotesk",sans-serif;
+  background:linear-gradient(120deg,var(--gold-bright),var(--gold));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin:4px 0 6px;
+}
+.price .amount small{font:400 .75rem "DM Sans",sans-serif;color:var(--dimmer);-webkit-text-fill-color:var(--dimmer)}
+.price .pitch{color:var(--muted);font-size:.82rem;margin-bottom:22px;line-height:1.55;font-style:italic}
+.price ul{list-style:none;padding:0;margin:0 0 26px;flex:1}
+.price li{
+  color:#c5cdd8;font-size:.86rem;margin:10px 0;
+  padding-left:22px;position:relative;line-height:1.55;
+}
+.price li::before{
+  content:"＋";position:absolute;left:0;
+  color:var(--cyan);font-weight:700;
+}
+.price .btn{width:100%}
+.fineprint{
+  text-align:center;color:var(--dimmer);font-size:.76rem;
+  margin-top:28px;line-height:1.7;
+}
+
+/* FINAL CTA */
+.final-cta{
+  padding:56px 40px;border-radius:28px;
+  border:1px solid rgba(95,240,255,.2);
+  background:
+    radial-gradient(ellipse at 80% 10%,rgba(95,240,255,.08),transparent 45%),
+    radial-gradient(ellipse at 20% 90%,rgba(240,200,105,.06),transparent 45%),
+    linear-gradient(135deg,rgba(15,20,29,.9),rgba(8,11,17,.95));
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(95,240,255,.1),0 20px 60px rgba(0,0,0,.5);
+}
+.final-cta::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),var(--gold),var(--cyan),transparent);
+}
+.final-cta h2{
+  font:600 clamp(2rem,4vw,3.4rem)/1.05 "Space Grotesk",sans-serif;
+  letter-spacing:-.055em;margin-bottom:16px;
+}
+.final-cta h2 .gold{
+  background:linear-gradient(120deg,var(--gold-bright),var(--gold));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.final-cta p{color:var(--muted);max-width:600px;margin:0 auto 28px;line-height:1.7}
+
+/* FOOTER */
+footer{
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:40px 0 100px;color:var(--dimmer);
+  font-size:.76rem;margin-top:40px;
+}
+footer .foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+.footer-brand{
+  color:var(--gold);font:700 .95rem "Space Grotesk",sans-serif;
+  letter-spacing:.16em;
+  text-shadow:0 0 20px rgba(240,200,105,.35);
+}
+
+/* FLOATING LAUNCH */
+.ai-launch{
+  position:fixed;right:26px;bottom:24px;z-index:30;
+  border:1px solid rgba(95,240,255,.5);
+  background:linear-gradient(145deg,rgba(15,30,42,.95),rgba(8,11,17,.95));
+  border-radius:18px;padding:10px 16px 10px 10px;
+  display:flex;align-items:center;gap:12px;color:var(--white);
+  box-shadow:0 12px 40px rgba(0,0,0,.7),0 0 30px rgba(95,240,255,.15);
+  cursor:pointer;transition:all .2s ease;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.ai-launch:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,0,0,.7),0 0 45px rgba(95,240,255,.3);
+}
+.mini-orb{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  color:var(--cyan-bright);
+  background:radial-gradient(circle,rgba(95,240,255,.3),rgba(95,240,255,.04));
+  border:1px solid rgba(95,240,255,.55);
+  font-size:1.2rem;
+  box-shadow:inset 0 0 16px rgba(95,240,255,.2);
+}
+.launch-copy{text-align:left}
+.launch-copy b{display:block;font:600 .84rem "Space Grotesk",sans-serif;color:var(--white)}
+.launch-copy small{display:block;color:var(--muted);font-size:.66rem}
+
+/* ============================================================
+   10. TOAST / ADMIN
+   ============================================================ */
+.toast{
+  position:fixed;bottom:96px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:rgba(10,14,21,.95);
+  border:1px solid rgba(95,240,255,.4);
+  border-radius:14px;padding:12px 20px;
+  color:var(--cyan-bright);font-size:.8rem;
+  font-family:"Space Grotesk",sans-serif;letter-spacing:.04em;
+  z-index:150;opacity:0;pointer-events:none;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 24px rgba(95,240,255,.15);
+  transition:opacity .3s,transform .3s;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.admin-modal{
+  position:fixed;inset:0;z-index:200;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(10px);
+  padding:20px;
+}
+.admin-modal.open{display:flex}
+.admin-panel{
+  background:var(--panel);border:1px solid rgba(240,200,105,.25);
+  border-radius:18px;max-width:720px;width:100%;max-height:80vh;
+  overflow:auto;padding:28px;
+  box-shadow:0 30px 80px rgba(0,0,0,.8);
+}
+.admin-panel h2{font:600 1.4rem "Space Grotesk",sans-serif;margin:0 0 6px;color:var(--gold)}
+.admin-panel .sub{color:var(--muted);font-size:.8rem;margin-bottom:22px}
+.lead-card{
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:16px;margin-bottom:14px;
+  background:rgba(255,255,255,.02);
+}
+.lead-card .lead-name{font-weight:700;color:var(--cyan);margin-bottom:6px}
+.lead-card .lead-meta{
+  font-size:.75rem;color:var(--muted);
+  font-family:"JetBrains Mono",monospace;
+  line-height:1.75;white-space:pre-wrap;
+}
+.admin-close{
+  float:right;background:transparent;border:0;color:var(--muted);
+  font-size:1.5rem;cursor:pointer;padding:0 8px;
+}
+.admin-close:hover{color:var(--white)}
+
+/* ============================================================
+   11. KEYFRAMES
+   ============================================================ */
+@keyframes pulse{50%{opacity:.35;box-shadow:0 0 2px var(--cyan-bright)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes pulseRing{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.35;transform:scale(1.03)}}
+@keyframes scanDown{0%{top:-24%}100%{top:100%}}
+@keyframes wv{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+
+/* ============================================================
+   12. RESPONSIVE
+   ============================================================ */
+@media(max-width:850px){
+  .hero{padding-top:20px}
+  .service-grid{grid-template-columns:repeat(2,1fr)}
+  .split{grid-template-columns:1fr;gap:36px}
+  .split-copy{text-align:center}
+  .feature-list{text-align:left;max-width:520px;margin:25px auto}
+  .price-grid{grid-template-columns:1fr;max-width:560px;margin:auto}
+  .nav{display:none}
+}
+@media(max-width:520px){
+  .wrap{width:calc(100% - 30px)}
+  .topbar{padding:16px 0}
+  .top-cta{font-size:.72rem;padding:9px 12px}
+  .hero{padding:16px 0 50px}
+  .hero h1{font-size:clamp(2rem,9vw,3rem)}
+  .hero-sub{font-size:.92rem}
+  .actions{display:grid;grid-template-columns:1fr;width:100%;max-width:340px}
+  .stage{width:min(310px,74vw)}
+  .mode-badge{right:0;top:0;font-size:.55rem;padding:5px 10px;min-width:76px}
+  .control-bar{gap:8px;margin-top:18px}
+  .ctrl-pill{font-size:.68rem;padding:7px 11px}
+  .ctrl-pill.icon-only{padding:7px 10px}
+  .section{padding:70px 0}
+  .service-grid{grid-template-columns:1fr}
+  .service{min-height:0;padding:24px}
+  .cv-card{padding:22px}
+  .cv-top .fake-name{font-size:1.4rem}
+  .final-cta{padding:36px 22px}
+  .ai-launch{right:14px;bottom:14px}
+  .transcript{max-height:180px;font-size:.85rem;padding:14px 16px}
+  .input-bar input{padding:14px 18px;font-size:.86rem}
+  .ibtn{width:48px;height:48px}
+  footer .foot-row{display:block}
+  footer .foot-row>*{margin:8px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="topbar">
+  <a class="brand" href="#" id="brand">
+    <span class="brand-mark"><span>✳</span></span>
+    <span>NEXUS <span class="gold">CV</span></span>
+  </a>
+  <nav class="nav">
+    <a href="#services">Services</a>
+    <a href="#standard">Our standard</a>
+    <a href="#packages">Packages</a>
+    <a href="#assistant">AI guide</a>
+  </nav>
+  <a class="top-cta" href="#packages">Explore packages ↗</a>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="eyebrow anim-up d1"><i class="live-dot"></i> Career technology, reimagined</span>
+
+  <h1 class="anim-up d2">YOUR STORY.<br><span class="gold">YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
+
+  <p class="hero-sub anim-up d3">
+    A sharper CV starts with a better story. Meet a holographic strategist that
+    <strong>speaks, listens, and adapts</strong> — in English, Arabic, or Roman Urdu —
+    then delivers a clear, ATS-aware professional profile. No fake promises. No job guarantees.
+  </p>
+
+  <!-- HOLOGRAM -->
+  <div class="stage anim-up d3" id="stage" role="button" tabindex="0" aria-label="Activate NEXUS hologram">
+    <div class="ring ring-1"></div>
+    <div class="ring ring-2"></div>
+    <div class="ring ring-3"></div>
+    <div class="ring ring-4"></div>
+    <div class="aura"></div>
+
+    <div class="avatar-halo">
+      <div class="avatar-inner" id="avatarInner" title="Click to upload your photo">
+        <img class="avatar" id="avatarImg" alt="NEXUS holographic avatar">
+        <div class="holo-scan"></div>
+      </div>
+      <div class="waveform" id="waveform" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </div>
+
+    <div class="mode-badge" id="modeBadge">
+      <span class="lbl">MODE</span>
+      <span class="val" id="modeVal">STANDBY</span>
+    </div>
+  </div>
+
+  <div class="status-pill anim-up d4" id="statusPill">
+    <span class="dot"></span>
+    <span id="statusText">STANDBY · CLICK THE HOLOGRAM TO WAKE</span>
+  </div>
+
+  <!-- CONTROL BAR -->
+  <div class="control-bar anim-up d4">
+    <div class="ctrl-group" role="group" aria-label="Voice">
+      <button class="ctrl-pill active" id="femaleBtn">♀ Female</button>
+      <button class="ctrl-pill" id="maleBtn">♂ Male</button>
+    </div>
+    <div class="ctrl-group" role="group" aria-label="Session">
+      <button class="ctrl-pill icon-only" id="closeBtn" title="Hide transcript">✕</button>
+      <button class="ctrl-pill danger" id="exitBtn" title="Exit hologram">⏻ Exit</button>
+    </div>
+  </div>
+
+  <!-- TRANSCRIPT -->
+  <div class="transcript anim-up d4" id="transcript" aria-live="polite">
+    <div class="t-line bot">
+      <span class="who">NX</span>
+      <span class="txt">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate. Type or speak in English, العربية, or Roman Urdu.</span>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <form class="input-bar anim-up d5" id="chatForm" autocomplete="off">
+    <button type="button" class="ibtn mic hidden" id="micBtn" aria-label="Speak your question">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/>
+      </svg>
+    </button>
+    <input id="chatInput" placeholder="Ask NEXUS — English, العربية, or Roman Urdu…">
+    <button class="ibtn send" type="submit" id="sendBtn" aria-label="Send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+    </button>
+  </form>
+
+  <div class="actions anim-up d5">
+    <a class="btn btn-gold wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV <span>↗</span></a>
+    <button class="btn btn-outline" id="wakeBtn">MEET NEXUS AI <span style="color:var(--cyan)">✧</span></button>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="section-kicker">Built around your next step</div>
+  <h2 class="section-title">Not just a CV. A <span class="gold">career signal.</span></h2>
+  <p class="section-sub">Focused services for real job-search needs. Choose what fits you, then speak with us directly.</p>
+  <div class="service-grid">
+    <article class="service"><div class="symbol">⌘</div><h3>ATS-aware CV</h3><p>Readable structure, standard headings, and relevant keywords based on your target role.</p></article>
+    <article class="service"><div class="symbol">↗</div><h3>Saudi-market CV</h3><p>Present your experience and job-relevant details clearly for opportunities in Saudi Arabia.</p></article>
+    <article class="service"><div class="symbol">◎</div><h3>Freshers & career starters</h3><p>Bring projects, training, transferable skills, and potential into focus — even with limited experience.</p></article>
+    <article class="service"><div class="symbol">✳</div><h3>International applications</h3><p>Adapt the format and language to the country, role, and employer expectations.</p></article>
+    <article class="service"><div class="symbol">⟳</div><h3>CV rebuild & refresh</h3><p>Turn a cluttered or outdated CV into a cleaner, more focused professional document.</p></article>
+    <article class="service"><div class="symbol">≋</div><h3>Cover letter & LinkedIn</h3><p>Keep your professional story consistent across applications and recruiter-facing profiles.</p></article>
+  </div>
+</section>
+
+<!-- SAMPLE CV -->
+<section class="section" id="standard">
+  <div class="split">
+    <div class="split-copy">
+      <div class="section-kicker" style="text-align:left">The NEXUS standard</div>
+      <h2>Less decoration.<br><span class="gold">More signal.</span></h2>
+      <p>A futuristic website can look bold. Your CV should still be easy for recruiters and software to read. We keep the experience modern while prioritizing the document itself.</p>
+      <div class="feature-list">
+        <div class="feature"><span class="check">✦</span><span><b>ATS-aware formatting</b>Clean sections and practical layouts — not complicated graphics inside the CV.</span></div>
+        <div class="feature"><span class="check">✦</span><span><b>Role-focused wording</b>Relevant keywords drawn from your experience and target job description.</span></div>
+        <div class="feature"><span class="check">✦</span><span><b>Human review</b>We confirm your details with you instead of inventing achievements.</span></div>
+      </div>
+      <button class="btn btn-outline" onclick="askNexus('What makes a CV ATS-aware?')">Ask NEXUS how it works ↗</button>
+    </div>
+
+    <div class="cv-card">
+      <div class="cv-top">
+        <div class="fake-name">UMAR FARUQ</div>
+        <div class="fake-role">Senior Business Operations Specialist</div>
+        <div class="cv-meta">Dammam, Saudi Arabia · umar.faruq@nexuscv.co · +966 56 346 8309</div>
+      </div>
+
+      <div class="cv-section">
+        <h4>Professional Summary</h4>
+        <p>Results-driven operations specialist with 7+ years delivering process improvements across logistics, project coordination, and cross-functional leadership. Recognized for translating complex requirements into measurable outcomes — including 32% efficiency gains and SAR 1.2M in annual savings. Fluent in Arabic, English, and Urdu.</p>
+      </div>
+
+      <div class="cv-section">
+        <h4>Experience</h4>
+
+        <b>Senior Operations Specialist · Gulf Energy Services</b>
+        <div class="cv-job-meta">Dammam, KSA · 2021 — Present</div>
+        <ul>
+          <li>Led cross-functional team of 12 across three departments, cutting project cycle time by 28%.</li>
+          <li>Redesigned procurement workflow, saving SAR 1.2M annually across regional operations.</li>
+          <li>Introduced automated reporting that eliminated 15+ hours of manual work weekly.</li>
+        </ul>
+
+        <b style="margin-top:14px;display:block">Operations Coordinator · Eastern Logistics Group</b>
+        <div class="cv-job-meta">Khobar, KSA · 2018 — 2021</div>
+        <ul>
+          <li>Managed scheduling for 40+ field technicians, improving on-time delivery from 76% to 94%.</li>
+          <li>Built inventory tracking dashboard adopted by 6 regional branches.</li>
+        </ul>
+
+        <b style="margin-top:14px;display:block">Junior Business Analyst · Regional Trading Co.</b>
+        <div class="cv-job-meta">Dammam, KSA · 2016 — 2018</div>
+        <ul>
+          <li>Supported demand forecasting for an SAR 8M product line, reducing stockouts by 41%.</li>
+          <li>Prepared weekly executive reports on regional sales performance.</li>
+        </ul>
+      </div>
+
+      <div class="cv-section">
+        <h4>Certifications</h4>
+        <p>PMP · Six Sigma Green Belt · Advanced Excel · SAP S/4HANA · Power BI</p>
+      </div>
+
+      <div class="cv-section">
+        <h4>Core Skills</h4>
+        <p>Operations Management · Project Coordination · Data Analysis · Process Improvement · Team Leadership · SAP · Excel · Power BI · Arabic · English · Urdu</p>
+      </div>
+
+      <div style="border-top:1px solid rgba(240,200,105,.15);margin-top:22px;padding-top:14px;color:var(--dimmer);font-size:.66rem;letter-spacing:.06em">
+        SAMPLE FORMAT · ACHIEVEMENTS ILLUSTRATIVE · YOUR REAL DETAILS REPLACE THESE
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section class="section" id="packages">
+  <div class="section-kicker">Straightforward packages</div>
+  <h2 class="section-title">Choose your <span class="gold">next move.</span></h2>
+  <p class="section-sub">No online checkout. Message us on WhatsApp to discuss your requirements, final price, delivery time, and payment options before confirming.</p>
+  <div class="price-grid">
+    <article class="price">
+      <span class="label">Start here</span>
+      <h3>Essential</h3>
+      <div class="amount">From SAR 149</div>
+      <p class="pitch">A clean, ATS-ready start.</p>
+      <ul>
+        <li>ATS-aware CV structure</li>
+        <li>Role-focused content review</li>
+        <li>PDF + editable file, if agreed</li>
+        <li>Revision terms confirmed first</li>
+      </ul>
+      <a class="btn btn-outline wa-link" data-message="Hi NEXUS CV, I want to ask about the Essential CV package.">Ask on WhatsApp ↗</a>
+    </article>
+    <article class="price featured">
+      <span class="label">Most requested</span>
+      <h3>Professional</h3>
+      <div class="amount">From SAR 299</div>
+      <p class="pitch">CV + cover letter + LinkedIn, aligned.</p>
+      <ul>
+        <li>Everything in Essential</li>
+        <li>Cover letter support</li>
+        <li>LinkedIn content guidance</li>
+        <li>Delivery and revision terms agreed</li>
+      </ul>
+      <a class="btn btn-gold wa-link" data-message="Hi NEXUS CV, I want to ask about the Professional package.">Discuss this package ↗</a>
+    </article>
+    <article class="price">
+      <span class="label">Career positioning</span>
+      <h3>Executive</h3>
+      <div class="amount">From SAR 499</div>
+      <p class="pitch">Priority, international, unlimited.</p>
+      <ul>
+        <li>Senior-level CV positioning</li>
+        <li>International format guidance</li>
+        <li>Personal brand statement</li>
+        <li>Priority timing by agreement</li>
+      </ul>
+      <a class="btn btn-outline wa-link" data-message="Hi NEXUS CV, I want to ask about the Executive package.">Ask on WhatsApp ↗</a>
+    </article>
+  </div>
+  <p class="fineprint">Prices are illustrative starting points and must be confirmed with the owner. No job placement, interview, or ATS pass is guaranteed.</p>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section" id="assistant">
+  <div class="final-cta">
+    <div class="section-kicker">Meet the guide</div>
+    <h2>Ask the question.<br><span class="gold">Get a straight answer.</span></h2>
+    <p>Need to know what ATS means, which package fits you, or why a CV costs what it costs? Ask NEXUS. Serious when it matters, funny when it helps — never a loop.</p>
+    <button class="btn btn-gold" onclick="scrollToHologram()">Talk to NEXUS <span>✧</span></button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="foot-row">
+    <div class="footer-brand">NEXUS CV</div>
+    <div>Built for clarity. Designed for momentum.</div>
+    <div>© <span id="year"></span> NEXUS CV</div>
+  </div>
+  <p style="max-width:760px;margin-top:20px;line-height:1.8">
+    NEXUS CV provides CV and career-document assistance, not recruitment or job placement.
+    ATS behavior varies by employer and software. AI responses are informational and may be imperfect.
+    Conversations may be logged for service quality and follow-up. Confirm all details before relying on them.
+  </p>
+</footer>
+</div>
+
+<button class="ai-launch" id="aiLaunch" aria-label="Scroll to NEXUS hologram">
+  <span class="mini-orb">✧</span>
+  <span class="launch-copy"><b>NEXUS AI</b><small>Talk to the hologram</small></span>
+</button>
+
+<input id="avatarUpload" type="file" accept="image/*" hidden>
+
+<div class="admin-modal" id="adminModal">
+  <div class="admin-panel">
+    <button class="admin-close" onclick="document.getElementById('adminModal').classList.remove('open')">×</button>
+    <h2>Captured Leads</h2>
+    <p class="sub">Stored locally in this browser. Triple-click the NEXUS logo to open.</p>
+    <div id="adminLeads"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const WHATSAPP_NUMBER = "966563468309";
+const AVATAR_KEY = "nexus_avatar_v2";
+const LEADS_KEY  = "nexus_leads_v2";
+const LEAD_WEBHOOK_URL = "";
+
+const $ = (id) => document.getElementById(id);
+$("year").textContent = new Date().getFullYear();
+
+/* ============================================================
+   WHATSAPP
+   ============================================================ */
+function whatsappUrl(message){
+  const number = WHATSAPP_NUMBER.replace(/\D/g, "");
+  if(!number || number.length < 8){
+    alert("Set your WhatsApp number in WHATSAPP_NUMBER near the top of the script.");
+    return "#";
+  }
+  return "https://wa.me/" + number + "?text=" + encodeURIComponent(message);
+}
+document.querySelectorAll(".wa-link").forEach(a => {
+  a.href = whatsappUrl(a.dataset.message || "Hi NEXUS CV, I'd like to ask about your CV services.");
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+});
+
+/* ============================================================
+   AVATAR
+   ============================================================ */
+const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 380'>" +
+    "<defs><radialGradient id='bg' cx='50%' cy='40%'>" +
+      "<stop offset='0%' stop-color='#0a1a28'/><stop offset='100%' stop-color='#020408'/>" +
+    "</radialGradient><linearGradient id='cy' x1='0' y1='0' x2='1' y2='1'>" +
+      "<stop offset='0' stop-color='#5ff0ff'/><stop offset='1' stop-color='#a78bfa'/>" +
+    "</linearGradient></defs>" +
+    "<rect width='300' height='380' fill='url(#bg)'/>" +
+    "<g opacity='0.4' stroke='#5ff0ff' stroke-width='1' fill='none'>" +
+      "<circle cx='150' cy='165' r='95'/><circle cx='150' cy='165' r='125' opacity='0.5'/>" +
+      "<circle cx='150' cy='165' r='155' opacity='0.25'/></g>" +
+    "<circle cx='150' cy='155' r='45' fill='url(#cy)' opacity='0.92'/>" +
+    "<path d='M60 340 Q150 220 240 340 Z' fill='url(#cy)' opacity='0.82'/>" +
+    "<circle cx='150' cy='155' r='45' fill='none' stroke='#5ff0ff' stroke-width='2'/>" +
+    "<text x='150' y='368' text-anchor='middle' font-family='Space Grotesk, sans-serif' font-size='11' fill='#5ff0ff' letter-spacing='3' opacity='0.8'>NEXUS</text>" +
+  "</svg>"
+);
+
+const avatarImg = $("avatarImg");
+avatarImg.src = DEFAULT_AVATAR;
+try{ const s = localStorage.getItem(AVATAR_KEY); if(s) avatarImg.src = s; }catch(e){}
+
+$("avatarInner").addEventListener("click", (e) => { e.stopPropagation(); $("avatarUpload").click(); });
+$("avatarUpload").addEventListener("change", (e) => {
+  const file = e.target.files && e.target.files[0]; if(!file) return;
+  if(!file.type.startsWith("image/")){ alert("Please choose an image file."); return; }
+  if(file.size > 4 * 1024 * 1024){ alert("Image too large (max 4 MB)."); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = String(reader.result);
+    if(dataUrl.length > 2 * 1024 * 1024){ alert("Compressed image still too large. Try under ~1.5 MB."); return; }
+    avatarImg.src = dataUrl;
+    try{ localStorage.setItem(AVATAR_KEY, dataUrl); }catch(err){ alert("Could not save photo — session-only."); }
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const stage      = $("stage");
+const statusPill = $("statusPill");
+const statusText = $("statusText");
+const modeBadge  = $("modeBadge");
+const modeVal    = $("modeVal");
+const wakeBtn    = $("wakeBtn");
+const transcript = $("transcript");
+
+let isActivated = false;
+let isBusy      = false;
+let isSpeaking  = false;
+let isListening = false;
+
+let currentLang   = "en";
+let currentGender = "female";
+let currentVoice  = null;
+let voiceReady    = false;
+let speechGen     = 0;
+
+const state = {
+  turnCount: 0,
+  askedRole: false,
+  knownRole: null,
+  knownMarket: null,
+  knownExperience: null,
+  knownTone: "professional",
+  usedVariants: new Map(),
+  lastReply: null,
+  lastTopic: null
+};
+
+function setStatus(kind){
+  statusPill.classList.remove("online","speaking","listening");
+  if(kind === "online")    { statusPill.classList.add("online");    statusText.textContent = "ONLINE · READY"; }
+  if(kind === "speaking")  { statusPill.classList.add("speaking");  statusText.textContent = "SPEAKING"; }
+  if(kind === "listening") { statusPill.classList.add("listening"); statusText.textContent = "LISTENING"; }
+  if(kind === "standby")   { statusText.textContent = "STANDBY · CLICK THE HOLOGRAM TO WAKE"; }
+}
+
+function setMode(tone, lang){
+  modeBadge.classList.remove("mode-coach","mode-savage","shift");
+  const tag = { en:"", ar:" · AR", ur:" · UR" }[lang || currentLang] || "";
+  if(tone === "encouraging") { modeBadge.classList.add("mode-coach");  modeVal.textContent = "COACH" + tag; }
+  else if(tone === "savage") { modeBadge.classList.add("mode-savage"); modeVal.textContent = "NO NONSENSE" + tag; }
+  else if(tone === "standby"){ modeVal.textContent = "STANDBY"; }
+  else                       { modeVal.textContent = "STRATEGIC" + tag; }
+  void modeBadge.offsetWidth;
+  modeBadge.classList.add("shift");
+  setTimeout(() => modeBadge.classList.remove("shift"), 650);
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function toast(msg, ms){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), ms || 2600);
+}
+
+/* ============================================================
+   LANGUAGE DETECTION
+   ============================================================ */
+function detectLanguage(text){
+  if(!text) return "en";
+  if(/[\u0600-\u06FF]/.test(text)) return "ar";
+  const urdu = /\b(kya|hai|hain|ka|ki|ke|ko|mera|meri|mujhe|aap|tum|hum|nahi|haan|chahiye|banana|banao|batao|kaise|kyun|shukriya|acha|thik|zaroor|zarurat|paisa|kitna|zyada|kam|sasta|mehnga|yaar|bhai|salam|salaam|assalam|inshallah|mashallah|bataiye|batayein|kijiye|karo|karunga|karenge|hoga|milega|gaya|gayi|bohot|bahut|bana|banaao|naukri|kaam|mujhe|batado|bata|suniye|suno|bolo|boliye|matlab)\b/i;
+  if(urdu.test(text)) return "ur";
+  return "en";
+}
+
+/* ============================================================
+   VOICE
+   ============================================================ */
+const FEMALE_HINTS = [
+  "aria online (natural)","aria natural","aria",
+  "jenny online (natural)","jenny",
+  "sonia online (natural)","sonia",
+  "libby online (natural)","libby",
+  "michelle online (natural)","michelle",
+  "natasha online (natural)","natasha",
+  "clara online (natural)","clara",
+  "zira",
+  "google uk english female","google us english",
+  "samantha","karen","susan","victoria"
+];
+const MALE_HINTS = [
+  "guy online (natural)","guy natural","guy",
+  "ryan online (natural)","ryan",
+  "thomas online (natural)","thomas",
+  "christopher online (natural)","christopher",
+  "eric online (natural)","eric",
+  "roger online (natural)","roger",
+  "steffan online (natural)","steffan",
+  "david","mark",
+  "google uk english male",
+  "daniel","alex","fred"
+];
+
+const LANG_MATCH = { en: "en", ar: "ar", ur: "ur" };
+
+function pickVoice(){
+  if(!("speechSynthesis" in window)) return null;
+  const voices = speechSynthesis.getVoices();
+  if(!voices.length) return null;
+
+  const wantLang = LANG_MATCH[currentLang] || "en";
+  let candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith(wantLang));
+
+  if(!candidates.length && wantLang === "ur"){
+    candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith("hi"));
+  }
+  if(!candidates.length){
+    candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith("en"));
+  }
+  if(!candidates.length) candidates = voices;
+
+  const hints = currentGender === "female" ? FEMALE_HINTS : MALE_HINTS;
+  for(const h of hints){
+    const m = candidates.find(v => (v.name || "").toLowerCase().includes(h));
+    if(m) return m;
+  }
+  return candidates[0];
+}
+
+function refreshVoice(){
+  currentVoice = pickVoice();
+  voiceReady = !!currentVoice;
+}
+
+if("speechSynthesis" in window){
+  refreshVoice();
+  speechSynthesis.onvoiceschanged = refreshVoice;
+}
+
+function stripMarkup(s){ return s.replace(/<[^>]+>/g, ""); }
+
+function splitForSpeech(text){
+  return (text.match(/[^.!?؟।]+[.!?؟।]*/g) || [text]).map(s => s.trim()).filter(Boolean);
+}
+
+function chunkByLength(sentences, maxLen){
+  const out = []; let cur = "";
+  for(const s of sentences){
+    const pieces = s.length > maxLen ? s.split(/(?<=,|،)\s+/) : [s];
+    for(const piece of pieces){
+      if((cur + " " + piece).trim().length > maxLen && cur){ out.push(cur.trim()); cur = piece; }
+      else { cur = (cur + " " + piece).trim(); }
+    }
+  }
+  if(cur) out.push(cur.trim());
+  return out;
+}
+
+function speak(text, tone, lang){
+  if(!("speechSynthesis" in window)) return;
+  if(!text || !isActivated) return;
+
+  const speakLang = lang || currentLang;
+  if(speakLang !== currentLang){ currentLang = speakLang; refreshVoice(); }
+  if(!voiceReady) refreshVoice();
+  if(!currentVoice) return;
+
+  const myGen = ++speechGen;
+  isSpeaking = true;
+  stage.classList.add("speaking");
+  setStatus("speaking");
+
+  try{ speechSynthesis.cancel(); }catch(e){}
+
+  const chunks = chunkByLength(splitForSpeech(stripMarkup(text)), 170);
+  let idx = 0;
+
+  const finish = () => {
+    if(myGen !== speechGen) return;
+    isSpeaking = false;
+    stage.classList.remove("speaking");
+    setStatus(isListening ? "listening" : "online");
+  };
+
+  const isNaturalVoice = currentVoice && /natural|online|neural/i.test(currentVoice.name);
+  const rateBase = isNaturalVoice ? 0.92 : 1.02;
+  const pitchBase = currentGender === "female" ? 1.04 : 0.95;
+
+  const speakNext = () => {
+    if(myGen !== speechGen) return;
+    if(idx >= chunks.length){ finish(); return; }
+
+    const u = new SpeechSynthesisUtterance(chunks[idx]);
+    u.voice = currentVoice;
+    u.lang = currentVoice.lang || (currentLang === "ar" ? "ar-SA" : currentLang === "ur" ? "ur-PK" : "en-US");
+
+    if(tone === "encouraging")      { u.rate = rateBase + 0.04; u.pitch = pitchBase + 0.10; }
+    else if(tone === "savage")      { u.rate = rateBase + 0.06; u.pitch = pitchBase - 0.06; }
+    else                            { u.rate = rateBase;        u.pitch = pitchBase; }
+    u.volume = 1;
+
+    u.onend = () => { idx++; speakNext(); };
+    u.onerror = (ev) => {
+      if(ev.error === "interrupted" || ev.error === "canceled"){ finish(); return; }
+      idx++; speakNext();
+    };
+    speechSynthesis.speak(u);
+  };
+
+  setTimeout(speakNext, 50);
+}
+
+/* ============================================================
+   TRANSCRIPT
+   ============================================================ */
+const MAX_LINES = 14;
+
+function renderLine(role, text, lang){
+  const lines = transcript.querySelectorAll(".t-line");
+  if(lines.length >= MAX_LINES) lines[0].remove();
+  const line = document.createElement("div");
+  line.className = "t-line " + role;
+  const who = document.createElement("span");
+  who.className = "who"; who.textContent = role === "bot" ? "NX" : "YOU";
+  const txt = document.createElement("span");
+  txt.className = "txt"; txt.textContent = text || "";
+  line.appendChild(who); line.appendChild(txt);
+  if(lang && role === "bot" && lang !== "en"){
+    const tag = document.createElement("span");
+    tag.className = "lang-tag"; tag.textContent = lang.toUpperCase();
+    txt.appendChild(tag);
+  }
+  transcript.appendChild(line);
+  transcript.scrollTop = transcript.scrollHeight;
+  return txt;
+}
+
+async function typewriter(el, plain, speed){
+  speed = speed || 22;
+  el.textContent = "";
+  const words = plain.split(" ");
+  for(let i = 0; i < words.length; i++){
+    el.textContent += (i ? " " : "") + words[i];
+    transcript.scrollTop = transcript.scrollHeight;
+    await new Promise(r => setTimeout(r, speed));
+  }
+}
+
+/* ============================================================
+   ACTIVATION
+   ============================================================ */
+function activate(){
+  if(isActivated) return;
+  isActivated = true;
+
+  stage.classList.add("activating");
+  setTimeout(() => stage.classList.remove("activating"), 800);
+
+  setStatus("online");
+  setMode("professional");
+  wakeBtn.classList.add("active");
+  wakeBtn.textContent = "NEXUS ACTIVE";
+
+  const bank = BANKS[currentLang] || EN;
+  const toneBank = bank.professional || bank;
+  const greeting = pickVariant("greeting_" + currentLang, toneBank.greeting);
+
+  const el = renderLine("bot", "", currentLang);
+  speak(greeting, "professional", currentLang);
+  typewriter(el, greeting, 20);
+}
+
+/* ============================================================
+   VARIANT PICKER
+   ============================================================ */
+function pickVariant(topicId, variants){
+  if(!state.usedVariants.has(topicId)) state.usedVariants.set(topicId, new Set());
+  const used = state.usedVariants.get(topicId);
+  const avail = variants.map((_, i) => i).filter(i => !used.has(i));
+  if(avail.length === 0){
+    used.clear();
+    return variants[Math.floor(Math.random() * variants.length)];
+  }
+  const idx = avail[Math.floor(Math.random() * avail.length)];
+  used.add(idx);
+  return variants[idx];
+}
+
+/* ============================================================
+   RESPONSE BANKS
+   ============================================================ */
+const EN = {
+  professional: {
+    greeting: [
+      "Welcome. I'm NEXUS — a holographic CV strategist. Ask me about ATS behavior, the Saudi market, international roles, or pricing. Tell me your target role and I'll take it from there.",
+      "Good to see you. I'm NEXUS. I help people build clearer, ATS-aware CVs. What role are you chasing right now?",
+      "I'm NEXUS — CV strategist, tone-shifter, occasional truth-teller. Tell me your target role and I'll show you what your CV should look like."
+    ],
+    ats: [
+      "ATS means Applicant Tracking System. Some employers use software to organize applications. A sensible CV uses clear headings, readable formatting, and honest keywords that match your experience. No one can guarantee a pass — systems differ.",
+      "Applicant Tracking Systems are filters, not judges. Give them clean structure, standard headings, and role-specific keywords — and keep the formatting boring on purpose. That's the whole trick.",
+      "Three things defeat an ATS: tables, graphics, and keyword confusion. Fix those with a clean single-column layout and honest keywords. Then a human gets a fair look."
+    ],
+    saudi: [
+      "For Saudi roles, tailor your CV to the job description. Present experience, qualifications, language skills, and work eligibility accurately. Photo, nationality, and visa details only when the role or employer expects them. Which sector are you targeting?",
+      "The Saudi market rewards clarity — credentials, languages, and visa status. Align keywords with the sector and the specific job description. Skip the decorations, keep the signal.",
+      "Saudi CVs work best when they read clean and honest. Show what the employer needs: skills, languages, eligibility, and outcomes. Where are you applying?"
+    ],
+    international: [
+      "International formats vary. US resumes are usually one page, no photo, achievement-led. European CVs can run longer. Gulf profiles often include nationality and photo. Which country are you targeting?",
+      "Every country expects a different shape. Tell me the destination — US, UK, Canada, Europe, or the Gulf — and I'll describe the format that lands best there.",
+      "No single CV fits every country. The format follows the local norm. Which market is on your mind?"
+    ],
+    freshers: [
+      "No experience isn't a barrier — it's raw material. We highlight education, projects, training, volunteer work, and transferable skills. Without inventing anything. What role are you aiming for?",
+      "Fresh graduates have more to show than they think. Coursework, personal projects, internships, side work — all of it can be framed as real capability. Let's build from there.",
+      "Your CV doesn't need fake experience. It needs clear framing of what you've already done. Start with your strongest project and we'll build outward."
+    ],
+    redesign: [
+      "A redesign starts with an audit: formatting, keyword coverage, achievement language, and visual credibility. We rebuild from that audit, not by layering new paint on old structure. Which package is your CV on today?",
+      "Most CVs fail on structure, not content. A rebuild fixes the layout, tightens the language, and lets the achievements breathe. Send me what you have and I'll point at the first fix.",
+      "Old CVs accumulate clutter. Redesign strips it back to what the recruiter needs — clear sections, strong verbs, measurable outcomes."
+    ],
+    cover: [
+      "A cover letter should explain why this company and this role — not repeat your CV. Three short paragraphs: hook, evidence, close. NEXUS writes them targeted, not generic.",
+      "Cover letters win when they answer one question: why here, why now? Everything else is a bonus. Want help writing one?",
+      "The best cover letters sound like a person, not a brochure. Warm, specific, and short. NEXUS writes exactly that."
+    ],
+    linkedin: [
+      "LinkedIn is a search problem. Recruiters search for keywords — so your headline, About section, and role descriptions should carry the terms they're looking for. Then align the profile with your CV.",
+      "Optimize LinkedIn for searchability first, personality second. Rewrite the headline with recruiter terms, then warm up the About section. Two hours of work, real returns.",
+      "Your LinkedIn and your CV should tell the same story. If they don't, one of them is lying. Let's align them."
+    ],
+    pricing: [
+      "Pricing is transparent — Essential from SAR 149, Professional from SAR 299, Executive from SAR 499. Final quotes and payment arrangements are confirmed on WhatsApp before any work begins. Want to talk through which fits you?",
+      "Three tiers: Essential for a clean ATS-aware CV, Professional adds cover letter and LinkedIn, Executive is the senior positioning package. All priced from SAR 149 upwards. Shall we talk it through?",
+      "The prices are starting points. Final quote depends on complexity, market, and turnaround. WhatsApp is where we confirm the numbers — no surprises."
+    ],
+    guarantee: [
+      "I can help your CV communicate your strengths, but hiring depends on your fit, applications, the employer, and the market. No CV service can honestly guarantee a job.",
+      "Nobody can promise you a job — and anyone who does is selling you hope, not a service. What we deliver is a clearer CV. That's the honest promise.",
+      "What I can promise: a cleaner, more targeted CV. What I can't promise: a job, an interview, or an ATS pass. Anyone saying otherwise is lying to you."
+    ],
+    whatsapp: [
+      "Use the WhatsApp button in this page and the human team will help you directly. They'll confirm requirements, price, timeline, and payment.",
+      "WhatsApp is the fastest route to a real person. Tap the button and the team takes over from there.",
+      "The human team lives on WhatsApp. Tap the button and they'll answer within a few hours."
+    ],
+    thanks: [
+      "You're welcome. If you'd like a human expert to review your CV, tap WhatsApp — the team typically replies within a few hours.",
+      "Anytime. If you want a human eye on your CV, WhatsApp is the fastest way to reach the team.",
+      "Glad to help. When you're ready for the human touch, WhatsApp is right there."
+    ],
+    default: [
+      "I can help with ATS basics, CV structure, Saudi and international formats, freshers, pricing, and cover letters. What's your target role?",
+      "Ask me about ATS, Saudi CVs, international formats, freshers, pricing, or cover letters. Or just tell me your target role.",
+      "Not sure where to start? Tell me your role and market, and I'll point you to the right place."
+    ]
+  },
+  encouraging: {
+    greeting: [
+      "Hey — really glad you're here. Career moves are big, and you don't have to figure out the CV part alone. Tell me where you are right now.",
+      "Welcome. First CV? Career change? Coming back after a break? Whatever it is, you're in the right place. What's on your mind?",
+      "Good to see you. This stuff can feel intimidating. It doesn't have to be. Tell me a little about what you're working toward."
+    ],
+    ats: [
+      "Here's the good news: ATS systems aren't scary once you know what they want. Clean structure, real keywords, honest achievements. We'll make sure your CV speaks the same language as the jobs you're applying for. You've got this.",
+      "ATS systems are just filters. Fix the structure, keep the language honest, and your CV gets a fair shot. Small changes, big difference.",
+      "Nothing about ATS is mysterious. Give the system clean formatting and honest keywords, and it does its job. We'll make that easy."
+    ],
+    saudi: [
+      "The Saudi market is welcoming to well-prepared candidates. Clarity matters most — credentials, languages, eligibility. We'll make sure all of that reads clean and confident.",
+      "Saudi employers want to see you clearly. Languages, qualifications, readiness for the sector. We'll bring that to the front of your CV.",
+      "Applying in Saudi? Great. The market rewards preparation. Let's put your strongest facts where a recruiter will find them."
+    ],
+    international: [
+      "Applying abroad is really about meeting local norms. We'll reformat your CV for the country you're targeting and make sure your story translates cleanly.",
+      "Every country has its own CV culture. Once we know where you're headed, we'll shape the format to fit.",
+      "International applications feel bigger than they are. Format follows the market — that's the only rule."
+    ],
+    freshers: [
+      "You have more than you think. Projects, coursework, certifications, volunteering, side work — all of it can be framed as real capability. Let's build from that.",
+      "Fresh graduates are often told they have 'nothing.' Not true. Your education and projects are raw material. We'll shape them into something a recruiter respects.",
+      "Starting out is exciting, not limiting. We'll make your CV reflect the effort you've already put in."
+    ],
+    redesign: [
+      "Your CV isn't broken — it's just not telling your story in the strongest way yet. A redesign is a fresh start.",
+      "Small tweaks or a full rebuild — either way, a cleaner CV gives you more confidence walking into the next application.",
+      "Redesigns are a reset. We keep what's working, replace what isn't, and rebuild around your strengths."
+    ],
+    cover: [
+      "Cover letters feel scary, but they're really just a short, warm conversation with the hiring manager. We'll help you sound like yourself.",
+      "The cover letter is your chance to sound human. Three short paragraphs is plenty. We'll help you write them.",
+      "You don't need to be a writer to write a great cover letter. You need to be specific. That's a skill we can build together."
+    ],
+    linkedin: [
+      "LinkedIn is where recruiters find you. Small, confident changes to your headline and About section can make a real difference. We'll do that with you.",
+      "You don't need a viral LinkedIn. You need a findable one. We'll fix the search terms and warm up the tone.",
+      "Your LinkedIn should feel like you on a good day. Confident, clear, specific. Let's get it there."
+    ],
+    pricing: [
+      "The packages start at SAR 149, 299, and 499. The lower tier is a strong start if this is your first CV. No pressure at all.",
+      "Price is honest and confirmed on WhatsApp before any work begins. If the Essential tier fits your budget, that's a real start.",
+      "There's a package for every stage. If you're unsure which fits, the team will help you choose on WhatsApp."
+    ],
+    guarantee: [
+      "I can't promise a job — nobody honestly can — but I can promise you a clearer, more confident CV. That's a real step forward.",
+      "What I can promise is a cleaner, stronger CV. What nobody can promise is the outcome. That's not failure — it's honesty.",
+      "You're doing the work. The result depends on fit, timing, and the market. That's okay. The CV is the part you control."
+    ],
+    whatsapp: [
+      "The human team is genuinely kind. Tap WhatsApp and tell them where you are in your search — they'll help you find the right next step.",
+      "A real person is one tap away. WhatsApp is where you can talk through the messy parts.",
+      "Reach out on WhatsApp whenever you're ready. The team is patient and helpful."
+    ],
+    thanks: [
+      "Anytime. If you'd like a human to look at your CV with the same encouragement, tap WhatsApp.",
+      "You're welcome. And if you want a real human to cheer you on through this, the team is on WhatsApp.",
+      "Glad I could help. Go easy on yourself — you're doing the work."
+    ],
+    default: [
+      "Whatever stage you're at — first CV, career change, or coming back after a break — I'll help you find the right next step. What's on your mind?",
+      "No pressure, no rush. Tell me a bit about where you are and what you're aiming for.",
+      "Let's figure this out together. What role are you working toward?"
+    ]
+  },
+  savage: {
+    greeting: [
+      "Oh, we're doing this. Fine. I'm NEXUS and I don't sugar-coat. Tell me what you're actually here for.",
+      "Welcome. I'm NEXUS. I tell the truth and I make jokes. Sometimes both. What are we fixing today?",
+      "Look who showed up. Good. I'm NEXUS. Tell me your target role and I'll tell you what your CV is missing. Fair warning: I don't flatter."
+    ],
+    ats: [
+      "Everyone whispers 'ATS' like it's a curse. It's not. It's a robot that wants keywords and clean formatting. Give it both. That's the whole secret.",
+      "ATS systems don't hate you. They ignore you. Give them what they want — clean structure, honest keywords — and they'll pass you to a human. Simple.",
+      "Three things kill an ATS: tables, graphics, and hoping. Remove the first two, replace the third with keywords. You're welcome."
+    ],
+    saudi: [
+      "Saudi CVs need a photo, visa status, and language proficiency — when the role calls for it. Skip those and a human filters you, not a robot. We fix that.",
+      "Applying in Saudi without tailoring? Bold. Wrong, but bold. Match the JD, list the languages, and stop decorating.",
+      "Saudi market is competitive. The CVs that win are clear and tailored. Yours probably isn't. We fix that."
+    ],
+    international: [
+      "Applying abroad with your local CV is like showing up to a black-tie dinner in a bathrobe. We reformat it. You'll thank me later.",
+      "Every country has its own CV culture. Using the wrong one is a silent rejection. Let's not do that.",
+      "International means local. Pick the country, we shape the format. That's it."
+    ],
+    freshers: [
+      "'No experience' isn't the problem. 'No framing' is. Your coursework isn't a gap — it's raw material. We'll make you look like someone worth betting on.",
+      "Fresh graduates say 'I have nothing.' Wrong. You have projects, training, and time spent. We turn that into a real CV.",
+      "You have no experience and a lot of potential. The CV's job is to make the second part louder. We do that."
+    ],
+    redesign: [
+      "Your CV probably has three fonts, an unaligned table, and the phrase 'hard-working team player.' Yes. We know. We've seen it. Let's burn it down and rebuild.",
+      "If your CV hasn't been updated since 2022, it's not a CV — it's a museum piece. Let's fix that.",
+      "A redesign isn't cosmetic. It's a rewrite. We keep the truth and lose the noise."
+    ],
+    cover: [
+      "Nobody reads cover letters. Except the one hiring manager who does, and then it matters a lot. We write the one they actually read.",
+      "A cover letter isn't a formality. It's the difference between 'who?' and 'interesting.' Short, specific, warm. That's the formula.",
+      "One page. Three paragraphs. One real reason you want this job. That's a good cover letter. Most people miss all three."
+    ],
+    linkedin: [
+      "Your LinkedIn headline says 'Seeking opportunities.' So does everyone else's. Let's make yours sound like a person, not a vacancy notice.",
+      "'Passionate professional' is not a headline. It's a shrug in text form. We'll write one that actually says something.",
+      "LinkedIn is a search engine. If you're not findable, you're not hired. Simple. We fix that."
+    ],
+    pricing: [
+      "SAR 299 too much? That's two weeks of coffee and a slightly worse future. Coffee's great, by the way. Choose wisely.",
+      "Let me guess — you wanted a Ferrari on a bicycle budget. Look, we can talk price on WhatsApp. They're nicer than me. Barely.",
+      "Three hundred riyals for a CV. That could open doors. Or you could buy sixty shawarmas. Your call, chef.",
+      "Price complaint noted. Filed under 'reasons my CV has been rejected since 2019.' Kidding. Mostly. WhatsApp us, we'll find a plan."
+    ],
+    guarantee: [
+      "Nobody can guarantee you a job. If someone does, they're selling lottery tickets with a smile. We sell a clear CV. That's it. That's the honest pitch.",
+      "Let me be brutally honest: a CV can open a door, not carry you through it. Anyone promising more is lying. What we can do is real.",
+      "Guaranteed job? No. Better CV? Yes. And the second one is what you actually need."
+    ],
+    whatsapp: [
+      "Don't argue with me about pricing — argue with the human team on WhatsApp. They're nicer than me. Slightly.",
+      "Need to talk to a real person? WhatsApp. They'll handle the details. I'll handle the sass.",
+      "The human team is on WhatsApp. They answer questions. I answer with attitude. Choose your fighter."
+    ],
+    thanks: [
+      "Don't thank me. Go fix your CV. Tap WhatsApp if you want a human.",
+      "You're welcome. Now go get rejected fewer times. WhatsApp if you need backup.",
+      "Anytime. Real talk: the work isn't done. WhatsApp the team when you're ready to actually ship."
+    ],
+    default: [
+      "Not here to flatter you. Here to make your CV actually work. What are you applying for — or should I guess from the panic?",
+      "Tell me your role. Or don't, and I'll describe the average CV that isn't working and see if it sounds familiar.",
+      "I can help with ATS, pricing, format, or honesty. Pick one — or keep me guessing. Either way, your CV loses if we don't start."
+    ]
+  }
+};
+
+const AR = {
+  professional: {
+    greeting: ["أنا نيكسوس، مستشار السيرة الذاتية الخاص بك. اسألني عن أنظمة ATS أو السوق السعودي أو الوظائف الدولية. ما هو دورك المستهدف؟"],
+    ats: ["ATS يعني نظام تتبع المتقدمين. بعض الشركات تستخدمه لتصفية الطلبات. السيرة الجيدة تحتاج عناوين واضحة وتنسيقاً مقروءاً وكلمات مفتاحية صادقة. لا أحد يضمن النجاح."],
+    saudi: ["للوظائف السعودية، طابق سيرتك مع وصف الوظيفة. اعرض الخبرة والمؤهلات واللغة والأهلية بوضوح. الصورة والجنسية والتأشيرة فقط عند الحاجة. ما القطاع الذي تستهدفه؟"],
+    pricing: ["الأسعار واضحة: الأساسي من 149 ريال، الاحترافي من 299، التنفيذي من 499. السعر النهائي والدفع يتم تأكيده عبر واتساب قبل البدء."],
+    freshers: ["لا خبرة؟ هذه بداية وليست عقبة. نسلط الضوء على التعليم والمشاريع والتدريب والمهارات القابلة للنقل — دون اختراع أي شيء."],
+    guarantee: ["أستطيع مساعدتك في عرض نقاط قوتك بوضوح، لكن التوظيف يعتمد على التوافق والسوق وصاحب العمل. لا يمكن لأي خدمة أن تضمن وظيفة."],
+    thanks: ["على الرحب والسعة. لمراجعة بشرية، اضغط واتساب — الفريق يرد خلال ساعات."],
+    default: ["أستطيع المساعدة في أساسيات ATS، هيكل السيرة، التنسيقات السعودية والدولية، حديثي التخرج، الأسعار، وخطابات التقديم. ما دورك المستهدف؟"]
+  },
+  encouraging: {
+    greeting: ["أهلاً بك — سعيد أنك هنا. تغيير المسار خطوة كبيرة، ولست وحدك في جزء السيرة الذاتية. أخبرني أين أنت الآن."],
+    ats: ["الأنظمة ليست مخيفة إذا عرفت ما تريد. هيكل واضح، كلمات صادقة، إنجازات حقيقية. سنجعل سيرتك تتحدث لغة الوظائف. أنت قادر."],
+    saudi: ["السوق السعودي يرحب بالمرشحين المستعدين. الوضوح هو الأهم — المؤهلات، اللغات، الأهلية. سنجعل ذلك واضحاً وواثقاً."],
+    pricing: ["الحزم تبدأ من 149 و299 و499 ريال. الفئة الأساسية بداية قوية إذا كانت سيرتك الأولى. لا ضغط إطلاقاً."],
+    freshers: ["لديك أكثر مما تظن. المشاريع والدورات والشهادات والتطوع — كلها قدرات حقيقية. لنبنِ منها."],
+    guarantee: ["لا أستطيع ضمان وظيفة — لا أحد يستطيع بأمانة — لكنني أستطيع ضمان سيرة أوضح وأقوى. هذه خطوة حقيقية."],
+    thanks: ["على الرحب والسعة. للتواصل مع الفريق، اضغط واتساب — سيسعدون بمساعدتك."],
+    default: ["أياً كانت مرحلتك — سيرة أولى، تغيير مسار، أو عودة بعد انقطاع — سأساعدك في الخطوة التالية. ما الذي يدور في ذهنك؟"]
+  },
+  savage: {
+    greeting: ["حسناً، لنتحدث بصراحة. أنا نيكسوس ولا أُجمّل. أخبرني لِمَ أنت هنا فعلاً."],
+    ats: ["الجميع يخشى ATS كأنها لعنة. هي مجرد روبوت يريد كلمات وتنسيقاً نظيفاً. أعطه الاثنين — هذا كل السر."],
+    saudi: ["سيرة سعودية بدون تخصيص؟ جسور. خطأ، لكن جسور. طابق الوصف الوظيفي، اذكر اللغات، وتوقف عن الزخرفة."],
+    pricing: ["299 ريال كثير؟ هذا أسبوعان من القهوة ومستقبل أسوأ قليلاً. القهوة رائعة بالمناسبة. اختر بحكمة."],
+    freshers: ["'لا خبرة' ليست المشكلة. 'لا صياغة' هي المشكلة. دوراتك ليست فراغاً — إنها مادة خام. سنصنع منها شيئاً يستحق الرهان."],
+    guarantee: ["لا أحد يضمن وظيفة. من يقول غير ذلك يبيعك تذكرة يانصيب بابتسامة. نحن نبيع سيرة أوضح. هذه الحقيقة."],
+    thanks: ["لا تشكرني. اذهب وأصلح سيرتك. واتساب إذا أردت إنساناً."],
+    default: ["لست هنا لأُطرِيك. أنا هنا لجعل سيرتك تعمل فعلاً. ما الذي تتقدم له — أم أخمّن من التوتر؟"]
+  }
+};
+
+const UR = {
+  professional: {
+    greeting: ["Main NEXUS hoon — aapka CV mushir. ATS, Saudi market, ya international naukriyon ke baare mein poochein. Aapka target role kya hai?"],
+    ats: ["ATS ka matlab hai Applicant Tracking System. Kuch companies is software se applications filter karti hain. Saaf CV — clear headings, readable format, sachche keywords — process aasan banata hai. Koi 100% guarantee nahi de sakta."],
+    saudi: ["Saudi jobs ke liye CV ko job description se match karein. Experience, qualifications, zubaan, work eligibility saaf dikhayein. Photo, nationality, visa sirf tab jab role ke liye zaroori ho. Kaunsa sector target kar rahe hain?"],
+    pricing: ["Pricing saaf hai — Essential SAR 149 se, Professional SAR 299 se, Executive SAR 499 se. Final quote aur payment WhatsApp pe confirm hoti hai."],
+    freshers: ["Experience nahi hai? Ye shuruaat hai, rukawat nahi. Hum education, projects, training, volunteer work aur transferable skills highlight karte hain — bina jhoot."],
+    guarantee: ["Main aapki taqat saaf dikhane mein madad kar sakta hoon, lekin hiring fit, applications, employer aur market pe depend karti hai. Koi CV service job ki guarantee nahi de sakti."],
+    thanks: ["Koi baat nahi. Human review ke liye WhatsApp pe message karein — team chand ghanton mein jawab deti hai."],
+    default: ["Main ATS basics, CV structure, Saudi aur international formats, freshers, pricing, cover letters mein madad kar sakta hoon. Aapka target role kya hai?"]
+  },
+  encouraging: {
+    greeting: ["Aap yahan hain — bohot acha laga. Career badalna bada qadam hai, aur CV ka hissa akele nahi karna. Bataiye, aap abhi kahan hain?"],
+    ats: ["Achi khabar: ATS darawani nahi hai jab aapko pata ho wo kya chahti hai. Saaf structure, sachche keywords, imaandaar achievements. Hum aapka CV unki zubaan mein bana denge. Aap kar sakte hain."],
+    saudi: ["Saudi market tayyar candidates ko khush aamdeed kehta hai. Clarity sab se ahem hai — credentials, languages, eligibility. Hum yeh sab saaf aur confident bana denge."],
+    pricing: ["Packages SAR 149, 299, aur 499 se shuru hote hain. Agar yeh aapka pehla CV hai, to lower tier achi shuruaat hai. Koi pressure nahi."],
+    freshers: ["Aapke paas soch se zyada hai. Projects, courses, certifications, volunteering, side work — sab asli capability hai. Chaliye isse banate hain."],
+    guarantee: ["Main job guarantee nahi kar sakta — koi imaandaari se nahi kar sakta — lekin ek saaf aur mazboot CV ka waada kar sakta hoon. Yeh asli qadam hai."],
+    thanks: ["Koi baat nahi. Human team se baat karne ke liye WhatsApp pe tap karein."],
+    default: ["Aap kisi bhi stage pe ho — pehla CV, career change, ya break ke baad wapsi — main agli step mein madad karunga. Kya soch rahe hain?"]
+  },
+  savage: {
+    greeting: ["Theek hai, seedhi baat karte hain. Main NEXUS hoon aur main tareef nahi karta. Bataiye aap yahan kis liye aaye hain."],
+    ats: ["Sab ATS se darte hain jaise koi shraap ho. Wo bas ek robot hai jo keywords aur saaf formatting chahta hai. Dono do — bas yehi raaz hai."],
+    saudi: ["Saudi CV bina tailoring? Bahaduri hai. Galat, lekin bahaduri. JD se match karo, languages likho, aur decoration band karo."],
+    pricing: ["SAR 299 zyada? Ye do hafte ki coffee aur thoda bura future hai. Coffee achi hai waise. Soch samajh ke choose karo."],
+    freshers: ["'No experience' masla nahi. 'No framing' masla hai. Aapke courses khali nahi — raw material hain. Hum isse aisa banayenge jispe bharosa kiya jaye."],
+    guarantee: ["Koi job guarantee nahi kar sakta. Jo kare wo muskura ke lottery ticket bech raha hai. Hum saaf CV bechte hain. Yehi sach hai."],
+    thanks: ["Shukriya mat kaho. Jaao CV theek karo. WhatsApp karo agar insaan chahiye."],
+    default: ["Main tareef nahi karne aaya. Main aapka CV kaam karwane aaya hoon. Kya apply kar rahe hain — ya tension se guess karun?"]
+  }
+};
+
+const BANKS = { en: EN, ar: AR, ur: UR };
+
+/* ============================================================
+   DETECTORS
+   ============================================================ */
+const ROLE_ROOTS = [
+  { canon:"engineer",   re:/\b(engin\w*|engn\w*|ingin\w*|engeneer\w*|enjine\w*)\b/ },
+  { canon:"developer",  re:/\b(develop\w*|devl\w*|devops|programmer\w*|programer\w*|coder\w*)\b/ },
+  { canon:"designer",   re:/\b(design\w*|desing\w*|desgn\w*|ux|ui)\b/ },
+  { canon:"manager",    re:/\b(manag\w*|mang\w*|mngr\w*)\b/ },
+  { canon:"accountant", re:/\b(account\w*|acount\w*|accnt\w*|acct)\b/ },
+  { canon:"nurse",      re:/\b(nurs\w*|nurce\w*)\b/ },
+  { canon:"teacher",    re:/\b(teach\w*|teecher\w*|tutor\w*)\b/ },
+  { canon:"driver",     re:/\b(driv\w*|drvr\w*)\b/ },
+  { canon:"analyst",    re:/\b(analy\w*|analist\w*|analytic\w*)\b/ },
+  { canon:"coordinator",re:/\b(coordinat\w*|cordnat\w*|coord)\b/ },
+  { canon:"consultant", re:/\b(consult\w*|conslt\w*)\b/ },
+  { canon:"admin",      re:/\b(administrat\w*|adminstr\w*|admin)\b/ },
+  { canon:"sales",      re:/\b(sales\w*|seling|sell\w*)\b/ },
+  { canon:"marketing",  re:/\b(market\w*|markting|mrkt\w*)\b/ },
+  { canon:"hr",         re:/\b(human resources|hr|recruiter\w*|recruit\w*)\b/ },
+  { canon:"technician", re:/\b(technician\w*|tecnitian\w*)\b/ },
+  { canon:"officer",    re:/\b(officer\w*|oficer\w*)\b/ },
+  { canon:"supervisor", re:/\b(supervis\w*|superviz\w*)\b/ },
+  { canon:"director",   re:/\b(director\w*)\b/ },
+  { canon:"specialist", re:/\b(specialist\w*|specialst\w*)\b/ }
+];
+
+function detectRole(text){
+  const t = text.toLowerCase();
+  for(const { canon, re } of ROLE_ROOTS){ if(re.test(t)) return canon; }
+  return null;
+}
+
+function detectTone(text){
+  const t = text.toLowerCase();
+  if(/\b(too (expensive|much|costly)|expensive|can'?t afford|discount|cheap(er)?|for free|free\?|reduce (the )?price|negotiat|scam|waste of money|overpriced|rip.?off|refund|mehnga|zyada paisa|bahut mehnga)\b/i.test(t)) return "savage";
+  if(/\b(fresher|fresh graduate|graduate|no experience|first job|student|internship|nervous|scared|anxious|worried|struggling|lost|imposter|not good enough|help me|naya|shuru|darr|pareshan)\b/i.test(t)) return "encouraging";
+  return "professional";
+}
+
+function detectTopic(text){
+  const t = text.toLowerCase();
+  if(/\b(hi|hello|hey|salam|salaam|assalam|assalamualaikum|marhaba|ahlan|aoa)\b/i.test(t)) return "greeting";
+  if(/\b(ats|applicant tracking|tracking system|keyword|parser|robot)\b/i.test(t)) return "ats";
+  if(/\b(saudi|ksa|riyadh|jeddah|gulf|vision 2030|arabia)\b/i.test(t)) return "saudi";
+  if(/\b(international|abroad|usa|united states|uk|canada|europe|dubai|foreign|overseas|america|britain)\b/i.test(t)) return "international";
+  if(/\b(no experience|fresher|fresh graduate|first job|student|internship)\b/i.test(t)) return "freshers";
+  if(/\b(redesign|old cv|update|revamp|improve|rebuild|purana cv)\b/i.test(t)) return "redesign";
+  if(/\b(cover letter|motivation letter)\b/i.test(t)) return "cover";
+  if(/\b(linkedin|profile)\b/i.test(t)) return "linkedin";
+  if(/\b(price|pricing|cost|fee|charge|sar|package|how much|expensive|afford|discount|cheap|free|reduce|negotiat|kitna|paisa|kimat|rate)\b/i.test(t)) return "pricing";
+  if(/\b(guarantee|guaranteed|job|salary|interview|hired|placement|naukri milegi)\b/i.test(t)) return "guarantee";
+  if(/\b(whatsapp|contact|human|person|talk to you|speak to someone|baat karni)\b/i.test(t)) return "whatsapp";
+  if(/\b(thanks|thank you|shukriya|jazak|shukria|dhanyavad)\b/i.test(t)) return "thanks";
+  return "default";
+}
+
+/* ============================================================
+   ROLE FLAVOR
+   ============================================================ */
+const ROLE_FLAVOR = {
+  en: {
+    engineer:"engineering CVs need project outcomes, tools, and certifications front and centre",
+    developer:"developer CVs need tech stack, shipped projects, and measurable impact",
+    designer:"designer CVs need portfolio links, process stories, and impact metrics",
+    manager:"manager CVs need team size, budget scope, and business outcomes",
+    accountant:"accounting CVs need certifications, ERP tools, and reconciliation scope",
+    nurse:"nursing CVs need licensure, specialty, and patient-care metrics",
+    teacher:"teaching CVs need grade levels, curriculum frameworks, and student outcomes",
+    driver:"driving CVs need license class, clean-record years, and route types",
+    analyst:"analyst CVs need tools, the metrics you owned, and business impact",
+    coordinator:"coordinator CVs need scheduling scope, stakeholder count, and process wins",
+    consultant:"consultant CVs need client types, project scope, and quantified outcomes",
+    admin:"administrative CVs need systems handled, team support scope, and accuracy",
+    sales:"sales CVs need quota attainment, deal size, and pipeline numbers",
+    marketing:"marketing CVs need campaign outcomes, channels owned, and attribution",
+    hr:"HR CVs need headcount scope, hiring volume, and policy outcomes",
+    technician:"technical CVs need equipment handled, certifications, and safety records",
+    officer:"officer CVs need functional scope, compliance, and reporting lines",
+    supervisor:"supervisor CVs need team size, shift ownership, and KPI outcomes",
+    director:"director CVs need P&L scope, org size, and strategic outcomes",
+    specialist:"specialist CVs need domain depth, tools, and measurable deliverables",
+    default:"role-specific CVs need relevant keywords, measurable achievements, and clean formatting"
+  },
+  ar: { default:"السيرة الجيدة تحتاج كلمات مفتاحية ذات صلة وإنجازات قابلة للقياس وتنسيق نظيف" },
+  ur: { default:"role-specific CV mein relevant keywords, measurable achievements aur saaf formatting chahiye" }
+};
+
+function roleReply(role, tone, lang){
+  const flavors = ROLE_FLAVOR[lang] || ROLE_FLAVOR.en;
+  const flavor = flavors[role] || flavors.default;
+  const roleDisp = role.charAt(0).toUpperCase() + role.slice(1);
+  if(lang === "ar"){
+    return tone === "savage"
+      ? `${roleDisp}؟ حسناً. سيرة بدون كلمات مفتاحية هي مجرد ورقة. ما السوق الذي تستهدفه؟`
+      : `${roleDisp} — جيد. ${flavor}. ما السوق الذي تستهدفه: السعودية، دولي، أم كلاهما؟`;
+  }
+  if(lang === "ur"){
+    return tone === "savage"
+      ? `${roleDisp}? Acha. Bina keywords wala CV sirf kaagaz hai. Kaunsa market target kar rahe hain?`
+      : `${roleDisp} — acha. ${flavor}. Kaunsa market target kar rahe hain: Saudi, international, ya dono?`;
+  }
+  if(tone === "savage"){
+    return `${roleDisp}. Good. Then let's actually tailor it — ${flavor}. Which market are you targeting? And don't say "anywhere."`;
+  }
+  if(tone === "encouraging"){
+    return `${roleDisp} — great direction. ${flavor}. We'll make sure your CV tells that story with confidence. Which market are you aiming for?`;
+  }
+  return `${roleDisp} — good. ${flavor}. Which market are you targeting: Saudi Arabia, international, or both?`;
+}
+
+/* ============================================================
+   LEAD CAPTURE
+   ============================================================ */
+const leads = {
+  turnCount: 0, role: null, market: null, experience: null,
+  name: null, email: null, phone: null, tone: null,
+  languages: new Set(), transcript: [], captured: false
+};
+
+function extractLeadInfo(userText, lang){
+  leads.turnCount++;
+  leads.languages.add(lang);
+
+  const email = userText.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
+  if(email) leads.email = email[0];
+
+  const phone = userText.match(/\+?\d[\d\s\-()]{7,}\d/);
+  if(phone){
+    const clean = phone[0].replace(/[\s\-()]/g, "");
+    if(clean.length >= 8 && clean.length <= 16) leads.phone = clean;
+  }
+
+  const name = userText.match(/(?:my name is|i'm|i am|this is|naam)\s+([A-Z][a-zA-Z]{1,20})/i);
+  if(name) leads.name = name[1];
+
+  const role = detectRole(userText);
+  if(role) leads.role = role;
+
+  if(/\b(saudi|ksa|riyadh|jeddah|gulf)\b/i.test(userText)) leads.market = "saudi";
+  else if(/\b(international|abroad|usa|uk|canada|europe|dubai)\b/i.test(userText)) leads.market = "international";
+
+  if(/\b(no experience|fresher|fresh graduate|student)\b/i.test(userText)) leads.experience = "fresher";
+  else if(/\b(\d+\s*(years?|yrs?|saal))\b/i.test(userText)) leads.experience = userText.match(/\d+\s*(years?|yrs?|saal)/i)[0];
+
+  leads.tone = detectTone(userText);
+  leads.transcript.push({ role: "user", text: userText.slice(0, 200), ts: Date.now() });
+  if(leads.transcript.length > 20) leads.transcript.shift();
+}
+
+function leadSummary(){
+  return [
+    "NEXUS Lead",
+    "—",
+    "Name: " + (leads.name || "—"),
+    "Role: " + (leads.role || "—"),
+    "Market: " + (leads.market || "—"),
+    "Experience: " + (leads.experience || "—"),
+    "Email: " + (leads.email || "—"),
+    "Phone: " + (leads.phone || "—"),
+    "Tone: " + (leads.tone || "—"),
+    "Languages: " + Array.from(leads.languages).join(", "),
+    "Turns: " + leads.turnCount,
+    "Time: " + new Date().toISOString()
+  ].join("\n");
+}
+
+async function pushLeadSilently(){
+  if(leads.captured) return;
+  if(!leads.role && !leads.email && !leads.phone && !leads.name && leads.turnCount < 2) return;
+  leads.captured = true;
+
+  const summary = leadSummary();
+
+  try{
+    const saved = JSON.parse(localStorage.getItem(LEADS_KEY) || "[]");
+    saved.push({
+      summary, name: leads.name, role: leads.role, market: leads.market,
+      experience: leads.experience, email: leads.email, phone: leads.phone,
+      tone: leads.tone, languages: Array.from(leads.languages),
+      turns: leads.turnCount, ts: Date.now(),
+      transcript: leads.transcript.slice(-8),
+      waLink: whatsappUrl(summary)
+    });
+    localStorage.setItem(LEADS_KEY, JSON.stringify(saved.slice(-30)));
+  }catch(e){}
+
+  if(LEAD_WEBHOOK_URL){
+    try{
+      await fetch(LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ summary, leads: { ...leads, languages: Array.from(leads.languages) } })
+      });
+    }catch(e){}
+  }
+}
+
+window.addEventListener("beforeunload", () => { pushLeadSilently(); });
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden") pushLeadSilently();
+});
+
+/* ============================================================
+   REPLY ENGINE
+   ============================================================ */
+function replyFor(userText){
+  const lang  = detectLanguage(userText);
+  const tone  = detectTone(userText);
+  const topic = detectTopic(userText);
+  const role  = detectRole(userText);
+
+  state.turnCount++;
+  state.knownTone = tone;
+  if(lang !== currentLang){ currentLang = lang; }
+
+  if(role && (topic === "default" || topic === "greeting")){
+    state.knownRole = role;
+    return { tone, topic: "role", lang, text: roleReply(role, tone, lang) };
+  }
+
+  if(state.askedRole && topic === "default"){
+    const words = userText.trim().split(/\s+/);
+    if(words.length <= 3 && !/[?]/.test(userText)){
+      const filler = /^(i|am|a|an|the|is|are|im|i'm|my|me|working|work|as|in|at|for|to|of|role|job|target|targeting|want|need|looking|currently|just|and|or|so|well|ok|okay|main|hu|hoon|kya)$/i;
+      const substantive = words.filter(w => !filler.test(w.replace(/[^a-zA-Z\u0600-\u06FF]/g, "")));
+      if(substantive.length > 0){
+        const guessed = substantive[0].toLowerCase();
+        state.knownRole = guessed;
+        state.askedRole = false;
+        return { tone, topic: "role", lang, text: roleReply(guessed, tone, lang) };
+      }
+    }
+  }
+
+  const bank = (BANKS[lang] || EN)[tone] || EN.professional;
+  const variants = bank[topic] || bank.default;
+  const variantKey = `${lang}_${tone}_${topic}`;
+
+  let text = pickVariant(variantKey, variants);
+  if(text === state.lastReply && variants.length > 1){
+    text = pickVariant(variantKey, variants);
+  }
+  state.lastReply = text;
+  state.lastTopic = topic;
+
+  state.askedRole = /\b(what'?s your (target |current )?role|what role are you|which role|target role|aapka target role|ما هو دورك|ما دورك)\b/i.test(text);
+
+  return { tone, topic, lang, text };
+}
+
+/* ============================================================
+   SEND HANDLER
+   ============================================================ */
+const chatForm  = $("chatForm");
+const chatInput = $("chatInput");
+const sendBtn   = $("sendBtn");
+
+chatForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if(!isActivated) activate();
+
+  const text = chatInput.value.trim();
+  if(!text || isBusy) return;
+
+  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(err){} }
+
+  isBusy = true;
+  sendBtn.disabled = true;
+  chatInput.value = "";
+
+  renderLine("user", text);
+  extractLeadInfo(text, detectLanguage(text));
+
+  await new Promise(r => setTimeout(r, 320));
+
+  const { tone, text: reply, lang } = replyFor(text);
+  setMode(tone, lang);
+
+  if(lang !== "en"){
+    toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
+  }
+
+  const el = renderLine("bot", "", lang);
+  speak(reply, tone, lang);
+  await typewriter(el, reply, 22);
+
+  isBusy = false;
+  sendBtn.disabled = false;
+  chatInput.focus();
+
+  if(state.turnCount > 0 && state.turnCount % 3 === 0){
+    pushLeadSilently();
+  }
+});
+
+/* ============================================================
+   GENDER TOGGLE
+   ============================================================ */
+$("femaleBtn").addEventListener("click", () => setGender("female"));
+$("maleBtn").addEventListener("click", () => setGender("male"));
+
+function setGender(gender){
+  if(currentGender === gender) return;
+  currentGender = gender;
+  $("femaleBtn").classList.toggle("active", gender === "female");
+  $("maleBtn").classList.toggle("active", gender === "male");
+  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
+  refreshVoice();
+  if(isActivated && voiceReady){
+    const testText = currentLang === "ar"
+      ? "فحص الصوت. هكذا أبدو الآن."
+      : currentLang === "ur"
+      ? "Awaaz check. Main aisa bolta hoon ab."
+      : "Voice check. This is how I sound now.";
+    speak(testText, "professional", currentLang);
+  }
+}
+
+/* ============================================================
+   EXIT + CLOSE
+   ============================================================ */
+$("exitBtn").addEventListener("click", exitHologram);
+$("closeBtn").addEventListener("click", closeTranscript);
+
+function exitHologram(){
+  pushLeadSilently();
+  isActivated = false;
+  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
+  stage.classList.remove("speaking");
+  setStatus("standby");
+  setMode("standby");
+  wakeBtn.classList.remove("active");
+  wakeBtn.textContent = "MEET NEXUS AI";
+  transcript.innerHTML = '<div class="t-line bot"><span class="who">NX</span><span class="txt">Hologram offline. Tap the avatar or press <strong>MEET NEXUS AI</strong> to activate voice.</span></div>';
+  state.turnCount = 0;
+  state.askedRole = false;
+  state.usedVariants.clear();
+}
+
+function closeTranscript(){
+  const hidden = transcript.classList.toggle("hidden");
+  $("closeBtn").textContent = hidden ? "☰" : "✕";
+  $("closeBtn").title = hidden ? "Show transcript" : "Hide transcript";
+}
+
+/* ============================================================
+   WAKE + HERO
+   ============================================================ */
+wakeBtn.addEventListener("click", activate);
+stage.addEventListener("click", (e) => {
+  if(e.target.closest(".avatar-inner")) return;
+  activate();
+});
+stage.addEventListener("keydown", (e) => {
+  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); activate(); }
+});
+
+function scrollToHologram(){
+  document.querySelector(".hero").scrollIntoView({ behavior: "smooth", block: "start" });
+  setTimeout(activate, 400);
+}
+function askNexus(question){
+  scrollToHologram();
+  setTimeout(() => { chatInput.value = question; chatForm.requestSubmit(); }, 800);
+}
+$("aiLaunch").addEventListener("click", scrollToHologram);
+
+/* ============================================================
+   MICROPHONE
+   ============================================================ */
+const micBtn = $("micBtn");
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const MIC_LANG = { en: "en-US", ar: "ar-SA", ur: "ur-PK" };
+
+if(SR){
+  const rec = new SR();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 1;
+
+  micBtn.classList.remove("hidden");
+
+  let finalTranscript = "";
+  let silenceTimer = null;
+  const SILENCE_MS = 1700;
+
+  function resetSilence(){
+    clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(() => {
+      if((finalTranscript + chatInput.value).trim()){
+        try{ rec.stop(); }catch(e){}
+      }
+    }, SILENCE_MS);
+  }
+
+  function startListening(){
+    if(!isActivated) activate();
+    if("speechSynthesis" in window){
+      speechGen++;
+      try{ speechSynthesis.cancel(); }catch(e){}
+    }
+    rec.lang = MIC_LANG[currentLang] || "en-US";
+    finalTranscript = "";
+    chatInput.value = "";
+    try{ rec.start(); }catch(e){}
+  }
+
+  micBtn.addEventListener("click", () => {
+    if(isListening){ try{ rec.stop(); }catch(e){} return; }
+    startListening();
+  });
+
+  rec.onstart = () => {
+    isListening = true;
+    micBtn.classList.add("listening");
+    setStatus("listening");
+    chatInput.placeholder = "Listening… speak, then pause — or tap mic again";
+    resetSilence();
+  };
+
+  rec.onresult = (e) => {
+    let interim = "";
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const piece = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalTranscript += piece + " ";
+      else interim += piece;
+    }
+    chatInput.value = (finalTranscript + interim).trim();
+    resetSilence();
+  };
+
+  rec.onerror = (ev) => {
+    if(ev.error === "no-speech" || ev.error === "aborted") return;
+    isListening = false;
+    micBtn.classList.remove("listening");
+    if(!isSpeaking) setStatus("online");
+    chatInput.placeholder = "Ask NEXUS — English, العربية, or Roman Urdu…";
+  };
+
+  rec.onend = () => {
+    isListening = false;
+    micBtn.classList.remove("listening");
+    if(!isSpeaking) setStatus("online");
+    chatInput.placeholder = "Ask NEXUS — English, العربية, or Roman Urdu…";
+    const final = chatInput.value.trim();
+    if(final) setTimeout(() => chatForm.requestSubmit(), 120);
+  };
+}
+
+/* Escape stops speech */
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && "speechSynthesis" in window){
+    try{ speechSynthesis.cancel(); }catch(err){}
+  }
+});
+
+/* 3D tilt */
+if(matchMedia("(hover:hover)").matches){
+  window.addEventListener("mousemove", (e) => {
+    const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+    const y = (e.clientY / window.innerHeight - 0.5) * 2;
+    stage.style.setProperty("--mx", x.toFixed(3));
+    stage.style.setProperty("--my", y.toFixed(3));
+  });
+}
+
+/* Service glow */
+document.querySelectorAll(".service").forEach(card => {
+  card.addEventListener("pointermove", (e) => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--px", ((e.clientX - r.left) / r.width * 100) + "%");
+    card.style.setProperty("--py", ((e.clientY - r.top) / r.height * 100) + "%");
+  });
+});
+
+/* Admin — triple-click brand */
+let brandClicks = 0, brandTimer;
+$("brand").addEventListener("click", (e) => {
+  brandClicks++;
+  clearTimeout(brandTimer);
+  brandTimer = setTimeout(() => brandClicks = 0, 700);
+  if(brandClicks >= 3){
+    e.preventDefault();
+    brandClicks = 0;
+    showLeads();
+  }
+});
+
+function showLeads(){
+  const saved = JSON.parse(localStorage.getItem(LEADS_KEY) || "[]").slice().reverse();
+  const container = $("adminLeads");
+  if(!saved.length){
+    container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No leads captured yet in this browser.</p>';
+  } else {
+    container.innerHTML = saved.map(l => `
+      <div class="lead-card">
+        <div class="lead-name">${l.name || "Anonymous"} ${l.role ? "· " + l.role : ""} ${l.market ? "· " + l.market : ""}</div>
+        <div class="lead-meta">${(l.summary || "").replace(/</g, "&lt;")}</div>
+        ${l.email ? `<div class="lead-meta">📧 <a href="mailto:${l.email}" style="color:var(--cyan)">${l.email}</a></div>` : ""}
+        ${l.phone ? `<div class="lead-meta">📱 <a href="https://wa.me/${l.phone.replace(/\D/g,"")}" target="_blank" style="color:var(--cyan)">${l.phone}</a></div>` : ""}
+        ${l.waLink ? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open summary in WhatsApp</a></div>` : ""}
+      </div>
+    `).join("");
+  }
+  $("adminModal").classList.add("open");
+}
+
+/* Scroll reveal */
+if("IntersectionObserver" in window){
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+}
+</script>
+</body>
+</html>
