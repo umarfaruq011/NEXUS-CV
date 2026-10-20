@@ -1129,6 +1129,7 @@ footer .foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:w
 </div>
 
 <div class="toast" id="toast"></div>
+
 <script>
 /* ============================================================
    CONFIG
@@ -1138,9 +1139,9 @@ const AVATAR_KEY = "nexus_avatar_v2";
 const LEADS_KEY  = "nexus_leads_v2";
 const LEAD_WEBHOOK_URL = "";
 
-/* NEXUS AI Worker (Cloudflare) */
+/* NEXUS AI Worker — background only, never blocks UI */
 const NEXUS_WORKER_URL = "https://quiet-snowflake-4c02.umaremotions.workers.dev/";
-const NEXUS_WORKER_TIMEOUT_MS = 30000;   // safety net only — does NOT block UI
+const NEXUS_WORKER_TIMEOUT_MS = 30000;
 
 const $ = (id) => document.getElementById(id);
 $("year").textContent = new Date().getFullYear();
@@ -1214,7 +1215,6 @@ const wakeBtn    = $("wakeBtn");
 const transcript = $("transcript");
 
 let isActivated = false;
-let isBusy      = false;
 let isSpeaking  = false;
 let isListening = false;
 
@@ -1493,7 +1493,7 @@ function pickVariant(topicId, variants){
 }
 
 /* ============================================================
-   RESPONSE BANKS
+   RESPONSE BANKS (offline fallback)
    ============================================================ */
 const EN = {
   professional: {
@@ -2019,7 +2019,7 @@ function replyFor(userText){
 }
 
 /* ============================================================
-   NEXUS AI — Background fetch (does not block UI)
+   NEXUS AI — Background fetch, does NOT block user
    ============================================================ */
 async function fetchNexusReply(message, lang){
   const controller = new AbortController();
@@ -2062,7 +2062,7 @@ async function fetchNexusReply(message, lang){
 }
 
 /* ============================================================
-   SEND HANDLER — instant local answer + background AI upgrade
+   SEND HANDLER — instant local + background AI upgrade
    ============================================================ */
 const chatForm  = $("chatForm");
 const chatInput = $("chatInput");
@@ -2073,7 +2073,7 @@ chatForm.addEventListener("submit", (e) => {
   if(!isActivated) activate();
 
   const text = chatInput.value.trim();
-  if(!text || isBusy) return;
+  if(!text) return;
 
   if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(err){} }
 
@@ -2088,7 +2088,7 @@ chatForm.addEventListener("submit", (e) => {
 
   setMode(tone, lang);
 
-  // === Instant local answer — 0ms ===
+  /* === INSTANT LOCAL REPLY (0ms) === */
   const el = renderLine("bot", "", lang);
   el.textContent = localReply;
   speak(localReply, tone, lang);
@@ -2097,13 +2097,12 @@ chatForm.addEventListener("submit", (e) => {
     toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
   }
 
-  // === Fire AI request in background — does not block user ===
+  /* === BACKGROUND AI UPGRADE (non-blocking) === */
   fetchNexusReply(text, lang).then(worker => {
     if(!worker.ok) return;
-    if(!el.isConnected) return;            // user already navigated / line trimmed
+    if(!el.isConnected) return;
     if(worker.answer === localReply) return;
 
-    // Replace with real AI answer — typewriter for nice effect
     el.textContent = "";
     typewriter(el, worker.answer, 12).then(() => {
       speak(worker.answer, tone, lang);
