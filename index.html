@@ -1139,7 +1139,7 @@ const AVATAR_KEY = "nexus_avatar_v2";
 const LEADS_KEY  = "nexus_leads_v2";
 const LEAD_WEBHOOK_URL = "";
 
-/* NEXUS AI Worker — background only, never blocks UI */
+/* AI worker — background, never blocks UI */
 const NEXUS_WORKER_URL = "https://quiet-snowflake-4c02.umaremotions.workers.dev/";
 const NEXUS_WORKER_TIMEOUT_MS = 30000;
 
@@ -1278,6 +1278,42 @@ function detectLanguage(text){
   if(urdu.test(text)) return "ur";
   return "en";
 }
+
+/* ============================================================
+   OFF-TOPIC FILTER — keep conversation about CV/career only
+   ============================================================ */
+const CV_KEYWORDS = /(cv|resume|curriculum|ats|applicant|job|career|work|interview|salary|pay|hire|hiring|position|role|apply|application|cover|letter|linkedin|profile|fresher|fresh|graduate|experience|skill|education|degree|project|portfolio|recruit|employer|company|package|price|pricing|cost|service|whatsapp|saudi|ksa|riyadh|jeddah|gulf|international|arabic|english|urdu|language|review|redesign|build|create|make|help|need|want|looking|advice|tips|template|format|feedback|improve|fix|edit|write|draft|summary|objective|achievement|qualification|certification|training|internship|volunteer|abroad|overseas|submit|prepare|naukri|kaam|paisa|kitna|mehnga|sasta)/i;
+
+const GREETING_KEYWORDS = /^(hi|hello|hey|salam|salaam|assalam|assalamualaikum|marhaba|ahlan|aoa|how are you|how r u|thanks|thank you|shukriya|bye|goodbye|ok|okay|what'?s up|good morning|good evening|good night)\b[\s!?.,]*$/i;
+
+const CONTINUER_KEYWORDS = /^(yes|no|yeah|nope|sure|continue|go on|more|tell me more|next|what else|why|haan|nahi|acha|theek|ok|okay)\b[\s!?.,]*$/i;
+
+function isOffTopic(text){
+  const t = text.trim();
+  if(!t) return false;
+  if(GREETING_KEYWORDS.test(t)) return false;
+  if(CV_KEYWORDS.test(t)) return false;
+  if(state.turnCount > 0 && CONTINUER_KEYWORDS.test(t)) return false;
+  return true;
+}
+
+const OFF_TOPIC = {
+  en: {
+    professional: "Sorry — I focus on CVs, careers, and your next move. What role are you working toward?",
+    encouraging:  "Happy to chat! But let's keep it on your CV journey. What role are you aiming for?",
+    savage:       "We're here to fix your CV, not to chat. What job are you applying for?"
+  },
+  ar: {
+    professional: "عذراً — أنا مختص بالسيرة الذاتية والمسار المهني. ما دورك المستهدف؟",
+    encouraging:  "سعيد بالحديث، لكن لنركز على سيرتك. ما الدور الذي تسعى إليه؟",
+    savage:       "نحن هنا لإصلاح سيرتك، لا للثرثرة. ما الوظيفة التي تتقدم لها؟"
+  },
+  ur: {
+    professional: "Maaf — main sirf CV aur career mein madad karta hoon. Aapka target role kya hai?",
+    encouraging:  "Baat karna acha hai, lekin apni CV pe focus karein. Kaunsa role chahiye?",
+    savage:       "Hum CV theek karne aaye hain, baatein karne nahi. Kis job ke liye apply kar rahe hain?"
+  }
+};
 
 /* ============================================================
    VOICE
@@ -1493,276 +1529,275 @@ function pickVariant(topicId, variants){
 }
 
 /* ============================================================
-   RESPONSE BANKS (offline fallback)
+   RESPONSE BANKS — SHORT answers, 2-3 lines max
    ============================================================ */
 const EN = {
   professional: {
     greeting: [
-      "Welcome. I'm NEXUS — a holographic CV strategist. Ask me about ATS behavior, the Saudi market, international roles, or pricing. Tell me your target role and I'll take it from there.",
-      "Good to see you. I'm NEXUS. I help people build clearer, ATS-aware CVs. What role are you chasing right now?",
-      "I'm NEXUS — CV strategist, tone-shifter, occasional truth-teller. Tell me your target role and I'll show you what your CV should look like."
+      "I'm NEXUS — a CV strategist. Ask me about ATS, Saudi market, pricing, or your target role.",
+      "Good to meet you. I help build ATS-aware CVs. What role are you targeting?",
+      "I'm NEXUS. Career strategy in a hologram. What's your target role?"
     ],
     ats: [
-      "ATS means Applicant Tracking System. Some employers use software to organize applications. A sensible CV uses clear headings, readable formatting, and honest keywords that match your experience. No one can guarantee a pass — systems differ.",
-      "Applicant Tracking Systems are filters, not judges. Give them clean structure, standard headings, and role-specific keywords — and keep the formatting boring on purpose. That's the whole trick.",
-      "Three things defeat an ATS: tables, graphics, and keyword confusion. Fix those with a clean single-column layout and honest keywords. Then a human gets a fair look."
+      "ATS is software that filters CVs. Use clean headings, standard fonts, and honest keywords. No guarantees — systems differ.",
+      "ATS filters want clean structure and keywords. Skip tables, graphics, and fancy layouts. Simple wins.",
+      "ATS = Applicant Tracking System. Boring formatting + real keywords. That's the whole game."
     ],
     saudi: [
-      "For Saudi roles, tailor your CV to the job description. Present experience, qualifications, language skills, and work eligibility accurately. Photo, nationality, and visa details only when the role or employer expects them. Which sector are you targeting?",
-      "The Saudi market rewards clarity — credentials, languages, and visa status. Align keywords with the sector and the specific job description. Skip the decorations, keep the signal.",
-      "Saudi CVs work best when they read clean and honest. Show what the employer needs: skills, languages, eligibility, and outcomes. Where are you applying?"
+      "Saudi CVs need clarity — credentials, languages, visa status. Which sector are you targeting?",
+      "For Saudi roles, match the job description and show eligibility clearly. Where are you applying?",
+      "Saudi market rewards clean, honest CVs. What role are you chasing?"
     ],
     international: [
-      "International formats vary. US resumes are usually one page, no photo, achievement-led. European CVs can run longer. Gulf profiles often include nationality and photo. Which country are you targeting?",
-      "Every country expects a different shape. Tell me the destination — US, UK, Canada, Europe, or the Gulf — and I'll describe the format that lands best there.",
-      "No single CV fits every country. The format follows the local norm. Which market is on your mind?"
+      "US: one page, no photo. Europe: longer, detailed. Gulf: photo + nationality. Which country?",
+      "Each country has its own CV rules. Tell me the destination and I'll match the format.",
+      "International format follows the market. Where are you applying?"
     ],
     freshers: [
-      "No experience isn't a barrier — it's raw material. We highlight education, projects, training, volunteer work, and transferable skills. Without inventing anything. What role are you aiming for?",
-      "Fresh graduates have more to show than they think. Coursework, personal projects, internships, side work — all of it can be framed as real capability. Let's build from there.",
-      "Your CV doesn't need fake experience. It needs clear framing of what you've already done. Start with your strongest project and we'll build outward."
+      "No experience? Use projects, training, and coursework. Which role are you aiming for?",
+      "Freshers have more than they think. Let's frame your projects as real capability. What's your field?",
+      "Your CV doesn't need fake experience — just better framing. What did you study?"
     ],
     redesign: [
-      "A redesign starts with an audit: formatting, keyword coverage, achievement language, and visual credibility. We rebuild from that audit, not by layering new paint on old structure. Which package is your CV on today?",
-      "Most CVs fail on structure, not content. A rebuild fixes the layout, tightens the language, and lets the achievements breathe. Send me what you have and I'll point at the first fix.",
-      "Old CVs accumulate clutter. Redesign strips it back to what the recruiter needs — clear sections, strong verbs, measurable outcomes."
+      "Most CVs fail on structure, not content. A rebuild fixes layout and language. Which package are you on?",
+      "Old CVs pile up clutter. Redesign strips it back to signal. Send me what you have.",
+      "A redesign is a reset. Keep what works, lose the noise. Ready?"
     ],
     cover: [
-      "A cover letter should explain why this company and this role — not repeat your CV. Three short paragraphs: hook, evidence, close. NEXUS writes them targeted, not generic.",
-      "Cover letters win when they answer one question: why here, why now? Everything else is a bonus. Want help writing one?",
-      "The best cover letters sound like a person, not a brochure. Warm, specific, and short. NEXUS writes exactly that."
+      "Cover letters should explain *why this role* — not repeat your CV. Three short paragraphs. Want help?",
+      "Best cover letters sound human. Specific, short, warm. NEXUS writes exactly that.",
+      "Cover letter = why here, why now. That's it. Shall we draft one?"
     ],
     linkedin: [
-      "LinkedIn is a search problem. Recruiters search for keywords — so your headline, About section, and role descriptions should carry the terms they're looking for. Then align the profile with your CV.",
-      "Optimize LinkedIn for searchability first, personality second. Rewrite the headline with recruiter terms, then warm up the About section. Two hours of work, real returns.",
-      "Your LinkedIn and your CV should tell the same story. If they don't, one of them is lying. Let's align them."
+      "LinkedIn is a search engine. Recruiters look for keywords. Fix your headline first.",
+      "Optimise LinkedIn for searchability, then personality. Small changes, real returns.",
+      "LinkedIn and CV should tell the same story. If they don't, one is lying."
     ],
     pricing: [
-      "Pricing is transparent — Essential from SAR 149, Professional from SAR 299, Executive from SAR 499. Final quotes and payment arrangements are confirmed on WhatsApp before any work begins. Want to talk through which fits you?",
-      "Three tiers: Essential for a clean ATS-aware CV, Professional adds cover letter and LinkedIn, Executive is the senior positioning package. All priced from SAR 149 upwards. Shall we talk it through?",
-      "The prices are starting points. Final quote depends on complexity, market, and turnaround. WhatsApp is where we confirm the numbers — no surprises."
+      "Essential SAR 149, Professional SAR 299, Executive SAR 499. Confirm on WhatsApp.",
+      "Three tiers: 149 / 299 / 499. Final quote on WhatsApp — no surprises.",
+      "Prices start at SAR 149. WhatsApp the team to finalise."
     ],
     guarantee: [
-      "I can help your CV communicate your strengths, but hiring depends on your fit, applications, the employer, and the market. No CV service can honestly guarantee a job.",
-      "Nobody can promise you a job — and anyone who does is selling you hope, not a service. What we deliver is a clearer CV. That's the honest promise.",
-      "What I can promise: a cleaner, more targeted CV. What I can't promise: a job, an interview, or an ATS pass. Anyone saying otherwise is lying to you."
+      "No service can guarantee a job — anyone who does is lying. I promise a clearer CV.",
+      "Job guarantee? No. Better CV? Yes. That's the honest offer.",
+      "Hiring depends on fit, market, and timing. The CV is the part you control."
     ],
     whatsapp: [
-      "Use the WhatsApp button in this page and the human team will help you directly. They'll confirm requirements, price, timeline, and payment.",
-      "WhatsApp is the fastest route to a real person. Tap the button and the team takes over from there.",
-      "The human team lives on WhatsApp. Tap the button and they'll answer within a few hours."
+      "Tap the WhatsApp button — the human team replies within hours.",
+      "WhatsApp is the fastest route to a real person. Tap the button.",
+      "Human team lives on WhatsApp. Tap and they'll take over."
     ],
     thanks: [
-      "You're welcome. If you'd like a human expert to review your CV, tap WhatsApp — the team typically replies within a few hours.",
-      "Anytime. If you want a human eye on your CV, WhatsApp is the fastest way to reach the team.",
-      "Glad to help. When you're ready for the human touch, WhatsApp is right there."
+      "Anytime. Want a human eye on your CV? WhatsApp the team.",
+      "You're welcome. WhatsApp if you want a human review.",
+      "Glad to help. WhatsApp for the human touch."
     ],
     default: [
-      "I can help with ATS basics, CV structure, Saudi and international formats, freshers, pricing, and cover letters. What's your target role?",
-      "Ask me about ATS, Saudi CVs, international formats, freshers, pricing, or cover letters. Or just tell me your target role.",
-      "Not sure where to start? Tell me your role and market, and I'll point you to the right place."
+      "I help with ATS, Saudi and international formats, freshers, pricing, and cover letters. What's your target role?",
+      "Ask about ATS, CV structure, pricing, or cover letters. Or just tell me your role.",
+      "Tell me your role and market — I'll point you to the right place."
     ]
   },
   encouraging: {
     greeting: [
-      "Hey — really glad you're here. Career moves are big, and you don't have to figure out the CV part alone. Tell me where you are right now.",
-      "Welcome. First CV? Career change? Coming back after a break? Whatever it is, you're in the right place. What's on your mind?",
-      "Good to see you. This stuff can feel intimidating. It doesn't have to be. Tell me a little about what you're working toward."
+      "Hey — really glad you're here. Career moves are big. What are you working toward?",
+      "Welcome. First CV or career change — either way, you're in the right place. What's on your mind?",
+      "Good to see you. This stuff feels intimidating but doesn't have to be. Where are you now?"
     ],
     ats: [
-      "Here's the good news: ATS systems aren't scary once you know what they want. Clean structure, real keywords, honest achievements. We'll make sure your CV speaks the same language as the jobs you're applying for. You've got this.",
-      "ATS systems are just filters. Fix the structure, keep the language honest, and your CV gets a fair shot. Small changes, big difference.",
-      "Nothing about ATS is mysterious. Give the system clean formatting and honest keywords, and it does its job. We'll make that easy."
+      "ATS isn't scary once you know what it wants — clean structure and honest keywords. You've got this.",
+      "ATS systems are just filters. Fix the structure, keep it honest, and you get a fair shot.",
+      "Nothing mysterious about ATS. Clean formatting, real keywords. Easy win."
     ],
     saudi: [
-      "The Saudi market is welcoming to well-prepared candidates. Clarity matters most — credentials, languages, eligibility. We'll make sure all of that reads clean and confident.",
-      "Saudi employers want to see you clearly. Languages, qualifications, readiness for the sector. We'll bring that to the front of your CV.",
-      "Applying in Saudi? Great. The market rewards preparation. Let's put your strongest facts where a recruiter will find them."
+      "Saudi market is welcoming to well-prepared candidates. Clarity wins. What sector?",
+      "Saudi employers want to see you clearly — languages, credentials, readiness. Where are you applying?",
+      "Saudi's a great move if you prepare well. What role are you going for?"
     ],
     international: [
-      "Applying abroad is really about meeting local norms. We'll reformat your CV for the country you're targeting and make sure your story translates cleanly.",
-      "Every country has its own CV culture. Once we know where you're headed, we'll shape the format to fit.",
-      "International applications feel bigger than they are. Format follows the market — that's the only rule."
+      "Applying abroad is really about local norms. Tell me the country and we'll shape it.",
+      "Every country has its own CV culture. Once we know where, we fit the format.",
+      "International applications feel bigger than they are. Format follows the market."
     ],
     freshers: [
-      "You have more than you think. Projects, coursework, certifications, volunteering, side work — all of it can be framed as real capability. Let's build from that.",
-      "Fresh graduates are often told they have 'nothing.' Not true. Your education and projects are raw material. We'll shape them into something a recruiter respects.",
-      "Starting out is exciting, not limiting. We'll make your CV reflect the effort you've already put in."
+      "You have more than you think. Projects, courses, volunteering — all real capability. What's your field?",
+      "Fresh grads are told they have 'nothing.' Not true. Your education is raw material.",
+      "Starting out is exciting, not limiting. Tell me what you studied."
     ],
     redesign: [
-      "Your CV isn't broken — it's just not telling your story in the strongest way yet. A redesign is a fresh start.",
-      "Small tweaks or a full rebuild — either way, a cleaner CV gives you more confidence walking into the next application.",
-      "Redesigns are a reset. We keep what's working, replace what isn't, and rebuild around your strengths."
+      "Your CV isn't broken — it's just not telling your story strongly yet. Small tweaks, big shift.",
+      "A redesign is a fresh start. Keep what works, rebuild around your strengths.",
+      "Cleaner CV, more confidence. That's the goal. Ready to begin?"
     ],
     cover: [
-      "Cover letters feel scary, but they're really just a short, warm conversation with the hiring manager. We'll help you sound like yourself.",
-      "The cover letter is your chance to sound human. Three short paragraphs is plenty. We'll help you write them.",
-      "You don't need to be a writer to write a great cover letter. You need to be specific. That's a skill we can build together."
+      "Cover letters feel scary but they're just a warm, short conversation. Shall we draft one?",
+      "You don't need to be a writer — you need to be specific. That's buildable.",
+      "Three short paragraphs is plenty. Shall we start with the hook?"
     ],
     linkedin: [
-      "LinkedIn is where recruiters find you. Small, confident changes to your headline and About section can make a real difference. We'll do that with you.",
-      "You don't need a viral LinkedIn. You need a findable one. We'll fix the search terms and warm up the tone.",
-      "Your LinkedIn should feel like you on a good day. Confident, clear, specific. Let's get it there."
+      "Small, confident changes to your headline make a real difference. Ready to fix it?",
+      "You don't need viral LinkedIn. You need a findable one. Let's fix the search terms.",
+      "LinkedIn should feel like you on a good day. Shall we warm it up?"
     ],
     pricing: [
-      "The packages start at SAR 149, 299, and 499. The lower tier is a strong start if this is your first CV. No pressure at all.",
-      "Price is honest and confirmed on WhatsApp before any work begins. If the Essential tier fits your budget, that's a real start.",
-      "There's a package for every stage. If you're unsure which fits, the team will help you choose on WhatsApp."
+      "Packages start at SAR 149. Essential is a strong start for a first CV. No pressure.",
+      "Price is honest and confirmed on WhatsApp before any work begins. Shall we talk?",
+      "There's a package for every stage. The team will help you pick on WhatsApp."
     ],
     guarantee: [
-      "I can't promise a job — nobody honestly can — but I can promise you a clearer, more confident CV. That's a real step forward.",
-      "What I can promise is a cleaner, stronger CV. What nobody can promise is the outcome. That's not failure — it's honesty.",
-      "You're doing the work. The result depends on fit, timing, and the market. That's okay. The CV is the part you control."
+      "I can't promise a job — nobody honestly can — but I can promise a clearer CV.",
+      "What I can promise is a cleaner, stronger CV. What nobody can promise is the outcome.",
+      "You're doing the work. The CV is the part you control. That's enough."
     ],
     whatsapp: [
-      "The human team is genuinely kind. Tap WhatsApp and tell them where you are in your search — they'll help you find the right next step.",
-      "A real person is one tap away. WhatsApp is where you can talk through the messy parts.",
-      "Reach out on WhatsApp whenever you're ready. The team is patient and helpful."
+      "Human team is genuinely kind. Tap WhatsApp and tell them where you are.",
+      "A real person is one tap away. WhatsApp is where messy parts get sorted.",
+      "Reach out on WhatsApp whenever you're ready. Team is patient."
     ],
     thanks: [
-      "Anytime. If you'd like a human to look at your CV with the same encouragement, tap WhatsApp.",
-      "You're welcome. And if you want a real human to cheer you on through this, the team is on WhatsApp.",
-      "Glad I could help. Go easy on yourself — you're doing the work."
+      "Anytime. Tap WhatsApp if you want a human eye on your CV.",
+      "You're welcome. Team is on WhatsApp if you want backup.",
+      "Glad I could help. Go easy on yourself."
     ],
     default: [
-      "Whatever stage you're at — first CV, career change, or coming back after a break — I'll help you find the right next step. What's on your mind?",
-      "No pressure, no rush. Tell me a bit about where you are and what you're aiming for.",
+      "Whatever stage you're at, I'll help you find the next step. What's on your mind?",
+      "No pressure, no rush. Tell me where you are and what you're aiming for.",
       "Let's figure this out together. What role are you working toward?"
     ]
   },
   savage: {
     greeting: [
-      "Oh, we're doing this. Fine. I'm NEXUS and I don't sugar-coat. Tell me what you're actually here for.",
-      "Welcome. I'm NEXUS. I tell the truth and I make jokes. Sometimes both. What are we fixing today?",
-      "Look who showed up. Good. I'm NEXUS. Tell me your target role and I'll tell you what your CV is missing. Fair warning: I don't flatter."
+      "I'm NEXUS. I don't sugar-coat. Tell me your target role.",
+      "Look who showed up. Good. Tell me the role and I'll tell you what your CV is missing.",
+      "Fine. Let's do this. What job are you applying for?"
     ],
     ats: [
-      "Everyone whispers 'ATS' like it's a curse. It's not. It's a robot that wants keywords and clean formatting. Give it both. That's the whole secret.",
-      "ATS systems don't hate you. They ignore you. Give them what they want — clean structure, honest keywords — and they'll pass you to a human. Simple.",
-      "Three things kill an ATS: tables, graphics, and hoping. Remove the first two, replace the third with keywords. You're welcome."
+      "ATS is a robot that wants keywords and clean formatting. Give it both. That's it.",
+      "ATS doesn't hate you — it ignores you. Clean structure, real keywords. Done.",
+      "Three things kill ATS: tables, graphics, hoping. Fix two, replace the third with keywords."
     ],
     saudi: [
-      "Saudi CVs need a photo, visa status, and language proficiency — when the role calls for it. Skip those and a human filters you, not a robot. We fix that.",
-      "Applying in Saudi without tailoring? Bold. Wrong, but bold. Match the JD, list the languages, and stop decorating.",
-      "Saudi market is competitive. The CVs that win are clear and tailored. Yours probably isn't. We fix that."
+      "Saudi CV without tailoring? Bold. Wrong, but bold. Match the JD, list languages, stop decorating.",
+      "Saudi market is competitive. Clear and tailored wins. Yours probably isn't. We fix that.",
+      "Photo, visa status, languages — when the role needs it. Skip and a human filters you. We fix that."
     ],
     international: [
-      "Applying abroad with your local CV is like showing up to a black-tie dinner in a bathrobe. We reformat it. You'll thank me later.",
-      "Every country has its own CV culture. Using the wrong one is a silent rejection. Let's not do that.",
-      "International means local. Pick the country, we shape the format. That's it."
+      "Local CV abroad = bathrobe at black tie. We reformat. You'll thank me later.",
+      "Wrong CV culture = silent rejection. Pick the country, we shape the format.",
+      "International means local. That's the whole rule."
     ],
     freshers: [
-      "'No experience' isn't the problem. 'No framing' is. Your coursework isn't a gap — it's raw material. We'll make you look like someone worth betting on.",
-      "Fresh graduates say 'I have nothing.' Wrong. You have projects, training, and time spent. We turn that into a real CV.",
-      "You have no experience and a lot of potential. The CV's job is to make the second part louder. We do that."
+      "'No experience' isn't the problem. 'No framing' is. Your coursework is raw material.",
+      "Fresh grads say 'I have nothing.' Wrong. Projects, training, time spent. That's a CV.",
+      "No experience, lots of potential. The CV's job is to make the second part louder."
     ],
     redesign: [
-      "Your CV probably has three fonts, an unaligned table, and the phrase 'hard-working team player.' Yes. We know. We've seen it. Let's burn it down and rebuild.",
-      "If your CV hasn't been updated since 2022, it's not a CV — it's a museum piece. Let's fix that.",
-      "A redesign isn't cosmetic. It's a rewrite. We keep the truth and lose the noise."
+      "Three fonts, unaligned table, 'hard-working team player'? Seen it. Let's burn it and rebuild.",
+      "CV from 2022 is a museum piece, not a CV. Let's fix that.",
+      "Redesign isn't cosmetic. It's a rewrite. Truth stays, noise leaves."
     ],
     cover: [
-      "Nobody reads cover letters. Except the one hiring manager who does, and then it matters a lot. We write the one they actually read.",
-      "A cover letter isn't a formality. It's the difference between 'who?' and 'interesting.' Short, specific, warm. That's the formula.",
-      "One page. Three paragraphs. One real reason you want this job. That's a good cover letter. Most people miss all three."
+      "Nobody reads cover letters. Except the one manager who does. That one matters.",
+      "Three paragraphs, one real reason. That's a good cover letter. Most miss all three.",
+      "Cover letter isn't formality. It's 'who?' vs 'interesting.' Short and specific."
     ],
     linkedin: [
-      "Your LinkedIn headline says 'Seeking opportunities.' So does everyone else's. Let's make yours sound like a person, not a vacancy notice.",
-      "'Passionate professional' is not a headline. It's a shrug in text form. We'll write one that actually says something.",
-      "LinkedIn is a search engine. If you're not findable, you're not hired. Simple. We fix that."
+      "'Seeking opportunities' — like everyone else. Let's make yours sound human.",
+      "'Passionate professional' is a shrug in text form. We'll write one that says something.",
+      "LinkedIn is a search engine. Not findable = not hired. Simple."
     ],
     pricing: [
-      "SAR 299 too much? That's two weeks of coffee and a slightly worse future. Coffee's great, by the way. Choose wisely.",
-      "Let me guess — you wanted a Ferrari on a bicycle budget. Look, we can talk price on WhatsApp. They're nicer than me. Barely.",
-      "Three hundred riyals for a CV. That could open doors. Or you could buy sixty shawarmas. Your call, chef.",
-      "Price complaint noted. Filed under 'reasons my CV has been rejected since 2019.' Kidding. Mostly. WhatsApp us, we'll find a plan."
+      "SAR 299 too much? Two weeks of coffee and a worse future. Choose wisely.",
+      "Ferrari on bicycle budget? Talk to WhatsApp team. They're nicer than me. Barely.",
+      "Three hundred riyals for a CV — opens doors. Or sixty shawarmas. Your call, chef."
     ],
     guarantee: [
-      "Nobody can guarantee you a job. If someone does, they're selling lottery tickets with a smile. We sell a clear CV. That's it. That's the honest pitch.",
-      "Let me be brutally honest: a CV can open a door, not carry you through it. Anyone promising more is lying. What we can do is real.",
-      "Guaranteed job? No. Better CV? Yes. And the second one is what you actually need."
+      "No job guarantee. Anyone who says otherwise sells lottery tickets with a smile.",
+      "A CV opens doors, it doesn't carry you through. Anyone promising more is lying.",
+      "Guaranteed job? No. Better CV? Yes. Second one matters."
     ],
     whatsapp: [
-      "Don't argue with me about pricing — argue with the human team on WhatsApp. They're nicer than me. Slightly.",
-      "Need to talk to a real person? WhatsApp. They'll handle the details. I'll handle the sass.",
-      "The human team is on WhatsApp. They answer questions. I answer with attitude. Choose your fighter."
+      "Argue pricing with WhatsApp team, not me. They're nicer. Slightly.",
+      "Real person? WhatsApp. Details go there. Sass stays with me.",
+      "Team's on WhatsApp. They answer questions. I answer with attitude."
     ],
     thanks: [
-      "Don't thank me. Go fix your CV. Tap WhatsApp if you want a human.",
-      "You're welcome. Now go get rejected fewer times. WhatsApp if you need backup.",
-      "Anytime. Real talk: the work isn't done. WhatsApp the team when you're ready to actually ship."
+      "Don't thank me. Go fix your CV. WhatsApp if you want a human.",
+      "Welcome. Now go get rejected fewer times. WhatsApp for backup.",
+      "Real talk: work isn't done. WhatsApp team when you're ready to ship."
     ],
     default: [
-      "Not here to flatter you. Here to make your CV actually work. What are you applying for — or should I guess from the panic?",
-      "Tell me your role. Or don't, and I'll describe the average CV that isn't working and see if it sounds familiar.",
-      "I can help with ATS, pricing, format, or honesty. Pick one — or keep me guessing. Either way, your CV loses if we don't start."
+      "Not here to flatter you. Here to fix your CV. What job are you applying for?",
+      "Tell me your role — or I'll guess from the panic.",
+      "ATS, pricing, format, honesty. Pick one or keep me guessing. Your CV loses if we don't start."
     ]
   }
 };
 
 const AR = {
   professional: {
-    greeting: ["أنا نيكسوس، مستشار السيرة الذاتية الخاص بك. اسألني عن أنظمة ATS أو السوق السعودي أو الوظائف الدولية. ما هو دورك المستهدف؟"],
-    ats: ["ATS يعني نظام تتبع المتقدمين. بعض الشركات تستخدمه لتصفية الطلبات. السيرة الجيدة تحتاج عناوين واضحة وتنسيقاً مقروءاً وكلمات مفتاحية صادقة. لا أحد يضمن النجاح."],
-    saudi: ["للوظائف السعودية، طابق سيرتك مع وصف الوظيفة. اعرض الخبرة والمؤهلات واللغة والأهلية بوضوح. الصورة والجنسية والتأشيرة فقط عند الحاجة. ما القطاع الذي تستهدفه؟"],
-    pricing: ["الأسعار واضحة: الأساسي من 149 ريال، الاحترافي من 299، التنفيذي من 499. السعر النهائي والدفع يتم تأكيده عبر واتساب قبل البدء."],
-    freshers: ["لا خبرة؟ هذه بداية وليست عقبة. نسلط الضوء على التعليم والمشاريع والتدريب والمهارات القابلة للنقل — دون اختراع أي شيء."],
-    guarantee: ["أستطيع مساعدتك في عرض نقاط قوتك بوضوح، لكن التوظيف يعتمد على التوافق والسوق وصاحب العمل. لا يمكن لأي خدمة أن تضمن وظيفة."],
-    thanks: ["على الرحب والسعة. لمراجعة بشرية، اضغط واتساب — الفريق يرد خلال ساعات."],
-    default: ["أستطيع المساعدة في أساسيات ATS، هيكل السيرة، التنسيقات السعودية والدولية، حديثي التخرج، الأسعار، وخطابات التقديم. ما دورك المستهدف؟"]
+    greeting: ["أنا نيكسوس — مستشار سيرة ذاتية. اسألني عن ATS أو السوق السعودي أو الأسعار. ما دورك المستهدف؟"],
+    ats: ["ATS نظام تصفية. استخدم عناوين واضحة وخطوطاً قياسية وكلمات صادقة. لا ضمانات."],
+    saudi: ["السيرة السعودية تحتاج وضوحاً — مؤهلات، لغات، أهلية. ما القطاع الذي تستهدفه؟"],
+    pricing: ["الأساسي 149، الاحترافي 299، التنفيذي 499. التأكيد عبر واتساب."],
+    freshers: ["لا خبرة؟ استخدم مشاريعك وتدريبك. ما دورك المستهدف؟"],
+    guarantee: ["لا أحد يضمن وظيفة. أضمن سيرة أوضح فقط."],
+    thanks: ["على الرحب. للمراجعة البشرية، واتساب."],
+    default: ["أساعد في ATS وهيكل السيرة والأسعار. ما دورك المستهدف؟"]
   },
   encouraging: {
-    greeting: ["أهلاً بك — سعيد أنك هنا. تغيير المسار خطوة كبيرة، ولست وحدك في جزء السيرة الذاتية. أخبرني أين أنت الآن."],
-    ats: ["الأنظمة ليست مخيفة إذا عرفت ما تريد. هيكل واضح، كلمات صادقة، إنجازات حقيقية. سنجعل سيرتك تتحدث لغة الوظائف. أنت قادر."],
-    saudi: ["السوق السعودي يرحب بالمرشحين المستعدين. الوضوح هو الأهم — المؤهلات، اللغات، الأهلية. سنجعل ذلك واضحاً وواثقاً."],
-    pricing: ["الحزم تبدأ من 149 و299 و499 ريال. الفئة الأساسية بداية قوية إذا كانت سيرتك الأولى. لا ضغط إطلاقاً."],
-    freshers: ["لديك أكثر مما تظن. المشاريع والدورات والشهادات والتطوع — كلها قدرات حقيقية. لنبنِ منها."],
-    guarantee: ["لا أستطيع ضمان وظيفة — لا أحد يستطيع بأمانة — لكنني أستطيع ضمان سيرة أوضح وأقوى. هذه خطوة حقيقية."],
-    thanks: ["على الرحب والسعة. للتواصل مع الفريق، اضغط واتساب — سيسعدون بمساعدتك."],
-    default: ["أياً كانت مرحلتك — سيرة أولى، تغيير مسار، أو عودة بعد انقطاع — سأساعدك في الخطوة التالية. ما الذي يدور في ذهنك؟"]
+    greeting: ["أهلاً بك — سعيد أنك هنا. ما الذي تعمل نحوه؟"],
+    ats: ["الأنظمة ليست مخيفة. هيكل واضح، كلمات صادقة. أنت قادر."],
+    saudi: ["السوق السعودي يرحب بالمستعدين. الوضوح هو الأهم."],
+    pricing: ["الحزم تبدأ من 149. لا ضغط."],
+    freshers: ["لديك أكثر مما تظن. مشاريعك قدرات حقيقية."],
+    guarantee: ["لا أضمن وظيفة، لكن أضمن سيرة أقوى."],
+    thanks: ["على الرحب. الفريق على واتساب."],
+    default: ["أياً كانت مرحلتك، سأساعدك. ما الذي يدور في ذهنك؟"]
   },
   savage: {
-    greeting: ["حسناً، لنتحدث بصراحة. أنا نيكسوس ولا أُجمّل. أخبرني لِمَ أنت هنا فعلاً."],
-    ats: ["الجميع يخشى ATS كأنها لعنة. هي مجرد روبوت يريد كلمات وتنسيقاً نظيفاً. أعطه الاثنين — هذا كل السر."],
-    saudi: ["سيرة سعودية بدون تخصيص؟ جسور. خطأ، لكن جسور. طابق الوصف الوظيفي، اذكر اللغات، وتوقف عن الزخرفة."],
-    pricing: ["299 ريال كثير؟ هذا أسبوعان من القهوة ومستقبل أسوأ قليلاً. القهوة رائعة بالمناسبة. اختر بحكمة."],
-    freshers: ["'لا خبرة' ليست المشكلة. 'لا صياغة' هي المشكلة. دوراتك ليست فراغاً — إنها مادة خام. سنصنع منها شيئاً يستحق الرهان."],
-    guarantee: ["لا أحد يضمن وظيفة. من يقول غير ذلك يبيعك تذكرة يانصيب بابتسامة. نحن نبيع سيرة أوضح. هذه الحقيقة."],
-    thanks: ["لا تشكرني. اذهب وأصلح سيرتك. واتساب إذا أردت إنساناً."],
-    default: ["لست هنا لأُطرِيك. أنا هنا لجعل سيرتك تعمل فعلاً. ما الذي تتقدم له — أم أخمّن من التوتر؟"]
+    greeting: ["حسناً. أنا نيكسوس. أخبرني بدورك المستهدف."],
+    ats: ["ATS يريد كلمات وتنسيقاً. أعطه الاثنين."],
+    saudi: ["سيرة سعودية بدون تخصيص؟ جسور. خطأ، لكن جسور."],
+    pricing: ["299 كثير؟ أسبوعان قهوة ومستقبل أسوأ. اختر."],
+    freshers: ["'لا خبرة' ليست المشكلة. 'لا صياغة' هي."],
+    guarantee: ["لا أحد يضمن وظيفة. هذه الحقيقة."],
+    thanks: ["لا تشكرني. اذهب وأصلح سيرتك."],
+    default: ["لست هنا لأُطرِيك. ما الذي تتقدم له؟"]
   }
 };
 
 const UR = {
   professional: {
-    greeting: ["Main NEXUS hoon — aapka CV mushir. ATS, Saudi market, ya international naukriyon ke baare mein poochein. Aapka target role kya hai?"],
-    ats: ["ATS ka matlab hai Applicant Tracking System. Kuch companies is software se applications filter karti hain. Saaf CV — clear headings, readable format, sachche keywords — process aasan banata hai. Koi 100% guarantee nahi de sakta."],
-    saudi: ["Saudi jobs ke liye CV ko job description se match karein. Experience, qualifications, zubaan, work eligibility saaf dikhayein. Photo, nationality, visa sirf tab jab role ke liye zaroori ho. Kaunsa sector target kar rahe hain?"],
-    pricing: ["Pricing saaf hai — Essential SAR 149 se, Professional SAR 299 se, Executive SAR 499 se. Final quote aur payment WhatsApp pe confirm hoti hai."],
-    freshers: ["Experience nahi hai? Ye shuruaat hai, rukawat nahi. Hum education, projects, training, volunteer work aur transferable skills highlight karte hain — bina jhoot."],
-    guarantee: ["Main aapki taqat saaf dikhane mein madad kar sakta hoon, lekin hiring fit, applications, employer aur market pe depend karti hai. Koi CV service job ki guarantee nahi de sakti."],
-    thanks: ["Koi baat nahi. Human review ke liye WhatsApp pe message karein — team chand ghanton mein jawab deti hai."],
-    default: ["Main ATS basics, CV structure, Saudi aur international formats, freshers, pricing, cover letters mein madad kar sakta hoon. Aapka target role kya hai?"]
+    greeting: ["Main NEXUS hoon — CV strategist. ATS, Saudi market, ya pricing poochein. Aapka target role kya hai?"],
+    ats: ["ATS ek filter hai. Saaf headings, standard fonts, sachche keywords. Koi guarantee nahi."],
+    saudi: ["Saudi CV ko saaf aur honest hona chahiye. Kaunsa sector target kar rahe hain?"],
+    pricing: ["Essential 149, Professional 299, Executive 499. WhatsApp pe confirm karein."],
+    freshers: ["Experience nahi? Projects aur training use karein. Kaunsa role chahiye?"],
+    guarantee: ["Koi job guarantee nahi de sakta. Saaf CV ka waada kar sakta hoon."],
+    thanks: ["Koi baat nahi. Human review ke liye WhatsApp."],
+    default: ["ATS, CV structure, pricing mein madad. Aapka target role kya hai?"]
   },
   encouraging: {
-    greeting: ["Aap yahan hain — bohot acha laga. Career badalna bada qadam hai, aur CV ka hissa akele nahi karna. Bataiye, aap abhi kahan hain?"],
-    ats: ["Achi khabar: ATS darawani nahi hai jab aapko pata ho wo kya chahti hai. Saaf structure, sachche keywords, imaandaar achievements. Hum aapka CV unki zubaan mein bana denge. Aap kar sakte hain."],
-    saudi: ["Saudi market tayyar candidates ko khush aamdeed kehta hai. Clarity sab se ahem hai — credentials, languages, eligibility. Hum yeh sab saaf aur confident bana denge."],
-    pricing: ["Packages SAR 149, 299, aur 499 se shuru hote hain. Agar yeh aapka pehla CV hai, to lower tier achi shuruaat hai. Koi pressure nahi."],
-    freshers: ["Aapke paas soch se zyada hai. Projects, courses, certifications, volunteering, side work — sab asli capability hai. Chaliye isse banate hain."],
-    guarantee: ["Main job guarantee nahi kar sakta — koi imaandaari se nahi kar sakta — lekin ek saaf aur mazboot CV ka waada kar sakta hoon. Yeh asli qadam hai."],
-    thanks: ["Koi baat nahi. Human team se baat karne ke liye WhatsApp pe tap karein."],
-    default: ["Aap kisi bhi stage pe ho — pehla CV, career change, ya break ke baad wapsi — main agli step mein madad karunga. Kya soch rahe hain?"]
+    greeting: ["Aap yahan hain — bohot acha. Kya kar rahe hain career mein?"],
+    ats: ["ATS darawani nahi hai. Saaf structure, sachche keywords. Aap kar sakte hain."],
+    saudi: ["Saudi market tayyar candidates ko pasand karta hai. Clarity ahem hai."],
+    pricing: ["Packages 149 se shuru. Koi pressure nahi."],
+    freshers: ["Aapke paas soch se zyada hai. Projects asli capability hain."],
+    guarantee: ["Job guarantee nahi — saaf CV ka waada hai."],
+    thanks: ["Koi baat nahi. Team WhatsApp pe hai."],
+    default: ["Aap kisi bhi stage pe ho, madad karunga. Kya soch rahe hain?"]
   },
   savage: {
-    greeting: ["Theek hai, seedhi baat karte hain. Main NEXUS hoon aur main tareef nahi karta. Bataiye aap yahan kis liye aaye hain."],
-    ats: ["Sab ATS se darte hain jaise koi shraap ho. Wo bas ek robot hai jo keywords aur saaf formatting chahta hai. Dono do — bas yehi raaz hai."],
-    saudi: ["Saudi CV bina tailoring? Bahaduri hai. Galat, lekin bahaduri. JD se match karo, languages likho, aur decoration band karo."],
-    pricing: ["SAR 299 zyada? Ye do hafte ki coffee aur thoda bura future hai. Coffee achi hai waise. Soch samajh ke choose karo."],
-    freshers: ["'No experience' masla nahi. 'No framing' masla hai. Aapke courses khali nahi — raw material hain. Hum isse aisa banayenge jispe bharosa kiya jaye."],
-    guarantee: ["Koi job guarantee nahi kar sakta. Jo kare wo muskura ke lottery ticket bech raha hai. Hum saaf CV bechte hain. Yehi sach hai."],
-    thanks: ["Shukriya mat kaho. Jaao CV theek karo. WhatsApp karo agar insaan chahiye."],
-    default: ["Main tareef nahi karne aaya. Main aapka CV kaam karwane aaya hoon. Kya apply kar rahe hain — ya tension se guess karun?"]
+    greeting: ["Main NEXUS hoon, tareef nahi karta. Target role bataiye."],
+    ats: ["ATS ko keywords aur saaf formatting chahiye. Dono do."],
+    saudi: ["Saudi CV bina tailoring? Bahaduri. Galat, lekin bahaduri."],
+    pricing: ["SAR 299 zyada? Coffee aur bura future. Soch samajh ke."],
+    freshers: ["'No experience' masla nahi. 'No framing' masla hai."],
+    guarantee: ["Koi job guarantee nahi kar sakta. Yehi sach hai."],
+    thanks: ["Shukriya mat kaho. CV theek karo."],
+    default: ["Tareef nahi karne aaya. Kya apply kar rahe hain?"]
   }
 };
 
@@ -1829,30 +1864,30 @@ function detectTopic(text){
    ============================================================ */
 const ROLE_FLAVOR = {
   en: {
-    engineer:"engineering CVs need project outcomes, tools, and certifications front and centre",
-    developer:"developer CVs need tech stack, shipped projects, and measurable impact",
-    designer:"designer CVs need portfolio links, process stories, and impact metrics",
-    manager:"manager CVs need team size, budget scope, and business outcomes",
-    accountant:"accounting CVs need certifications, ERP tools, and reconciliation scope",
-    nurse:"nursing CVs need licensure, specialty, and patient-care metrics",
-    teacher:"teaching CVs need grade levels, curriculum frameworks, and student outcomes",
-    driver:"driving CVs need license class, clean-record years, and route types",
-    analyst:"analyst CVs need tools, the metrics you owned, and business impact",
-    coordinator:"coordinator CVs need scheduling scope, stakeholder count, and process wins",
-    consultant:"consultant CVs need client types, project scope, and quantified outcomes",
-    admin:"administrative CVs need systems handled, team support scope, and accuracy",
-    sales:"sales CVs need quota attainment, deal size, and pipeline numbers",
-    marketing:"marketing CVs need campaign outcomes, channels owned, and attribution",
-    hr:"HR CVs need headcount scope, hiring volume, and policy outcomes",
-    technician:"technical CVs need equipment handled, certifications, and safety records",
-    officer:"officer CVs need functional scope, compliance, and reporting lines",
-    supervisor:"supervisor CVs need team size, shift ownership, and KPI outcomes",
-    director:"director CVs need P&L scope, org size, and strategic outcomes",
-    specialist:"specialist CVs need domain depth, tools, and measurable deliverables",
-    default:"role-specific CVs need relevant keywords, measurable achievements, and clean formatting"
+    engineer:"engineering CVs need project outcomes and tools",
+    developer:"developer CVs need tech stack and shipped work",
+    designer:"designer CVs need portfolio links and impact",
+    manager:"manager CVs need team size and outcomes",
+    accountant:"accounting CVs need certifications and ERP",
+    nurse:"nursing CVs need licensure and care metrics",
+    teacher:"teaching CVs need grade levels and outcomes",
+    driver:"driving CVs need license class and record",
+    analyst:"analyst CVs need tools and metrics owned",
+    coordinator:"coordinator CVs need scope and process wins",
+    consultant:"consultant CVs need client types and results",
+    admin:"admin CVs need systems and accuracy",
+    sales:"sales CVs need quota and deal size",
+    marketing:"marketing CVs need campaign outcomes",
+    hr:"HR CVs need headcount and hiring volume",
+    technician:"technical CVs need equipment and safety",
+    officer:"officer CVs need scope and compliance",
+    supervisor:"supervisor CVs need team and KPI wins",
+    director:"director CVs need P&L and strategy",
+    specialist:"specialist CVs need depth and deliverables",
+    default:"role-specific CVs need keywords and outcomes"
   },
-  ar: { default:"السيرة الجيدة تحتاج كلمات مفتاحية ذات صلة وإنجازات قابلة للقياس وتنسيق نظيف" },
-  ur: { default:"role-specific CV mein relevant keywords, measurable achievements aur saaf formatting chahiye" }
+  ar: { default:"السيرة الجيدة تحتاج كلمات مفتاحية وإنجازات" },
+  ur: { default:"Achi CV mein keywords aur outcomes chahiye" }
 };
 
 function roleReply(role, tone, lang){
@@ -1861,21 +1896,21 @@ function roleReply(role, tone, lang){
   const roleDisp = role.charAt(0).toUpperCase() + role.slice(1);
   if(lang === "ar"){
     return tone === "savage"
-      ? `${roleDisp}؟ حسناً. سيرة بدون كلمات مفتاحية هي مجرد ورقة. ما السوق الذي تستهدفه؟`
-      : `${roleDisp} — جيد. ${flavor}. ما السوق الذي تستهدفه: السعودية، دولي، أم كلاهما؟`;
+      ? `${roleDisp}؟ حسناً. سيرة بدون كلمات = ورقة. ما السوق؟`
+      : `${roleDisp} — جيد. ${flavor}. ما السوق: السعودية أم دولي؟`;
   }
   if(lang === "ur"){
     return tone === "savage"
-      ? `${roleDisp}? Acha. Bina keywords wala CV sirf kaagaz hai. Kaunsa market target kar rahe hain?`
-      : `${roleDisp} — acha. ${flavor}. Kaunsa market target kar rahe hain: Saudi, international, ya dono?`;
+      ? `${roleDisp}? Bina keywords wala CV sirf kaagaz hai. Kaunsa market?`
+      : `${roleDisp} — acha. ${flavor}. Saudi, international, ya dono?`;
   }
   if(tone === "savage"){
-    return `${roleDisp}. Good. Then let's actually tailor it — ${flavor}. Which market are you targeting? And don't say "anywhere."`;
+    return `${roleDisp}. Good. Then tailor it — ${flavor}. Which market? And don't say "anywhere."`;
   }
   if(tone === "encouraging"){
-    return `${roleDisp} — great direction. ${flavor}. We'll make sure your CV tells that story with confidence. Which market are you aiming for?`;
+    return `${roleDisp} — great direction. ${flavor}. Which market are you aiming for?`;
   }
-  return `${roleDisp} — good. ${flavor}. Which market are you targeting: Saudi Arabia, international, or both?`;
+  return `${roleDisp} — good. ${flavor}. Saudi, international, or both?`;
 }
 
 /* ============================================================
@@ -1971,7 +2006,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ============================================================
-   REPLY ENGINE (offline fallback)
+   REPLY ENGINE — offline fallback
    ============================================================ */
 function replyFor(userText){
   const lang  = detectLanguage(userText);
@@ -1988,20 +2023,6 @@ function replyFor(userText){
     return { tone, topic: "role", lang, text: roleReply(role, tone, lang) };
   }
 
-  if(state.askedRole && topic === "default"){
-    const words = userText.trim().split(/\s+/);
-    if(words.length <= 3 && !/[?]/.test(userText)){
-      const filler = /^(i|am|a|an|the|is|are|im|i'm|my|me|working|work|as|in|at|for|to|of|role|job|target|targeting|want|need|looking|currently|just|and|or|so|well|ok|okay|main|hu|hoon|kya)$/i;
-      const substantive = words.filter(w => !filler.test(w.replace(/[^a-zA-Z\u0600-\u06FF]/g, "")));
-      if(substantive.length > 0){
-        const guessed = substantive[0].toLowerCase();
-        state.knownRole = guessed;
-        state.askedRole = false;
-        return { tone, topic: "role", lang, text: roleReply(guessed, tone, lang) };
-      }
-    }
-  }
-
   const bank = (BANKS[lang] || EN)[tone] || EN.professional;
   const variants = bank[topic] || bank.default;
   const variantKey = `${lang}_${tone}_${topic}`;
@@ -2013,13 +2034,13 @@ function replyFor(userText){
   state.lastReply = text;
   state.lastTopic = topic;
 
-  state.askedRole = /\b(what'?s your (target |current )?role|what role are you|which role|target role|aapka target role|ما هو دورك|ما دورك)\b/i.test(text);
+  state.askedRole = /\b(target role|what role|which role|aapka target role|ما دورك)\b/i.test(text);
 
   return { tone, topic, lang, text };
 }
 
 /* ============================================================
-   NEXUS AI — Background fetch, does NOT block user
+   NEXUS AI — background fetch, short-answer enforced
    ============================================================ */
 async function fetchNexusReply(message, lang){
   const controller = new AbortController();
@@ -2039,9 +2060,7 @@ async function fetchNexusReply(message, lang){
     try { data = await response.json(); } catch {}
 
     if (!response.ok){
-      const reason = (data && data.error) || ("HTTP " + response.status);
-      console.warn("NEXUS AI worker error:", reason);
-      return { ok: false, reason };
+      return { ok: false, reason: (data && data.error) || ("HTTP " + response.status) };
     }
 
     const answer = data && data.answer;
@@ -2049,11 +2068,17 @@ async function fetchNexusReply(message, lang){
       return { ok: false, reason: "empty answer" };
     }
 
+    // Enforce short — first 2 sentences, max 260 chars
+    let final = answer.trim();
+    const sentences = final.split(/(?<=[.!?])\s+/);
+    if(sentences.length > 2) final = sentences.slice(0, 2).join(" ");
+    if(final.length > 260) final = final.slice(0, 257) + "...";
+
     if (Array.isArray(data.models_used)){
-      console.info("NEXUS AI models:", data.models_used.join(" + "), "· coordinated:", !!data.coordinated);
+      console.info("NEXUS AI:", data.models_used.join("+"), "·", data.coordinated ? "coordinated" : "single");
     }
 
-    return { ok: true, answer: answer.trim() };
+    return { ok: true, answer: final };
 
   } catch (err){
     clearTimeout(timeoutId);
@@ -2062,7 +2087,7 @@ async function fetchNexusReply(message, lang){
 }
 
 /* ============================================================
-   SEND HANDLER — instant local + background AI upgrade
+   SEND HANDLER — instant local + background AI, off-topic filter
    ============================================================ */
 const chatForm  = $("chatForm");
 const chatInput = $("chatInput");
@@ -2084,11 +2109,16 @@ chatForm.addEventListener("submit", (e) => {
 
   const local = replyFor(text);
   const { tone, lang } = local;
-  const localReply = local.text;
+  let localReply = local.text;
+
+  const offTopic = isOffTopic(text);
+  if(offTopic){
+    localReply = (OFF_TOPIC[lang] && OFF_TOPIC[lang][tone]) || OFF_TOPIC.en.professional;
+  }
 
   setMode(tone, lang);
 
-  /* === INSTANT LOCAL REPLY (0ms) === */
+  /* Render instantly */
   const el = renderLine("bot", "", lang);
   el.textContent = localReply;
   speak(localReply, tone, lang);
@@ -2097,7 +2127,13 @@ chatForm.addEventListener("submit", (e) => {
     toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
   }
 
-  /* === BACKGROUND AI UPGRADE (non-blocking) === */
+  /* Skip AI if off-topic OR too short */
+  const words = text.trim().split(/\s+/);
+  const isTooShort = words.length < 2 && !/\?/.test(text);
+
+  if(offTopic || isTooShort) return;
+
+  /* Background AI upgrade */
   fetchNexusReply(text, lang).then(worker => {
     if(!worker.ok) return;
     if(!el.isConnected) return;
@@ -2129,10 +2165,10 @@ function setGender(gender){
   refreshVoice();
   if(isActivated && voiceReady){
     const testText = currentLang === "ar"
-      ? "فحص الصوت. هكذا أبدو الآن."
+      ? "فحص الصوت."
       : currentLang === "ur"
-      ? "Awaaz check. Main aisa bolta hoon ab."
-      : "Voice check. This is how I sound now.";
+      ? "Awaaz check."
+      : "Voice check. This is me.";
     speak(testText, "professional", currentLang);
   }
 }
@@ -2152,7 +2188,7 @@ function exitHologram(){
   setMode("standby");
   wakeBtn.classList.remove("active");
   wakeBtn.textContent = "MEET NEXUS AI";
-  transcript.innerHTML = '<div class="t-line bot"><span class="who">NX</span><span class="txt">Hologram offline. Tap the avatar or press <strong>MEET NEXUS AI</strong> to activate voice.</span></div>';
+  transcript.innerHTML = '<div class="t-line bot"><span class="who">NX</span><span class="txt">Hologram offline. Tap the avatar or press <strong>MEET NEXUS AI</strong> to activate.</span></div>';
   state.turnCount = 0;
   state.askedRole = false;
   state.usedVariants.clear();
@@ -2235,7 +2271,7 @@ if(SR){
     isListening = true;
     micBtn.classList.add("listening");
     setStatus("listening");
-    chatInput.placeholder = "Listening… speak, then pause — or tap mic again";
+    chatInput.placeholder = "Listening…";
     resetSilence();
   };
 
@@ -2268,7 +2304,7 @@ if(SR){
   };
 }
 
-/* Escape stops speech */
+/* Escape cancels speech */
 document.addEventListener("keydown", (e) => {
   if(e.key === "Escape" && "speechSynthesis" in window){
     try{ speechSynthesis.cancel(); }catch(err){}
@@ -2319,7 +2355,7 @@ function showLeads(){
         <div class="lead-meta">${(l.summary || "").replace(/</g, "&lt;")}</div>
         ${l.email? `<div class="lead-meta">📧 <a href="mailto:${l.email}" style="color:var(--cyan)">${l.email}</a></div>` : ""}
         ${l.phone ? `<div class="lead-meta">📱 <a href="https://wa.me/${l.phone.replace(/\D/g,"")}" target="_blank" style="color:var(--cyan)">${l.phone}</a></div>` : ""}
-        ${l.waLink? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open summary in WhatsApp</a></div>` : ""}
+        ${l.waLink? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open in WhatsApp</a></div>` : ""}
       </div>
     `).join("");
   }
