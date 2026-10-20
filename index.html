@@ -2040,16 +2040,58 @@ chatForm.addEventListener("submit", async (e) => {
 
   await new Promise(r => setTimeout(r, 320));
 
-  const { tone, text: reply, lang } = replyFor(text);
-  setMode(tone, lang);
+  const { tone, lang } = replyFor(text);
+setMode(tone, lang);
 
-  if(lang !== "en"){
-    toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
+let reply = "";
+
+try {
+  const response = await fetch(
+    "https://quiet-snowflake-4c02.umaremotions.workers.dev/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text,
+        lang: lang
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "AI request failed");
   }
 
-  const el = renderLine("bot", "", lang);
-  speak(reply, tone, lang);
-  await typewriter(el, reply, 22);
+  reply = data.answer;
+
+  if (!reply) {
+    throw new Error("The AI returned an empty answer");
+  }
+} catch (error) {
+  console.error("NEXUS AI error:", error);
+  reply =
+    lang === "ar"
+      ? "عذراً، تعذر الاتصال بالمساعد الذكي. حاول مرة أخرى."
+      : lang === "ur"
+      ? "Maaf kijiye, AI se connection nahi ho saka. Dobara try karein."
+      : "Sorry, I couldn't connect to the AI assistant. Please try again.";
+}
+
+if (lang !== "en") {
+  toast(
+    lang === "ar"
+      ? "🌐 Replying in Arabic"
+      : "🌐 Replying in Roman Urdu"
+  );
+}
+
+const el = renderLine("bot", "", lang);
+speak(reply, tone, lang);
+await typewriter(el, reply, 22);
 
   isBusy = false;
   sendBtn.disabled = false;
