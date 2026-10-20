@@ -343,6 +343,7 @@
         <div class="agent-badge">AI AGENT ONLINE</div>
         
         <div class="avatar-img-wrap">
+          <!-- तुम्हारी फोटो यहाँ फिक्स है -->
           <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop" alt="NEXUS Avatar" class="avatar-media">
         </div>
         
@@ -540,10 +541,11 @@
     /* ============================================================
        CONFIG & UTILS
        ============================================================ */
-    const WHATSAPP_NUMBER = "966563468309";
+    const WHATSAPP_NUMBER = "966563468309"; // FIXED back to original
     
-    // यहाँ तुम्हारा नया URL अपडेट कर दिया गया है:
+    // ✅ NEW WORKER URL UPDATED HERE
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
+    
     const NEXUS_WORKER_TIMEOUT_MS = 30000;
     const $ = (id) => document.getElementById(id);
     $("year").textContent = new Date().getFullYear();
@@ -627,12 +629,19 @@
           signal: controller.signal
         });
         clearTimeout(timeoutId);
+        
         const data = await response.json();
-        if (!response.ok) return { ok: false };
+        
+        if (!response.ok) {
+          console.error("Worker Error Details:", data);
+          return { ok: false, error: data.error || "Unknown error" };
+        }
         return { ok: true, answer: data.answer };
+        
       } catch (err) {
         clearTimeout(timeoutId);
-        return { ok: false };
+        console.error("Fetch error:", err);
+        return { ok: false, error: err.message };
       }
     }
 
@@ -657,7 +666,7 @@
       chatWidget.classList.remove("scanning");
 
       if (!worker.ok) {
-        el.textContent = "System error. AI core offline.";
+        el.textContent = "System error. AI core offline. (Check console)";
         return;
       }
       
