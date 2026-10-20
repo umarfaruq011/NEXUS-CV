@@ -1,2376 +1,746 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#04060a">
-<meta name="description" content="NEXUS CV — a holographic CV strategist. Speaks English, Arabic, and Roman Urdu. ATS-aware, human-led.">
-<title>NEXUS CV — Your Next Move Starts Here</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-/* ============================================================
-   1. TOKENS
-   ============================================================ */
-:root{
-  --bg:#04060a;
-  --bg-2:#080b12;
-  --panel:#0a0e15;
-  --panel-2:#0f141d;
-  --gold:#f0c869;
-  --gold-bright:#ffd97a;
-  --gold-deep:#a98435;
-  --cyan:#5ff0ff;
-  --cyan-bright:#8fffff;
-  --cyan-deep:#0a7f8c;
-  --purple:#a78bfa;
-  --magenta:#ff5fc8;
-  --red:#ff4d6a;
-  --white:#f6f8fc;
-  --text:#e2e8f0;
-  --muted:#8b95a5;
-  --dimmer:#5a6472;
-  --line:rgba(255,255,255,.08);
-  --line-bright:rgba(95,240,255,.28);
-  --glass:rgba(10,14,21,.72);
-  --radius:20px;
-  --mx:0;--my:0;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:"DM Sans",system-ui,sans-serif;
-  line-height:1.65;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0D0D11">
+  <title>NEXUS CV — Your Next Move Starts Here</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ============================================================
+       1. TOKENS & RESET (2080 Cyberpunk Theme)
+       ============================================================ */
+    :root {
+      --bg: #0D0D11;
+      --bg-2: #050508;
+      --panel: rgba(11, 11, 15, 0.75);
+      --cyan: #00f3ff;
+      --pink: #ff00ea;
+      --green: #00ff88;
+      --primary: #0084ff;
+      --text: #e0eaff;
+      --muted: #8b9eb3;
+      --border: rgba(0, 243, 255, 0.2);
+    }
 
-/* Cinematic layered background */
-body::before{
-  content:"";
-  position:fixed;inset:0;pointer-events:none;z-index:-2;
-  background:
-    radial-gradient(ellipse 90% 55% at 50% -5%, rgba(95,240,255,.14), transparent 55%),
-    radial-gradient(ellipse 70% 50% at 15% 40%, rgba(167,139,250,.10), transparent 55%),
-    radial-gradient(ellipse 70% 50% at 85% 70%, rgba(240,200,105,.09), transparent 55%),
-    linear-gradient(180deg, #05070c 0%, #04060a 55%, #020306 100%);
-}
-/* Fine scanlines */
-body::after{
-  content:"";
-  position:fixed;inset:0;pointer-events:none;z-index:100;
-  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.022) 4px);
-  opacity:.85;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 132, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(255, 0, 234, 0.06) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
 
-a{color:inherit;text-decoration:none}
-button,input{font:inherit}
-.wrap{width:min(1200px,calc(100% - 40px));margin:0 auto;position:relative;z-index:1}
+    /* CRT Scanlines Overlay */
+    body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.02) 3px);
+      opacity: 0.8;
+    }
 
-/* ============================================================
-   2. TOPBAR
-   ============================================================ */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px 0;position:relative;z-index:20;
-}
-.brand{
-  display:flex;gap:12px;align-items:center;
-  font:700 1.02rem "Space Grotesk",sans-serif;
-  letter-spacing:.18em;cursor:pointer;user-select:none;
-}
-.brand-mark{
-  width:36px;height:36px;
-  border:1px solid rgba(95,240,255,.6);
-  border-radius:11px;display:grid;place-items:center;
-  color:var(--cyan);font-size:1.15rem;
-  box-shadow:0 0 24px rgba(95,240,255,.3),inset 0 0 12px rgba(95,240,255,.12);
-  transform:rotate(-8deg);
-  transition:all .35s ease;
-}
-.brand:hover .brand-mark{transform:rotate(0deg);box-shadow:0 0 36px rgba(95,240,255,.55)}
-.brand-mark span{transform:rotate(8deg);transition:transform .35s ease}
-.brand:hover .brand-mark span{transform:rotate(0deg)}
-.brand .gold{color:var(--gold);text-shadow:0 0 20px rgba(240,200,105,.5)}
-.nav{display:flex;gap:30px;color:var(--muted);font-size:.84rem;letter-spacing:.02em}
-.nav a{transition:color .2s}
-.nav a:hover{color:var(--gold)}
-.top-cta{
-  border:1px solid rgba(240,200,105,.4);
-  border-radius:999px;padding:10px 18px;
-  font-size:.82rem;font-weight:600;color:var(--gold);
-  background:rgba(240,200,105,.04);
-  transition:all .25s ease;
-}
-.top-cta:hover{
-  background:rgba(240,200,105,.12);
-  box-shadow:0 0 24px rgba(240,200,105,.25);
-  transform:translateY(-1px);
-}
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; outline: none; }
 
-/* ============================================================
-   3. HERO
-   ============================================================ */
-.hero{
-  min-height:100vh;
-  padding:30px 0 90px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;position:relative;
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:10px;
-  border:1px solid rgba(95,240,255,.35);
-  background:rgba(95,240,255,.06);
-  padding:7px 14px;border-radius:999px;
-  color:var(--cyan-bright);font-size:.72rem;
-  letter-spacing:.14em;text-transform:uppercase;
-  font-weight:500;
-  box-shadow:0 0 20px rgba(95,240,255,.12);
-}
-.live-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--cyan-bright);
-  box-shadow:0 0 14px var(--cyan-bright);
-  animation:pulse 1.8s ease-in-out infinite;
-}
+    /* ============================================================
+       2. NAVBAR
+       ============================================================ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 40px; background: rgba(5, 5, 8, 0.9);
+      backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .logo-icon { font: 900 1.8rem "Orbitron", sans-serif; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
+    .logo-text { font: 700 1rem "Orbitron", sans-serif; letter-spacing: 2px; line-height: 1; }
+    .logo-text span { display: block; font-size: 0.55rem; color: var(--muted); font-family: "Inter", sans-serif; letter-spacing: 1px; margin-top: 4px; }
+    
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a { color: var(--muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; }
+    .nav-links a:hover { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+    
+    .btn-wa {
+      background: transparent; border: 1px solid var(--pink); color: var(--pink);
+      padding: 10px 20px; border-radius: 4px; font: 700 0.75rem "Orbitron";
+      letter-spacing: 1px; cursor: pointer; transition: 0.3s;
+    }
+    .btn-wa:hover { background: rgba(255, 0, 234, 0.1); box-shadow: 0 0 20px rgba(255, 0, 234, 0.4); }
 
-.hero h1{
-  font:600 clamp(2.5rem,6.4vw,5.2rem)/.98 "Space Grotesk",sans-serif;
-  letter-spacing:-.055em;
-  margin:24px 0 0;max-width:920px;
-}
-.hero h1 .gold{
-  background:linear-gradient(120deg,var(--gold-bright) 10%,var(--gold) 45%,var(--gold-deep) 90%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 40px rgba(240,200,105,.35));
-}
-.hero-sub{
-  max-width:600px;color:var(--muted);
-  font-size:clamp(.98rem,1.6vw,1.08rem);
-  margin:22px auto 0;
-  line-height:1.7;
-}
-.hero-sub strong{color:var(--white);font-weight:600}
+    /* ============================================================
+       3. HERO SECTION (Aligned Layout)
+       ============================================================ */
+    .hero {
+      min-height: 100vh; padding: 120px 40px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: clamp(20px, 4vw, 50px); max-width: 1400px; margin: 0 auto; flex-wrap: wrap;
+    }
+    
+    /* Left Column */
+    .hero-left { flex: 1 1 300px; max-width: 450px; }
+    .hero-subtitle { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 16px; text-shadow: 0 0 8px var(--pink); text-transform: uppercase; }
+    .hero-title { font: 700 clamp(2.2rem, 3.5vw, 3.5rem)/1.1 "Orbitron", sans-serif; margin-bottom: 24px; }
+    .hero-title span { color: transparent; background-clip: text; -webkit-background-clip: text; background-image: linear-gradient(90deg, var(--cyan), var(--primary)); }
+    .hero-desc { color: var(--muted); font-size: 1rem; margin-bottom: 32px; }
+    
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: transparent;
+      color: var(--green); padding: 14px 24px; border-radius: 4px;
+      font: 700 0.85rem "Orbitron"; border: 1px solid var(--green); cursor: pointer;
+      transition: 0.3s; letter-spacing: 1px; width: 100%; max-width: 250px;
+    }
+    .btn-primary:hover { background: rgba(0, 255, 136, 0.1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.35); }
 
-/* ============================================================
-   4. HOLOGRAM STAGE
-   ============================================================ */
-.stage{
-  position:relative;
-  width:clamp(320px,46vw,500px);
-  aspect-ratio:1;margin:56px auto 0;
-  display:grid;place-items:center;
-  transform-style:preserve-3d;
-  transform:rotateX(calc(var(--my) * -4deg)) rotateY(calc(var(--mx) * 4deg));
-  transition:transform .3s ease-out;
-  cursor:pointer;
-  perspective:1100px;
-}
-@media (hover:none){.stage{transform:none!important}}
+    /* ============================================================
+       4. HOLOGRAPHIC AVATAR (FIXED)
+       ============================================================ */
+    .hero-center { display: flex; flex-direction: column; align-items: center; flex: 1 1 350px; position: relative; }
+    
+    /* Floating Animation */
+    @keyframes floatHologram {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    .avatar-container { 
+      width: min(100%, 360px); aspect-ratio: 1/1; position: relative; 
+      display: flex; justify-content: center; align-items: center; margin: 20px 0; 
+      animation: floatHologram 4s ease-in-out infinite;
+    }
+    
+    .ring-1, .ring-2, .ring-3 { position: absolute; border-radius: 50%; }
+    .ring-1 { inset: -10px; border: 1px dashed rgba(0, 243, 255, 0.3); animation: spin 30s linear infinite; }
+    .ring-2 { inset: 15px; border: 2px solid transparent; border-top-color: var(--cyan); border-bottom-color: var(--pink); animation: spinRev 12s linear infinite; }
+    .ring-3 { inset: 35px; border: 1px solid rgba(255, 0, 234, 0.15); animation: spin 20s linear infinite; }
+    
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
-.ring{position:absolute;border-radius:50%;pointer-events:none}
+    .agent-badge {
+      position: absolute; top: 0px; background: var(--bg-2); border: 1px solid var(--green);
+      padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif;
+      color: var(--green); letter-spacing: 1px; display: flex; align-items: center;
+      gap: 8px; z-index: 20; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); text-transform: uppercase;
+    }
+    .agent-badge::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.8s infinite ease-in-out;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } }
 
-/* Outer bright conic sweep */
-.ring-1{
-  inset:0;
-  background:conic-gradient(from 0deg,
-    transparent 0%,
-    rgba(95,240,255,.75) 15%,
-    rgba(95,240,255,.15) 22%,
-    transparent 30%,
-    rgba(240,200,105,.65) 55%,
-    rgba(240,200,105,.15) 62%,
-    transparent 70%,
-    rgba(167,139,250,.55) 88%,
-    transparent 100%);
-  -webkit-mask:radial-gradient(circle, transparent 70%, #000 72%);
-  mask:radial-gradient(circle, transparent 70%, #000 72%);
-  animation:spin 18s linear infinite;
-  filter:drop-shadow(0 0 12px rgba(95,240,255,.5));
-}
-/* Middle reverse sweep */
-.ring-2{
-  inset:9%;
-  background:conic-gradient(from 180deg,
-    transparent 0%,
-    rgba(240,200,105,.55) 22%,
-    transparent 42%,
-    rgba(167,139,250,.45) 70%,
-    transparent 100%);
-  -webkit-mask:radial-gradient(circle, transparent 74%, #000 76%);
-  mask:radial-gradient(circle, transparent 74%, #000 76%);
-  animation:spin 13s linear infinite reverse;
-}
-/* Pulsing halo */
-.ring-3{
-  inset:-7%;
-  border:1px solid rgba(95,240,255,.22);
-  animation:pulseRing 4s ease-in-out infinite;
-  box-shadow:0 0 30px rgba(95,240,255,.08);
-}
-/* Dashed orbit */
-.ring-4{
-  inset:19%;
-  border:1px dashed rgba(240,200,105,.25);
-  animation:spin 30s linear infinite;
-}
-/* Inner glow */
-.aura{
-  position:absolute;inset:6%;border-radius:50%;
-  background:radial-gradient(circle,
-    rgba(95,240,255,.28),
-    rgba(240,200,105,.12) 45%,
-    transparent 72%);
-  filter:blur(32px);
-  animation:breathe 5s ease-in-out infinite;
-  pointer-events:none;
-}
+    .avatar-img-wrap {
+      width: 75%; aspect-ratio: 1/1; border-radius: 50%; background: #060913;
+      border: 2px solid rgba(0, 243, 255, 0.5); position: relative; z-index: 10;
+      overflow: hidden; box-shadow: 0 0 35px rgba(0, 243, 255, 0.3); 
+    }
+    
+    /* Holographic Overlay Effect */
+    .avatar-img-wrap::after { 
+      content: ""; position: absolute; inset: 0; pointer-events: none; 
+      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.1) 3px),
+                  linear-gradient(180deg, transparent 50%, rgba(0, 243, 255, 0.4) 100%);
+      mix-blend-mode: overlay;
+    }
+    
+    .avatar-media { width: 100%; height: 100%; object-fit: cover; object-position: top; filter: saturate(1.2) contrast(1.1); }
+    
+    .avatar-base {
+      position: absolute; bottom: 5px; width: 85%; height: 40px;
+      background: radial-gradient(ellipse at center, rgba(0, 243, 255, 0.4) 0%, transparent 75%);
+      border-radius: 50%; border: 1px solid var(--cyan);
+      box-shadow: 0 0 30px var(--cyan); transform: rotateX(75deg);
+    }
 
-/* Avatar */
-.avatar-halo{
-  position:relative;
-  width:56%;aspect-ratio:1;
-  display:grid;place-items:center;z-index:2;
-}
-.avatar-inner{
-  position:relative;width:100%;height:100%;
-  border-radius:50%;overflow:hidden;
-  border:1.5px solid rgba(95,240,255,.7);
-  background:#020408;
-  box-shadow:
-    0 0 40px rgba(95,240,255,.4),
-    0 0 90px rgba(95,240,255,.15),
-    0 0 140px rgba(240,200,105,.08),
-    inset 0 0 40px rgba(0,0,0,.7),
-    inset 0 0 30px rgba(95,240,255,.1);
-  transition:box-shadow .4s, transform .4s;
-  cursor:pointer;
-}
-.avatar-inner::before{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:4;
-  background:
-    repeating-linear-gradient(0deg, rgba(95,240,255,.06) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, transparent 55%, rgba(95,240,255,.15));
-  mix-blend-mode:screen;
-}
-.avatar{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.05)}
-.holo-scan{
-  position:absolute;left:0;right:0;height:24%;
-  background:linear-gradient(180deg, transparent, rgba(95,240,255,.28), transparent);
-  animation:scanDown 4.5s linear infinite;
-  pointer-events:none;z-index:3;
-}
+    /* Controls under Avatar */
+    .avatar-controls { display: flex; gap: 10px; margin-top: 20px; z-index: 20; flex-wrap: wrap; justify-content: center; }
+    .ctrl-btn {
+      background: rgba(0, 243, 255, 0.05); border: 1px solid var(--border); color: var(--muted);
+      padding: 6px 12px; border-radius: 4px; font: 600 0.7rem "Orbitron"; cursor: pointer; transition: 0.3s;
+    }
+    .ctrl-btn.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+    .ctrl-btn.danger:hover { border-color: var(--pink); color: var(--pink); }
 
-.stage.speaking .avatar-inner{
-  box-shadow:
-    0 0 50px rgba(95,240,255,.7),
-    0 0 120px rgba(95,240,255,.35),
-    0 0 180px rgba(95,240,255,.12),
-    inset 0 0 45px rgba(95,240,255,.2);
-  transform:scale(1.03);
-}
-.stage.speaking .aura{
-  background:radial-gradient(circle,
-    rgba(95,240,255,.5),
-    rgba(240,200,105,.22) 45%,
-    transparent 72%);
-}
-.stage.activating .avatar-inner{animation:activatePulse 1s ease-out}
-@keyframes activatePulse{
-  0%{transform:scale(1);filter:brightness(1)}
-  40%{transform:scale(1.12);filter:brightness(1.8)}
-  100%{transform:scale(1);filter:brightness(1)}
-}
+    /* ============================================================
+       5. RIGHT (Chat Interface)
+       ============================================================ */
+    .hero-right { flex: 1 1 350px; max-width: 420px; width: 100%; }
+    .chat-widget {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+      padding: 20px; backdrop-filter: blur(25px); position: relative; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); height: 520px; display: flex; flex-direction: column;
+    }
 
-/* Waveform */
-.waveform{
-  position:absolute;bottom:-12%;left:50%;transform:translateX(-50%);
-  display:flex;gap:4px;align-items:center;height:32px;
-  opacity:0;transition:opacity .3s;pointer-events:none;
-}
-.stage.speaking .waveform{opacity:1}
-.waveform i{
-  display:block;width:3px;height:100%;border-radius:2px;
-  background:linear-gradient(180deg,var(--cyan-bright),var(--gold));
-  transform-origin:center;
-  animation:wv 1s ease-in-out infinite;
-  box-shadow:0 0 10px rgba(95,240,255,.7);
-}
-.waveform i:nth-child(1){animation-delay:-.9s}
-.waveform i:nth-child(2){animation-delay:-.5s}
-.waveform i:nth-child(3){animation-delay:-.2s}
-.waveform i:nth-child(4){animation-delay:0s}
-.waveform i:nth-child(5){animation-delay:-.3s}
-.waveform i:nth-child(6){animation-delay:-.6s}
-.waveform i:nth-child(7){animation-delay:-.85s}
+    .laser-line {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      box-shadow: 0 0 12px var(--cyan); opacity: 0; top: -10px; z-index: 10;
+    }
+    .chat-widget.scanning .laser-line { animation: scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite; opacity: 1; }
+    @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
-/* Mode badge */
-.mode-badge{
-  position:absolute;top:4px;right:-10px;
-  padding:7px 14px;border-radius:11px;
-  background:rgba(4,8,14,.94);
-  border:1px solid rgba(240,200,105,.4);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  font-family:"Space Grotesk",sans-serif;
-  letter-spacing:.16em;text-transform:uppercase;
-  z-index:6;transition:all .35s;
-  text-align:left;min-width:88px;
-  box-shadow:0 8px 30px rgba(0,0,0,.5);
-}
-.mode-badge .lbl{display:block;color:var(--dimmer);font-size:.48rem;margin-bottom:2px;letter-spacing:.2em}
-.mode-badge .val{display:block;color:var(--gold);font-weight:700;font-size:.62rem}
-.mode-badge.mode-coach{border-color:rgba(95,240,255,.55);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 24px rgba(95,240,255,.15)}
-.mode-badge.mode-coach .val{color:var(--cyan-bright)}
-.mode-badge.mode-savage{border-color:rgba(255,77,106,.55);box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 24px rgba(255,77,106,.15)}
-.mode-badge.mode-savage .val{color:var(--red)}
-.mode-badge.shift{animation:shiftPop .5s ease}
-@keyframes shiftPop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+    .chat-header { margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .chat-header h3 { font: 700 0.9rem "Orbitron", sans-serif; color: var(--cyan); letter-spacing: 1px; }
+    .status-pill { font: 600 0.6rem "Orbitron"; color: var(--green); display: flex; align-items: center; gap: 6px; }
+    .status-pill::before { content: ""; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 5px var(--green); }
 
-/* ============================================================
-   5. STATUS PILL
-   ============================================================ */
-.status-pill{
-  display:inline-flex;align-items:center;gap:10px;
-  margin-top:30px;padding:8px 18px;border-radius:999px;
-  background:rgba(255,255,255,.025);
-  border:1px solid rgba(255,255,255,.08);
-  font-family:"Space Grotesk",sans-serif;
-  font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--muted);transition:all .3s;
-}
-.status-pill .dot{
-  width:7px;height:7px;border-radius:50%;background:var(--dimmer);
-  transition:all .3s;
-}
-.status-pill.online{color:var(--white);border-color:rgba(74,222,128,.3)}
-.status-pill.online .dot{background:#4ade80;box-shadow:0 0 12px #4ade80}
-.status-pill.speaking{color:var(--cyan-bright);border-color:rgba(95,240,255,.4);background:rgba(95,240,255,.04)}
-.status-pill.speaking .dot{background:var(--cyan-bright);box-shadow:0 0 14px var(--cyan-bright);animation:blink .8s infinite}
-.status-pill.listening{color:#ff8792;border-color:rgba(255,77,106,.4);background:rgba(255,77,106,.04)}
-.status-pill.listening .dot{background:var(--red);box-shadow:0 0 14px var(--red);animation:blink .6s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; margin-bottom: 15px; }
+    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--cyan); }
+    
+    .msg { display: flex; gap: 10px; max-width: 90%; opacity: 0; transform: translateY(10px); animation: msgIn 0.3s forwards; }
+    @keyframes msgIn { to { opacity: 1; transform: translateY(0); } }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-icon { width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; font: 700 0.7rem "Orbitron"; flex-shrink: 0; }
+    .msg.bot .msg-icon { background: rgba(0, 243, 255, 0.1); color: var(--cyan); border: 1px solid var(--cyan); }
+    .msg.user .msg-icon { background: rgba(255, 0, 234, 0.1); color: var(--pink); border: 1px solid var(--pink); }
+    .msg-bubble { background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); padding: 10px 12px; border-radius: 4px; font-size: 0.85rem; color: var(--text); }
+    .msg.user .msg-bubble { background: rgba(255, 0, 234, 0.05); border-color: rgba(255, 0, 234, 0.2); }
+    .msg-bubble strong { color: var(--cyan); font-weight: 600; }
 
-/* ============================================================
-   6. CONTROL BAR (only Female/Male + Close + Exit)
-   ============================================================ */
-.control-bar{
-  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
-  margin:24px auto 0;max-width:760px;
-}
-.ctrl-group{
-  display:flex;gap:4px;
-  background:rgba(255,255,255,.025);
-  border:1px solid var(--line);
-  border-radius:999px;padding:4px;
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  align-items:center;
-}
-.ctrl-pill{
-  border:1px solid transparent;background:transparent;
-  color:var(--muted);font-size:.74rem;font-weight:600;
-  padding:8px 14px;border-radius:999px;cursor:pointer;
-  transition:all .2s;letter-spacing:.02em;
-  font-family:"DM Sans",sans-serif;
-  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
-}
-.ctrl-pill:hover{color:var(--white);background:rgba(255,255,255,.05)}
-.ctrl-pill.active{
-  color:var(--cyan-bright);
-  background:rgba(95,240,255,.12);
-  border-color:rgba(95,240,255,.4);
-  box-shadow:0 0 16px rgba(95,240,255,.15);
-}
-.ctrl-pill.icon-only{padding:8px 12px;font-size:.85rem}
-.ctrl-pill.danger{color:#ff8792}
-.ctrl-pill.danger:hover{background:rgba(255,77,106,.12);color:var(--red);border-color:rgba(255,77,106,.3)}
+    .chat-input-area { display: flex; gap: 6px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
+    .chat-input-area input { flex: 1; background: transparent; border: none; color: var(--text); padding: 8px 10px; font-size: 0.85rem; }
+    .chat-input-area input::placeholder { color: var(--muted); }
+    .ibtn { width: 36px; height: 36px; border-radius: 4px; background: transparent; border: 1px solid var(--border); color: var(--cyan); display: grid; place-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
+    .ibtn:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--cyan); }
+    .ibtn.listening { border-color: var(--pink); color: var(--pink); animation: micPulse 1s infinite; }
+    @keyframes micPulse { 50% { box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); } }
 
-/* ============================================================
-   7. TRANSCRIPT + INPUT
-   ============================================================ */
-.transcript{
-  width:min(760px,100%);margin:20px auto 0;
-  min-height:84px;max-height:240px;overflow-y:auto;
-  padding:18px 22px;border-radius:16px;
-  background:rgba(8,12,18,.6);
-  border:1px solid rgba(255,255,255,.06);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  font-size:.92rem;line-height:1.7;text-align:left;
-  scrollbar-width:thin;scrollbar-color:rgba(240,200,105,.4) transparent;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-}
-.transcript.hidden{display:none}
-.transcript::-webkit-scrollbar{width:5px}
-.transcript::-webkit-scrollbar-thumb{background:rgba(240,200,105,.4);border-radius:3px}
-.t-line{
-  margin-bottom:14px;display:flex;gap:12px;
-  opacity:0;transform:translateY(6px);
-  animation:tIn .45s ease forwards;
-}
-.t-line:last-child{margin-bottom:0}
-.t-line .who{
-  font-family:"Space Grotesk",sans-serif;font-size:.6rem;
-  letter-spacing:.16em;text-transform:uppercase;
-  flex-shrink:0;margin-top:4px;width:42px;
-  font-weight:700;
-}
-.t-line.bot .who{color:var(--cyan-bright);text-shadow:0 0 12px rgba(95,240,255,.4)}
-.t-line.user .who{color:var(--gold-bright);text-shadow:0 0 12px rgba(240,200,105,.4)}
-.t-line .txt{flex:1;color:var(--white);word-wrap:break-word}
-.t-line.user .txt{color:#fff1c8}
-.t-line .lang-tag{
-  font-size:.58rem;color:var(--cyan);opacity:.65;margin-left:8px;
-  font-family:"JetBrains Mono",monospace;font-weight:500;
-  letter-spacing:.06em;
-}
-@keyframes tIn{to{opacity:1;transform:translateY(0)}}
+    /* ============================================================
+       6. MAIN SECTIONS
+       ============================================================ */
+    .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); }
+    .section-header { text-align: center; margin-bottom: 50px; }
+    .section-kicker { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+    .section-title { font: 700 clamp(1.8rem, 3vw, 2.5rem) "Orbitron"; margin-bottom: 16px; }
+    .section-title span { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+    .section-sub { color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
 
-.input-bar{
-  width:min(760px,100%);margin:14px auto 0;display:flex;gap:10px;
-}
-.input-bar input{
-  flex:1;min-width:0;
-  padding:16px 24px;border-radius:999px;
-  background:rgba(255,255,255,.035);
-  border:1px solid rgba(255,255,255,.09);
-  color:var(--white);font-family:inherit;font-size:.92rem;
-  outline:none;
-  transition:border-color .25s,background .25s,box-shadow .25s;
-}
-.input-bar input:focus{
-  border-color:rgba(95,240,255,.55);
-  background:rgba(95,240,255,.035);
-  box-shadow:0 0 24px rgba(95,240,255,.12);
-}
-.input-bar input::placeholder{color:var(--dimmer)}
-.ibtn{
-  width:54px;height:54px;flex-shrink:0;border-radius:50%;
-  display:grid;place-items:center;
-  border:1px solid rgba(255,255,255,.09);
-  background:rgba(255,255,255,.04);
-  color:var(--muted);cursor:pointer;transition:all .25s;
-}
-.ibtn:hover{color:var(--cyan-bright);border-color:rgba(95,240,255,.5);box-shadow:0 0 20px rgba(95,240,255,.15)}
-.ibtn.send{
-  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
-  color:#04060a;border-color:transparent;
-  box-shadow:0 4px 20px rgba(240,200,105,.25);
-}
-.ibtn.send:hover{transform:scale(1.06);box-shadow:0 6px 30px rgba(240,200,105,.5)}
-.ibtn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
-.ibtn.mic.listening{
-  background:rgba(255,77,106,.15);
-  border-color:var(--red);color:#ff8792;
-  animation:micPulse 1s infinite;
-}
-.ibtn.mic.hidden{display:none}
-@keyframes micPulse{50%{box-shadow:0 0 22px rgba(255,77,106,.5)}}
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .service-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; transition: 0.3s; }
+    .service-card:hover { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); transform: translateY(-4px); }
+    .service-icon { font-size: 1.5rem; color: var(--cyan); margin-bottom: 16px; }
+    .service-card h3 { font: 600 1.1rem "Orbitron"; margin-bottom: 8px; }
+    .service-card p { color: var(--muted); font-size: 0.85rem; }
 
-/* ============================================================
-   8. CTA BUTTONS
-   ============================================================ */
-.actions{
-  display:flex;gap:14px;flex-wrap:wrap;margin:30px auto 0;justify-content:center;
-}
-.btn{
-  border:0;display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  border-radius:14px;padding:15px 22px;
-  font-weight:700;font-size:.9rem;cursor:pointer;
-  transition:transform .22s,box-shadow .22s,border-color .22s,background .22s;
-  text-decoration:none;letter-spacing:.01em;
-}
-.btn:hover{transform:translateY(-3px)}
-.btn-gold{
-  color:#04060a;
-  background:linear-gradient(135deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
-  box-shadow:0 8px 30px rgba(240,200,105,.22);
-}
-.btn-gold:hover{box-shadow:0 12px 45px rgba(240,200,105,.45)}
-.btn-outline{
-  color:var(--white);background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.1);
-}
-.btn-outline:hover{
-  border-color:rgba(95,240,255,.6);
-  background:rgba(95,240,255,.05);
-  box-shadow:0 0 26px rgba(95,240,255,.15);
-}
-.btn-outline.active{
-  border-color:rgba(95,240,255,.7);
-  background:rgba(95,240,255,.1);
-  color:var(--cyan-bright);
-}
+    .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; align-items: center; }
+    .split-copy h2 { font: 700 2rem "Orbitron"; margin-bottom: 16px; }
+    .split-copy h2 span { color: var(--cyan); }
+    .split-copy p { color: var(--muted); margin-bottom: 24px; font-size: 0.95rem; }
+    .feature-list { display: grid; gap: 16px; margin-bottom: 24px; }
+    .feature { display: flex; gap: 12px; }
+    .feature-icon { color: var(--green); font-size: 1.1rem; }
+    .feature b { display: block; font-size: 0.9rem; margin-bottom: 2px; }
+    .feature span { color: var(--muted); font-size: 0.8rem; }
 
-/* Entrance animations */
-.anim-up{opacity:0;transform:translateY(22px);animation:aU .9s cubic-bezier(.2,.7,.2,1) forwards}
-.d1{animation-delay:.05s}.d2{animation-delay:.2s}.d3{animation-delay:.35s}.d4{animation-delay:.55s}.d5{animation-delay:.75s}
-@keyframes aU{to{opacity:1;transform:translateY(0)}}
+    .cv-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
+      padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
+    }
+    .cv-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--pink)); }
+    .cv-name { font: 700 1.3rem "Orbitron"; }
+    .cv-role { color: var(--cyan); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0; }
+    .cv-meta { color: var(--muted); font-size: 0.7rem; font-family: monospace; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
+    .cv-sec h4 { font-size: 0.7rem; color: var(--pink); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
+    .cv-sec p, .cv-sec li { font-size: 0.8rem; color: #a0b0c0; line-height: 1.5; }
+    .cv-sec ul { padding-left: 16px; }
+    .cv-sec li { margin-bottom: 4px; }
+    .cv-footer { font-size: 0.65rem; color: var(--muted); text-align: center; margin-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; }
 
-/* ============================================================
-   9. SECTIONS
-   ============================================================ */
-.section{padding:100px 0;position:relative}
-.section-kicker{
-  text-align:center;color:var(--cyan);
-  font-size:.72rem;text-transform:uppercase;
-  letter-spacing:.24em;margin-bottom:14px;font-weight:600;
-}
-.section-title{
-  text-align:center;
-  font:600 clamp(2rem,4.2vw,3.6rem)/1.08 "Space Grotesk",sans-serif;
-  letter-spacing:-.05em;margin-bottom:16px;
-}
-.section-title .gold{
-  background:linear-gradient(120deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 30px rgba(240,200,105,.3));
-}
-.section-sub{
-  text-align:center;max-width:600px;margin:0 auto 56px;
-  color:var(--muted);font-size:1rem;line-height:1.7;
-}
+    .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .price-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 4px;
+      padding: 30px; display: flex; flex-direction: column; transition: 0.3s;
+    }
+    .price-card:hover { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); transform: translateY(-4px); }
+    .price-card.featured { border-color: var(--pink); box-shadow: 0 0 20px rgba(255, 0, 234, 0.1); }
+    .price-card.featured .pkg-label { color: var(--pink); }
+    .pkg-label { font-size: 0.7rem; color: var(--cyan); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    .price-card h3 { font: 700 1.3rem "Orbitron"; margin: 8px 0; }
+    .pkg-price { font: 700 2rem "Orbitron"; color: var(--text); margin-bottom: 16px; }
+    .pkg-price small { font-size: 0.8rem; color: var(--muted); font-family: "Inter"; }
+    .pkg-list { list-style: none; padding: 0; margin-bottom: 24px; flex: 1; }
+    .pkg-list li { font-size: 0.85rem; color: var(--muted); margin-bottom: 10px; display: flex; gap: 8px; }
+    .pkg-list li::before { content: "＋"; color: var(--cyan); }
+    .btn-pkg { width: 100%; padding: 12px; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 4px; font-family: "Orbitron"; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; display: block; text-decoration: none; }
+    .btn-pkg:hover, .price-card.featured .btn-pkg { border-color: var(--cyan); background: rgba(0, 243, 255, 0.1); color: var(--cyan); }
+    .fineprint { text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 24px; }
 
-/* SERVICES */
-.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.service{
-  border:1px solid rgba(255,255,255,.06);
-  background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
-  border-radius:20px;padding:28px;min-height:210px;
-  transition:all .3s ease;
-  position:relative;overflow:hidden;
-}
-.service::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(circle at var(--px,50%) var(--py,50%),rgba(95,240,255,.1),transparent 45%);
-  opacity:0;transition:opacity .4s;
-}
-.service:hover::before{opacity:1}
-.service:hover{
-  transform:translateY(-6px);
-  border-color:rgba(240,200,105,.4);
-  box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(240,200,105,.08);
-}
-.service .symbol{
-  width:46px;height:46px;display:grid;place-items:center;
-  border-radius:14px;
-  background:linear-gradient(135deg,rgba(240,200,105,.15),rgba(240,200,105,.04));
-  border:1px solid rgba(240,200,105,.22);
-  color:var(--gold);font-size:1.3rem;margin-bottom:22px;
-  box-shadow:0 0 20px rgba(240,200,105,.08);
-}
-.service h3{font:600 1.1rem "Space Grotesk",sans-serif;margin-bottom:10px;color:var(--white)}
-.service p{color:var(--muted);font-size:.88rem;margin-bottom:0;line-height:1.65}
+    .final-cta { text-align: center; padding: 60px 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; margin: 40px auto; max-width: 800px; }
+    .final-cta h2 { font: 700 2rem "Orbitron"; margin-bottom: 16px; }
+    .final-cta p { color: var(--muted); margin-bottom: 24px; }
 
-/* CV SAMPLE */
-.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
-.split-copy h2{
-  font:600 clamp(2.2rem,4vw,3.6rem)/1.05 "Space Grotesk",sans-serif;
-  letter-spacing:-.055em;
-}
-.split-copy h2 .gold{
-  background:linear-gradient(120deg,var(--gold-bright),var(--gold) 55%,var(--gold-deep));
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.split-copy p{color:var(--muted);margin-top:14px;line-height:1.7}
-.feature-list{display:grid;gap:16px;margin:28px 0}
-.feature{display:flex;gap:14px;color:var(--text);font-size:.92rem;line-height:1.6}
-.feature .check{
-  color:var(--cyan);font-size:1rem;flex-shrink:0;margin-top:2px;
-  text-shadow:0 0 14px rgba(95,240,255,.5);
-}
-.feature b{color:var(--white);display:block;margin-bottom:2px}
+    footer { border-top: 1px solid var(--border); padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-2); font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 16px; }
+    .footer-brand { color: var(--cyan); font-family: "Orbitron"; font-size: 1rem; }
+    .footer-disclaimer { max-width: 600px; font-size: 0.7rem; opacity: 0.7; margin-top: 16px; text-align: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; }
 
-/* CV Card — Umar Faruq */
-.cv-card{
-  padding:34px;
-  border:1px solid rgba(240,200,105,.28);
-  border-radius:22px;
-  background:
-    linear-gradient(145deg, rgba(20,16,10,.6), rgba(8,10,14,.85)),
-    radial-gradient(ellipse at top right, rgba(240,200,105,.06), transparent 60%);
-  box-shadow:
-    0 30px 80px rgba(0,0,0,.6),
-    0 0 60px rgba(240,200,105,.06),
-    inset 0 1px 0 rgba(240,200,105,.12);
-  position:relative;overflow:hidden;
-}
-.cv-card::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--gold),var(--cyan),var(--gold),transparent);
-  opacity:.8;
-}
-.cv-top{border-bottom:1px solid rgba(240,200,105,.15);padding-bottom:22px;margin-bottom:24px}
-.cv-top .fake-name{
-  font:700 1.75rem "Space Grotesk",sans-serif;
-  letter-spacing:.02em;color:var(--white);
-  text-shadow:0 0 30px rgba(240,200,105,.2);
-}
-.cv-top .fake-role{
-  color:var(--gold);
-  font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;
-  margin-top:4px;font-weight:600;
-}
-.cv-meta{color:var(--muted);font-size:.72rem;margin-top:10px;font-family:"JetBrains Mono",monospace}
-.cv-section{margin-top:22px}
-.cv-section h4{
-  font-size:.66rem;color:var(--cyan);
-  letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;
-  font-weight:600;
-}
-.cv-section p,.cv-section li{
-  font-size:.8rem;color:#c5cdd8;line-height:1.7;
-}
-.cv-section b{color:var(--white);font-size:.85rem}
-.cv-section ul{padding-left:20px;margin:6px 0}
-.cv-section li{margin-bottom:4px}
-.cv-job-meta{color:var(--dimmer);font-size:.7rem;margin:2px 0 6px;font-family:"JetBrains Mono",monospace}
-
-/* PRICING */
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.price{
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:22px;padding:32px;
-  background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(255,255,255,.008));
-  display:flex;flex-direction:column;
-  transition:all .3s ease;position:relative;
-}
-.price:hover{transform:translateY(-4px);border-color:rgba(240,200,105,.3)}
-.price.featured{
-  border-color:rgba(240,200,105,.5);
-  box-shadow:0 0 60px rgba(240,200,105,.1),0 20px 50px rgba(0,0,0,.5);
-  background:linear-gradient(155deg,rgba(240,200,105,.06),rgba(255,255,255,.01));
-}
-.price .label{
-  font-size:.7rem;color:var(--cyan);
-  letter-spacing:.18em;text-transform:uppercase;
-  font-weight:600;
-}
-.price h3{font:600 1.4rem "Space Grotesk",sans-serif;margin:12px 0 4px;color:var(--white)}
-.price .amount{
-  font:700 2.2rem "Space Grotesk",sans-serif;
-  background:linear-gradient(120deg,var(--gold-bright),var(--gold));
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  margin:4px 0 6px;
-}
-.price .amount small{font:400 .75rem "DM Sans",sans-serif;color:var(--dimmer);-webkit-text-fill-color:var(--dimmer)}
-.price .pitch{color:var(--muted);font-size:.82rem;margin-bottom:22px;line-height:1.55;font-style:italic}
-.price ul{list-style:none;padding:0;margin:0 0 26px;flex:1}
-.price li{
-  color:#c5cdd8;font-size:.86rem;margin:10px 0;
-  padding-left:22px;position:relative;line-height:1.55;
-}
-.price li::before{
-  content:"＋";position:absolute;left:0;
-  color:var(--cyan);font-weight:700;
-}
-.price .btn{width:100%}
-.fineprint{
-  text-align:center;color:var(--dimmer);font-size:.76rem;
-  margin-top:28px;line-height:1.7;
-}
-
-/* FINAL CTA */
-.final-cta{
-  padding:56px 40px;border-radius:28px;
-  border:1px solid rgba(95,240,255,.2);
-  background:
-    radial-gradient(ellipse at 80% 10%,rgba(95,240,255,.08),transparent 45%),
-    radial-gradient(ellipse at 20% 90%,rgba(240,200,105,.06),transparent 45%),
-    linear-gradient(135deg,rgba(15,20,29,.9),rgba(8,11,17,.95));
-  text-align:center;position:relative;overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(95,240,255,.1),0 20px 60px rgba(0,0,0,.5);
-}
-.final-cta::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),var(--gold),var(--cyan),transparent);
-}
-.final-cta h2{
-  font:600 clamp(2rem,4vw,3.4rem)/1.05 "Space Grotesk",sans-serif;
-  letter-spacing:-.055em;margin-bottom:16px;
-}
-.final-cta h2 .gold{
-  background:linear-gradient(120deg,var(--gold-bright),var(--gold));
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.final-cta p{color:var(--muted);max-width:600px;margin:0 auto 28px;line-height:1.7}
-
-/* FOOTER */
-footer{
-  border-top:1px solid rgba(255,255,255,.06);
-  padding:40px 0 100px;color:var(--dimmer);
-  font-size:.76rem;margin-top:40px;
-}
-footer .foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
-.footer-brand{
-  color:var(--gold);font:700 .95rem "Space Grotesk",sans-serif;
-  letter-spacing:.16em;
-  text-shadow:0 0 20px rgba(240,200,105,.35);
-}
-
-/* FLOATING LAUNCH */
-.ai-launch{
-  position:fixed;right:26px;bottom:24px;z-index:30;
-  border:1px solid rgba(95,240,255,.5);
-  background:linear-gradient(145deg,rgba(15,30,42,.95),rgba(8,11,17,.95));
-  border-radius:18px;padding:10px 16px 10px 10px;
-  display:flex;align-items:center;gap:12px;color:var(--white);
-  box-shadow:0 12px 40px rgba(0,0,0,.7),0 0 30px rgba(95,240,255,.15);
-  cursor:pointer;transition:all .2s ease;
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-}
-.ai-launch:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 40px rgba(0,0,0,.7),0 0 45px rgba(95,240,255,.3);
-}
-.mini-orb{
-  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-  color:var(--cyan-bright);
-  background:radial-gradient(circle,rgba(95,240,255,.3),rgba(95,240,255,.04));
-  border:1px solid rgba(95,240,255,.55);
-  font-size:1.2rem;
-  box-shadow:inset 0 0 16px rgba(95,240,255,.2);
-}
-.launch-copy{text-align:left}
-.launch-copy b{display:block;font:600 .84rem "Space Grotesk",sans-serif;color:var(--white)}
-.launch-copy small{display:block;color:var(--muted);font-size:.66rem}
-
-/* ============================================================
-   10. TOAST / ADMIN
-   ============================================================ */
-.toast{
-  position:fixed;bottom:96px;left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:rgba(10,14,21,.95);
-  border:1px solid rgba(95,240,255,.4);
-  border-radius:14px;padding:12px 20px;
-  color:var(--cyan-bright);font-size:.8rem;
-  font-family:"Space Grotesk",sans-serif;letter-spacing:.04em;
-  z-index:150;opacity:0;pointer-events:none;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 12px 40px rgba(0,0,0,.6),0 0 24px rgba(95,240,255,.15);
-  transition:opacity .3s,transform .3s;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-.admin-modal{
-  position:fixed;inset:0;z-index:200;display:none;
-  align-items:center;justify-content:center;
-  background:rgba(0,0,0,.85);backdrop-filter:blur(10px);
-  padding:20px;
-}
-.admin-modal.open{display:flex}
-.admin-panel{
-  background:var(--panel);border:1px solid rgba(240,200,105,.25);
-  border-radius:18px;max-width:720px;width:100%;max-height:80vh;
-  overflow:auto;padding:28px;
-  box-shadow:0 30px 80px rgba(0,0,0,.8);
-}
-.admin-panel h2{font:600 1.4rem "Space Grotesk",sans-serif;margin:0 0 6px;color:var(--gold)}
-.admin-panel .sub{color:var(--muted);font-size:.8rem;margin-bottom:22px}
-.lead-card{
-  border:1px solid rgba(255,255,255,.08);border-radius:14px;
-  padding:16px;margin-bottom:14px;
-  background:rgba(255,255,255,.02);
-}
-.lead-card .lead-name{font-weight:700;color:var(--cyan);margin-bottom:6px}
-.lead-card .lead-meta{
-  font-size:.75rem;color:var(--muted);
-  font-family:"JetBrains Mono",monospace;
-  line-height:1.75;white-space:pre-wrap;
-}
-.admin-close{
-  float:right;background:transparent;border:0;color:var(--muted);
-  font-size:1.5rem;cursor:pointer;padding:0 8px;
-}
-.admin-close:hover{color:var(--white)}
-
-/* ============================================================
-   11. KEYFRAMES
-   ============================================================ */
-@keyframes pulse{50%{opacity:.35;box-shadow:0 0 2px var(--cyan-bright)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes breathe{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
-@keyframes pulseRing{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.35;transform:scale(1.03)}}
-@keyframes scanDown{0%{top:-24%}100%{top:100%}}
-@keyframes wv{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
-
-/* ============================================================
-   12. RESPONSIVE
-   ============================================================ */
-@media(max-width:850px){
-  .hero{padding-top:20px}
-  .service-grid{grid-template-columns:repeat(2,1fr)}
-  .split{grid-template-columns:1fr;gap:36px}
-  .split-copy{text-align:center}
-  .feature-list{text-align:left;max-width:520px;margin:25px auto}
-  .price-grid{grid-template-columns:1fr;max-width:560px;margin:auto}
-  .nav{display:none}
-}
-@media(max-width:520px){
-  .wrap{width:calc(100% - 30px)}
-  .topbar{padding:16px 0}
-  .top-cta{font-size:.72rem;padding:9px 12px}
-  .hero{padding:16px 0 50px}
-  .hero h1{font-size:clamp(2rem,9vw,3rem)}
-  .hero-sub{font-size:.92rem}
-  .actions{display:grid;grid-template-columns:1fr;width:100%;max-width:340px}
-  .stage{width:min(310px,74vw)}
-  .mode-badge{right:0;top:0;font-size:.55rem;padding:5px 10px;min-width:76px}
-  .control-bar{gap:8px;margin-top:18px}
-  .ctrl-pill{font-size:.68rem;padding:7px 11px}
-  .ctrl-pill.icon-only{padding:7px 10px}
-  .section{padding:70px 0}
-  .service-grid{grid-template-columns:1fr}
-  .service{min-height:0;padding:24px}
-  .cv-card{padding:22px}
-  .cv-top .fake-name{font-size:1.4rem}
-  .final-cta{padding:36px 22px}
-  .ai-launch{right:14px;bottom:14px}
-  .transcript{max-height:180px;font-size:.85rem;padding:14px 16px}
-  .input-bar input{padding:14px 18px;font-size:.86rem}
-  .ibtn{width:48px;height:48px}
-  footer .foot-row{display:block}
-  footer .foot-row>*{margin:8px 0}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{
-    animation-duration:.01ms!important;
-    animation-iteration-count:1!important;
-    transition-duration:.01ms!important;
-    scroll-behavior:auto!important;
-  }
-}
-</style>
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero { flex-direction: column; text-align: center; padding-top: 100px; }
+      .hero-left { max-width: 100%; margin-bottom: 20px; }
+      .btn-primary { margin: 0 auto; }
+      .nav-links { display: none; }
+      .avatar-controls { justify-content: center; }
+      .hero-right { max-width: 100%; margin-top: 20px; }
+    }
+    @media (max-width: 600px) {
+      .navbar { padding: 12px 20px; }
+      .section { padding: 50px 20px; }
+      .chat-widget { height: 480px; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="wrap">
-<header class="topbar">
-  <a class="brand" href="#" id="brand">
-    <span class="brand-mark"><span>✳</span></span>
-    <span>NEXUS <span class="gold">CV</span></span>
-  </a>
-  <nav class="nav">
-    <a href="#services">Services</a>
-    <a href="#standard">Our standard</a>
-    <a href="#packages">Packages</a>
-    <a href="#assistant">AI guide</a>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo-wrap">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">
+        NEXUS CV
+        <span>Your Future. Our Priority.</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#standard">Our standard</a>
+      <a href="#packages">Packages</a>
+      <a href="#assistant">AI guide</a>
+    </div>
+    <a href="#packages" class="btn-wa">Explore packages ↗</a>
   </nav>
-  <a class="top-cta" href="#packages">Explore packages ↗</a>
-</header>
 
-<main>
-
-<!-- HERO -->
-<section class="hero">
-  <span class="eyebrow anim-up d1"><i class="live-dot"></i> Career technology, reimagined</span>
-
-  <h1 class="anim-up d2">YOUR STORY.<br><span class="gold">YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
-
-  <p class="hero-sub anim-up d3">
-    A sharper CV starts with a better story. Meet a holographic strategist that
-    <strong>speaks, listens, and adapts</strong> — in English, Arabic, or Roman Urdu —
-    then delivers a clear, ATS-aware professional profile. No fake promises. No job guarantees.
-  </p>
-
-  <!-- HOLOGRAM -->
-  <div class="stage anim-up d3" id="stage" role="button" tabindex="0" aria-label="Activate NEXUS hologram">
-    <div class="ring ring-1"></div>
-    <div class="ring ring-2"></div>
-    <div class="ring ring-3"></div>
-    <div class="ring ring-4"></div>
-    <div class="aura"></div>
-
-    <div class="avatar-halo">
-      <div class="avatar-inner" id="avatarInner" title="Click to upload your photo">
-        <img class="avatar" id="avatarImg" alt="NEXUS holographic avatar">
-        <div class="holo-scan"></div>
+  <!-- HERO SECTION -->
+  <main class="hero">
+    <!-- LEFT -->
+    <section class="hero-left">
+      <p class="hero-subtitle">Career technology, reimagined</p>
+      <h1 class="hero-title" id="scrambleTitle">YOUR STORY.<br><span>YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
+      <p class="hero-desc">A sharper CV starts with a better story. Meet a holographic strategist that speaks, listens, and adapts — in English, Arabic, or Roman Urdu — then delivers a clear, ATS-aware professional profile. No fake promises. No job guarantees.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+        <a href="#" class="btn-primary wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV ↗</a>
+        <button class="btn-primary" onclick="document.getElementById('chatInput').focus()">MEET NEXUS AI ✧</button>
       </div>
-      <div class="waveform" id="waveform" aria-hidden="true">
-        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </section>
+
+    <!-- CENTER (FIXED AVATAR) -->
+    <section class="hero-center">
+      <div class="avatar-container">
+        <div class="ring-1"></div>
+        <div class="ring-2"></div>
+        <div class="ring-3"></div>
+        <div class="agent-badge">AI AGENT ONLINE</div>
+        
+        <div class="avatar-img-wrap">
+          <!-- 
+            तुम्हारी फोटो यहाँ फिक्स है। 
+            अगर तुम वीडियो लगाना चाहो तो नीचे दिए गए <img> टैग को हटाकर यह डाल सकती हो:
+            <video src="YOUR_VIDEO_LINK.mp4" autoplay loop muted playsinline class="avatar-media"></video>
+            
+            या अपनी फोटो के लिए नीचे src में अपना लिंक डालो। 
+          -->
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop" alt="NEXUS Avatar" class="avatar-media">
+        </div>
+        
+        <div class="avatar-base"></div>
       </div>
-    </div>
-
-    <div class="mode-badge" id="modeBadge">
-      <span class="lbl">MODE</span>
-      <span class="val" id="modeVal">STANDBY</span>
-    </div>
-  </div>
-
-  <div class="status-pill anim-up d4" id="statusPill">
-    <span class="dot"></span>
-    <span id="statusText">STANDBY · CLICK THE HOLOGRAM TO WAKE</span>
-  </div>
-
-  <!-- CONTROL BAR -->
-  <div class="control-bar anim-up d4">
-    <div class="ctrl-group" role="group" aria-label="Voice">
-      <button class="ctrl-pill active" id="femaleBtn">♀ Female</button>
-      <button class="ctrl-pill" id="maleBtn">♂ Male</button>
-    </div>
-    <div class="ctrl-group" role="group" aria-label="Session">
-      <button class="ctrl-pill icon-only" id="closeBtn" title="Hide transcript">✕</button>
-      <button class="ctrl-pill danger" id="exitBtn" title="Exit hologram">⏻ Exit</button>
-    </div>
-  </div>
-
-  <!-- TRANSCRIPT -->
-  <div class="transcript anim-up d4" id="transcript" aria-live="polite">
-    <div class="t-line bot">
-      <span class="who">NX</span>
-      <span class="txt">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate. Type or speak in English, العربية, or Roman Urdu.</span>
-    </div>
-  </div>
-
-  <!-- INPUT -->
-  <form class="input-bar anim-up d5" id="chatForm" autocomplete="off">
-    <button type="button" class="ibtn mic hidden" id="micBtn" aria-label="Speak your question">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/>
-      </svg>
-    </button>
-    <input id="chatInput" placeholder="Ask NEXUS — English, العربية, or Roman Urdu…">
-    <button class="ibtn send" type="submit" id="sendBtn" aria-label="Send">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-      </svg>
-    </button>
-  </form>
-
-  <div class="actions anim-up d5">
-    <a class="btn btn-gold wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV <span>↗</span></a>
-    <button class="btn btn-outline" id="wakeBtn">MEET NEXUS AI <span style="color:var(--cyan)">✧</span></button>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section class="section" id="services">
-  <div class="section-kicker">Built around your next step</div>
-  <h2 class="section-title">Not just a CV. A <span class="gold">career signal.</span></h2>
-  <p class="section-sub">Focused services for real job-search needs. Choose what fits you, then speak with us directly.</p>
-  <div class="service-grid">
-    <article class="service"><div class="symbol">⌘</div><h3>ATS-aware CV</h3><p>Readable structure, standard headings, and relevant keywords based on your target role.</p></article>
-    <article class="service"><div class="symbol">↗</div><h3>Saudi-market CV</h3><p>Present your experience and job-relevant details clearly for opportunities in Saudi Arabia.</p></article>
-    <article class="service"><div class="symbol">◎</div><h3>Freshers & career starters</h3><p>Bring projects, training, transferable skills, and potential into focus — even with limited experience.</p></article>
-    <article class="service"><div class="symbol">✳</div><h3>International applications</h3><p>Adapt the format and language to the country, role, and employer expectations.</p></article>
-    <article class="service"><div class="symbol">⟳</div><h3>CV rebuild & refresh</h3><p>Turn a cluttered or outdated CV into a cleaner, more focused professional document.</p></article>
-    <article class="service"><div class="symbol">≋</div><h3>Cover letter & LinkedIn</h3><p>Keep your professional story consistent across applications and recruiter-facing profiles.</p></article>
-  </div>
-</section>
-
-<!-- SAMPLE CV -->
-<section class="section" id="standard">
-  <div class="split">
-    <div class="split-copy">
-      <div class="section-kicker" style="text-align:left">The NEXUS standard</div>
-      <h2>Less decoration.<br><span class="gold">More signal.</span></h2>
-      <p>A futuristic website can look bold. Your CV should still be easy for recruiters and software to read. We keep the experience modern while prioritizing the document itself.</p>
-      <div class="feature-list">
-        <div class="feature"><span class="check">✦</span><span><b>ATS-aware formatting</b>Clean sections and practical layouts — not complicated graphics inside the CV.</span></div>
-        <div class="feature"><span class="check">✦</span><span><b>Role-focused wording</b>Relevant keywords drawn from your experience and target job description.</span></div>
-        <div class="feature"><span class="check">✦</span><span><b>Human review</b>We confirm your details with you instead of inventing achievements.</span></div>
+      
+      <!-- Avatar Controls (Voice toggles) -->
+      <div class="avatar-controls">
+        <button class="ctrl-btn active" id="femaleBtn">♀ Female</button>
+        <button class="ctrl-btn" id="maleBtn">♂ Male</button>
+        <button class="ctrl-btn danger" id="exitBtn">⏻ Exit</button>
+        <button class="ctrl-btn" id="closeBtn">✕ Hide</button>
       </div>
-      <button class="btn btn-outline" onclick="askNexus('What makes a CV ATS-aware?')">Ask NEXUS how it works ↗</button>
-    </div>
+    </section>
 
-    <div class="cv-card">
-      <div class="cv-top">
-        <div class="fake-name">UMAR FARUQ</div>
-        <div class="fake-role">Senior Business Operations Specialist</div>
+    <!-- RIGHT (Chat) -->
+    <section class="hero-right" id="assistant">
+      <div class="chat-widget" id="chatWidget">
+        <div class="laser-line"></div>
+        <div class="chat-header">
+          <h3>NEXUS holographic avatar</h3>
+          <div class="status-pill" id="statusPill">STANDBY</div>
+        </div>
+        
+        <div class="chat-messages" id="transcript">
+          <div class="msg bot">
+            <div class="msg-icon">NX</div>
+            <div class="msg-bubble">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate. Type or speak in English, العربية, or Roman Urdu.</div>
+          </div>
+        </div>
+
+        <form class="chat-input-area" id="chatForm">
+          <button type="button" class="ibtn mic hidden" id="micBtn" aria-label="Speak">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+          </button>
+          <input type="text" id="chatInput" placeholder="Ask NEXUS — English, العربية, or Roman Urdu…" autocomplete="off">
+          <button type="submit" class="ibtn" id="sendBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- SERVICES (Same as previous, kept intact) -->
+  <section class="section" id="services">
+    <div class="section-header">
+      <p class="section-kicker">Built around your next step</p>
+      <h2 class="section-title">Not just a CV. A <span>career signal.</span></h2>
+      <p class="section-sub">Focused services for real job-search needs. Choose what fits you, then speak with us directly.</p>
+    </div>
+    <div class="service-grid">
+      <div class="service-card"><div class="service-icon">⌘</div><h3>ATS-aware CV</h3><p>Readable structure, standard headings, and relevant keywords based on your target role.</p></div>
+      <div class="service-card"><div class="service-icon">↗</div><h3>Saudi-market CV</h3><p>Present your experience and job-relevant details clearly for opportunities in Saudi Arabia.</p></div>
+      <div class="service-card"><div class="service-icon">◎</div><h3>Freshers & career starters</h3><p>Bring projects, training, transferable skills, and potential into focus — even with limited experience.</p></div>
+      <div class="service-card"><div class="service-icon">✳</div><h3>International applications</h3><p>Adapt the format and language to the country, role, and employer expectations.</p></div>
+      <div class="service-card"><div class="service-icon">⟳</div><h3>CV rebuild & refresh</h3><p>Turn a cluttered or outdated CV into a cleaner, more focused professional document.</p></div>
+      <div class="service-card"><div class="service-icon">≋</div><h3>Cover letter & LinkedIn</h3><p>Keep your professional story consistent across applications and recruiter-facing profiles.</p></div>
+    </div>
+  </section>
+
+  <!-- STANDARD / CV SAMPLE -->
+  <section class="section" id="standard">
+    <div class="split">
+      <div class="split-copy">
+        <p class="section-kicker">The NEXUS standard</p>
+        <h2>Less decoration.<br><span>More signal.</span></h2>
+        <p>A futuristic website can look bold. Your CV should still be easy for recruiters and software to read. We keep the experience modern while prioritizing the document itself.</p>
+        <div class="feature-list">
+          <div class="feature"><span class="feature-icon">✦</span><div><b>ATS-aware formatting</b><span>Clean sections and practical layouts — not complicated graphics inside the CV.</span></div></div>
+          <div class="feature"><span class="feature-icon">✦</span><div><b>Role-focused wording</b><span>Relevant keywords drawn from your experience and target job description.</span></div></div>
+          <div class="feature"><span class="feature-icon">✦</span><div><b>Human review</b><span>We confirm your details with you instead of inventing achievements.</span></div></div>
+        </div>
+        <button class="btn-primary" onclick="askNexus('What makes a CV ATS-aware?')" style="border-color: var(--cyan); color: var(--cyan);">Ask NEXUS how it works ↗</button>
+      </div>
+
+      <div class="cv-card">
+        <div class="cv-name">UMAR FARUQ</div>
+        <div class="cv-role">Senior Business Operations Specialist</div>
         <div class="cv-meta">Dammam, Saudi Arabia · umar.faruq@nexuscv.co · +966 56 346 8309</div>
-      </div>
-
-      <div class="cv-section">
-        <h4>Professional Summary</h4>
-        <p>Results-driven operations specialist with 7+ years delivering process improvements across logistics, project coordination, and cross-functional leadership. Recognized for translating complex requirements into measurable outcomes — including 32% efficiency gains and SAR 1.2M in annual savings. Fluent in Arabic, English, and Urdu.</p>
-      </div>
-
-      <div class="cv-section">
-        <h4>Experience</h4>
-
-        <b>Senior Operations Specialist · Gulf Energy Services</b>
-        <div class="cv-job-meta">Dammam, KSA · 2021 — Present</div>
-        <ul>
-          <li>Led cross-functional team of 12 across three departments, cutting project cycle time by 28%.</li>
-          <li>Redesigned procurement workflow, saving SAR 1.2M annually across regional operations.</li>
-          <li>Introduced automated reporting that eliminated 15+ hours of manual work weekly.</li>
-        </ul>
-
-        <b style="margin-top:14px;display:block">Operations Coordinator · Eastern Logistics Group</b>
-        <div class="cv-job-meta">Khobar, KSA · 2018 — 2021</div>
-        <ul>
-          <li>Managed scheduling for 40+ field technicians, improving on-time delivery from 76% to 94%.</li>
-          <li>Built inventory tracking dashboard adopted by 6 regional branches.</li>
-        </ul>
-
-        <b style="margin-top:14px;display:block">Junior Business Analyst · Regional Trading Co.</b>
-        <div class="cv-job-meta">Dammam, KSA · 2016 — 2018</div>
-        <ul>
-          <li>Supported demand forecasting for an SAR 8M product line, reducing stockouts by 41%.</li>
-          <li>Prepared weekly executive reports on regional sales performance.</li>
-        </ul>
-      </div>
-
-      <div class="cv-section">
-        <h4>Certifications</h4>
-        <p>PMP · Six Sigma Green Belt · Advanced Excel · SAP S/4HANA · Power BI</p>
-      </div>
-
-      <div class="cv-section">
-        <h4>Core Skills</h4>
-        <p>Operations Management · Project Coordination · Data Analysis · Process Improvement · Team Leadership · SAP · Excel · Power BI · Arabic · English · Urdu</p>
-      </div>
-
-      <div style="border-top:1px solid rgba(240,200,105,.15);margin-top:22px;padding-top:14px;color:var(--dimmer);font-size:.66rem;letter-spacing:.06em">
-        SAMPLE FORMAT · ACHIEVEMENTS ILLUSTRATIVE · YOUR REAL DETAILS REPLACE THESE
+        
+        <div class="cv-sec">
+          <h4>Professional Summary</h4>
+          <p>Results-driven operations specialist with 7+ years delivering process improvements across logistics, project coordination, and cross-functional leadership. Recognized for translating complex requirements into measurable outcomes — including 32% efficiency gains and SAR 1.2M in annual savings. Fluent in Arabic, English, and Urdu.</p>
+        </div>
+        <div class="cv-sec">
+          <h4>Experience</h4>
+          <p><b>Senior Operations Specialist · Gulf Energy Services</b></p>
+          <p style="font-size:0.7rem; color:var(--muted); margin-bottom:4px;">Dammam, KSA · 2021 — Present</p>
+          <ul>
+            <li>Led cross-functional team of 12 across three departments, cutting project cycle time by 28%.</li>
+            <li>Redesigned procurement workflow, saving SAR 1.2M annually across regional operations.</li>
+            <li>Introduced automated reporting that eliminated 15+ hours of manual work weekly.</li>
+          </ul>
+          <p><b>Operations Coordinator · Eastern Logistics Group</b></p>
+          <p style="font-size:0.7rem; color:var(--muted); margin-bottom:4px;">Khobar, KSA · 2018 — 2021</p>
+          <ul>
+            <li>Managed scheduling for 40+ field technicians, improving on-time delivery from 76% to 94%.</li>
+            <li>Built inventory tracking dashboard adopted by 6 regional branches.</li>
+          </ul>
+          <p><b>Junior Business Analyst · Regional Trading Co.</b></p>
+          <p style="font-size:0.7rem; color:var(--muted); margin-bottom:4px;">Dammam, KSA · 2016 — 2018</p>
+          <ul>
+            <li>Supported demand forecasting for an SAR 8M product line, reducing stockouts by 41%.</li>
+            <li>Prepared weekly executive reports on regional sales performance.</li>
+          </ul>
+        </div>
+        <div class="cv-sec">
+          <h4>Certifications</h4>
+          <p>PMP · Six Sigma Green Belt · Advanced Excel · SAP S/4HANA · Power BI</p>
+        </div>
+        <div class="cv-sec">
+          <h4>Core Skills</h4>
+          <p>Operations Management · Project Coordination · Data Analysis · Process Improvement · Team Leadership · SAP · Excel · Power BI · Arabic · English · Urdu</p>
+        </div>
+        <div class="cv-footer">SAMPLE FORMAT · ACHIEVEMENTS ILLUSTRATIVE · YOUR REAL DETAILS REPLACE THESE</div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- PACKAGES -->
-<section class="section" id="packages">
-  <div class="section-kicker">Straightforward packages</div>
-  <h2 class="section-title">Choose your <span class="gold">next move.</span></h2>
-  <p class="section-sub">No online checkout. Message us on WhatsApp to discuss your requirements, final price, delivery time, and payment options before confirming.</p>
-  <div class="price-grid">
-    <article class="price">
-      <span class="label">Start here</span>
-      <h3>Essential</h3>
-      <div class="amount">From SAR 149</div>
-      <p class="pitch">A clean, ATS-ready start.</p>
-      <ul>
-        <li>ATS-aware CV structure</li>
-        <li>Role-focused content review</li>
-        <li>PDF + editable file, if agreed</li>
-        <li>Revision terms confirmed first</li>
-      </ul>
-      <a class="btn btn-outline wa-link" data-message="Hi NEXUS CV, I want to ask about the Essential CV package.">Ask on WhatsApp ↗</a>
-    </article>
-    <article class="price featured">
-      <span class="label">Most requested</span>
-      <h3>Professional</h3>
-      <div class="amount">From SAR 299</div>
-      <p class="pitch">CV + cover letter + LinkedIn, aligned.</p>
-      <ul>
-        <li>Everything in Essential</li>
-        <li>Cover letter support</li>
-        <li>LinkedIn content guidance</li>
-        <li>Delivery and revision terms agreed</li>
-      </ul>
-      <a class="btn btn-gold wa-link" data-message="Hi NEXUS CV, I want to ask about the Professional package.">Discuss this package ↗</a>
-    </article>
-    <article class="price">
-      <span class="label">Career positioning</span>
-      <h3>Executive</h3>
-      <div class="amount">From SAR 499</div>
-      <p class="pitch">Priority, international, unlimited.</p>
-      <ul>
-        <li>Senior-level CV positioning</li>
-        <li>International format guidance</li>
-        <li>Personal brand statement</li>
-        <li>Priority timing by agreement</li>
-      </ul>
-      <a class="btn btn-outline wa-link" data-message="Hi NEXUS CV, I want to ask about the Executive package.">Ask on WhatsApp ↗</a>
-    </article>
-  </div>
-  <p class="fineprint">Prices are illustrative starting points and must be confirmed with the owner. No job placement, interview, or ATS pass is guaranteed.</p>
-</section>
+  <!-- PACKAGES -->
+  <section class="section" id="packages">
+    <div class="section-header">
+      <p class="section-kicker">Straightforward packages</p>
+      <h2 class="section-title">Choose your <span>next move.</span></h2>
+      <p class="section-sub">No online checkout. Message us on WhatsApp to discuss your requirements, final price, delivery time, and payment options before confirming.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="pkg-label">Start here</div>
+        <h3>Essential</h3>
+        <div class="pkg-price">From SAR 149</div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px; font-style:italic;">A clean, ATS-ready start.</p>
+        <ul class="pkg-list">
+          <li>ATS-aware CV structure</li>
+          <li>Role-focused content review</li>
+          <li>PDF + editable file, if agreed</li>
+          <li>Revision terms confirmed first</li>
+        </ul>
+        <a href="#" class="btn-pkg wa-link" data-message="Hi NEXUS CV, I want to ask about the Essential CV package.">Ask on WhatsApp ↗</a>
+      </div>
+      
+      <div class="price-card featured">
+        <div class="pkg-label">Most requested</div>
+        <h3>Professional</h3>
+        <div class="pkg-price">From SAR 299</div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px; font-style:italic;">CV + cover letter + LinkedIn, aligned.</p>
+        <ul class="pkg-list">
+          <li>Everything in Essential</li>
+          <li>Cover letter support</li>
+          <li>LinkedIn content guidance</li>
+          <li>Delivery and revision terms agreed</li>
+        </ul>
+        <a href="#" class="btn-pkg wa-link" data-message="Hi NEXUS CV, I want to ask about the Professional package.">Discuss this package ↗</a>
+      </div>
 
-<!-- FINAL CTA -->
-<section class="section" id="assistant">
-  <div class="final-cta">
-    <div class="section-kicker">Meet the guide</div>
-    <h2>Ask the question.<br><span class="gold">Get a straight answer.</span></h2>
-    <p>Need to know what ATS means, which package fits you, or why a CV costs what it costs? Ask NEXUS. Serious when it matters, funny when it helps — never a loop.</p>
-    <button class="btn btn-gold" onclick="scrollToHologram()">Talk to NEXUS <span>✧</span></button>
-  </div>
-</section>
+      <div class="price-card">
+        <div class="pkg-label">Career positioning</div>
+        <h3>Executive</h3>
+        <div class="pkg-price">From SAR 499</div>
+        <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px; font-style:italic;">Priority, international, unlimited.</p>
+        <ul class="pkg-list">
+          <li>Senior-level CV positioning</li>
+          <li>International format guidance</li>
+          <li>Personal brand statement</li>
+          <li>Priority timing by agreement</li>
+        </ul>
+        <a href="#" class="btn-pkg wa-link" data-message="Hi NEXUS CV, I want to ask about the Executive package.">Ask on WhatsApp ↗</a>
+      </div>
+    </div>
+    <p class="fineprint">Prices are illustrative starting points and must be confirmed with the owner. No job placement, interview, or ATS pass is guaranteed.</p>
+  </section>
 
-</main>
+  <!-- FINAL CTA -->
+  <section class="section">
+    <div class="final-cta">
+      <p class="section-kicker">Meet the guide</p>
+      <h2>Ask the question.<br><span style="color:var(--cyan);">Get a straight answer.</span></h2>
+      <p>Need to know what ATS means, which package fits you, or why a CV costs what it costs? Ask NEXUS. Serious when it matters, funny when it helps — never a loop.</p>
+      <button class="btn-primary" onclick="document.getElementById('chatInput').focus()" style="margin: 0 auto;">Talk to NEXUS ✧</button>
+    </div>
+  </section>
 
-<footer>
-  <div class="foot-row">
+  <!-- FOOTER -->
+  <footer>
     <div class="footer-brand">NEXUS CV</div>
     <div>Built for clarity. Designed for momentum.</div>
     <div>© <span id="year"></span> NEXUS CV</div>
-  </div>
-  <p style="max-width:760px;margin-top:20px;line-height:1.8">
-    NEXUS CV provides CV and career-document assistance, not recruitment or job placement.
-    ATS behavior varies by employer and software. AI responses are informational and may be imperfect.
-    Conversations may be logged for service quality and follow-up. Confirm all details before relying on them.
-  </p>
-</footer>
-</div>
+    <div class="footer-disclaimer">
+      NEXUS CV provides CV and career-document assistance, not recruitment or job placement. ATS behavior varies by employer and software. AI responses are informational and may be imperfect. Conversations may be logged for service quality and follow-up. Confirm all details before relying on them.
+    </div>
+  </footer>
 
-<button class="ai-launch" id="aiLaunch" aria-label="Scroll to NEXUS hologram">
-  <span class="mini-orb">✧</span>
-  <span class="launch-copy"><b>NEXUS AI</b><small>Talk to the hologram</small></span>
-</button>
+  <script>
+    /* ============================================================
+       CONFIG & UTILS
+       ============================================================ */
+    const WHATSAPP_NUMBER = "966563468307";
+    const NEXUS_WORKER_URL = "https://quiet-snowflake-4c02.umaremotions.workers.dev/";
+    const NEXUS_WORKER_TIMEOUT_MS = 30000;
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
 
-<input id="avatarUpload" type="file" accept="image/*" hidden>
-
-<div class="admin-modal" id="adminModal">
-  <div class="admin-panel">
-    <button class="admin-close" onclick="document.getElementById('adminModal').classList.remove('open')">×</button>
-    <h2>Captured Leads</h2>
-    <p class="sub">Stored locally in this browser. Triple-click the NEXUS logo to open.</p>
-    <div id="adminLeads"></div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-/* ============================================================
-   CONFIG
-   ============================================================ */
-const WHATSAPP_NUMBER = "966563468309";
-const AVATAR_KEY = "nexus_avatar_v2";
-const LEADS_KEY  = "nexus_leads_v2";
-const LEAD_WEBHOOK_URL = "";
-
-/* AI worker — background, never blocks UI */
-const NEXUS_WORKER_URL = "https://quiet-snowflake-4c02.umaremotions.workers.dev/";
-const NEXUS_WORKER_TIMEOUT_MS = 30000;
-
-const $ = (id) => document.getElementById(id);
-$("year").textContent = new Date().getFullYear();
-
-/* ============================================================
-   WHATSAPP
-   ============================================================ */
-function whatsappUrl(message){
-  const number = WHATSAPP_NUMBER.replace(/\D/g, "");
-  if(!number || number.length < 8){
-    alert("Set your WhatsApp number in WHATSAPP_NUMBER near the top of the script.");
-    return "#";
-  }
-  return "https://wa.me/" + number + "?text=" + encodeURIComponent(message);
-}
-document.querySelectorAll(".wa-link").forEach(a => {
-  a.href = whatsappUrl(a.dataset.message || "Hi NEXUS CV, I'd like to ask about your CV services.");
-  a.target = "_blank";
-  a.rel = "noopener noreferrer";
-});
-
-/* ============================================================
-   AVATAR
-   ============================================================ */
-const DEFAULT_AVATAR = "data:image/svg+xml;utf8," + encodeURIComponent(
-  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 380'>" +
-    "<defs><radialGradient id='bg' cx='50%' cy='40%'>" +
-      "<stop offset='0%' stop-color='#0a1a28'/><stop offset='100%' stop-color='#020408'/>" +
-    "</radialGradient><linearGradient id='cy' x1='0' y1='0' x2='1' y2='1'>" +
-      "<stop offset='0' stop-color='#5ff0ff'/><stop offset='1' stop-color='#a78bfa'/>" +
-    "</linearGradient></defs>" +
-    "<rect width='300' height='380' fill='url(#bg)'/>" +
-    "<g opacity='0.4' stroke='#5ff0ff' stroke-width='1' fill='none'>" +
-      "<circle cx='150' cy='165' r='95'/><circle cx='150' cy='165' r='125' opacity='0.5'/>" +
-      "<circle cx='150' cy='165' r='155' opacity='0.25'/></g>" +
-    "<circle cx='150' cy='155' r='45' fill='url(#cy)' opacity='0.92'/>" +
-    "<path d='M60 340 Q150 220 240 340 Z' fill='url(#cy)' opacity='0.82'/>" +
-    "<circle cx='150' cy='155' r='45' fill='none' stroke='#5ff0ff' stroke-width='2'/>" +
-    "<text x='150' y='368' text-anchor='middle' font-family='Space Grotesk, sans-serif' font-size='11' fill='#5ff0ff' letter-spacing='3' opacity='0.8'>NEXUS</text>" +
-  "</svg>"
-);
-
-const avatarImg = $("avatarImg");
-avatarImg.src = DEFAULT_AVATAR;
-try{ const s = localStorage.getItem(AVATAR_KEY); if(s) avatarImg.src = s; }catch(e){}
-
-$("avatarInner").addEventListener("click", (e) => { e.stopPropagation(); $("avatarUpload").click(); });
-$("avatarUpload").addEventListener("change", (e) => {
-  const file = e.target.files && e.target.files[0]; if(!file) return;
-  if(!file.type.startsWith("image/")){ alert("Please choose an image file."); return; }
-  if(file.size > 4 * 1024 * 1024){ alert("Image too large (max 4 MB)."); return; }
-  const reader = new FileReader();
-  reader.onload = () => {
-    const dataUrl = String(reader.result);
-    if(dataUrl.length > 2 * 1024 * 1024){ alert("Compressed image still too large. Try under ~1.5 MB."); return; }
-    avatarImg.src = dataUrl;
-    try{ localStorage.setItem(AVATAR_KEY, dataUrl); }catch(err){ alert("Could not save photo — session-only."); }
-  };
-  reader.readAsDataURL(file);
-});
-
-/* ============================================================
-   STATE
-   ============================================================ */
-const stage      = $("stage");
-const statusPill = $("statusPill");
-const statusText = $("statusText");
-const modeBadge  = $("modeBadge");
-const modeVal    = $("modeVal");
-const wakeBtn    = $("wakeBtn");
-const transcript = $("transcript");
-
-let isActivated = false;
-let isSpeaking  = false;
-let isListening = false;
-
-let currentLang   = "en";
-let currentGender = "female";
-let currentVoice  = null;
-let voiceReady    = false;
-let speechGen     = 0;
-
-const state = {
-  turnCount: 0,
-  askedRole: false,
-  knownRole: null,
-  knownMarket: null,
-  knownExperience: null,
-  knownTone: "professional",
-  usedVariants: new Map(),
-  lastReply: null,
-  lastTopic: null
-};
-
-function setStatus(kind){
-  statusPill.classList.remove("online","speaking","listening");
-  if(kind === "online")    { statusPill.classList.add("online");    statusText.textContent = "ONLINE · READY"; }
-  if(kind === "speaking")  { statusPill.classList.add("speaking");  statusText.textContent = "SPEAKING"; }
-  if(kind === "listening") { statusPill.classList.add("listening"); statusText.textContent = "LISTENING"; }
-  if(kind === "standby")   { statusText.textContent = "STANDBY · CLICK THE HOLOGRAM TO WAKE"; }
-}
-
-function setMode(tone, lang){
-  modeBadge.classList.remove("mode-coach","mode-savage","shift");
-  const tag = { en:"", ar:" · AR", ur:" · UR" }[lang || currentLang] || "";
-  if(tone === "encouraging") { modeBadge.classList.add("mode-coach");  modeVal.textContent = "COACH" + tag; }
-  else if(tone === "savage") { modeBadge.classList.add("mode-savage"); modeVal.textContent = "NO NONSENSE" + tag; }
-  else if(tone === "standby"){ modeVal.textContent = "STANDBY"; }
-  else                       { modeVal.textContent = "STRATEGIC" + tag; }
-  void modeBadge.offsetWidth;
-  modeBadge.classList.add("shift");
-  setTimeout(() => modeBadge.classList.remove("shift"), 650);
-}
-
-/* ============================================================
-   TOAST
-   ============================================================ */
-let toastTimer;
-function toast(msg, ms){
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), ms || 2600);
-}
-
-/* ============================================================
-   LANGUAGE DETECTION
-   ============================================================ */
-function detectLanguage(text){
-  if(!text) return "en";
-  if(/[\u0600-\u06FF]/.test(text)) return "ar";
-  const urdu = /\b(kya|hai|hain|ka|ki|ke|ko|mera|meri|mujhe|aap|tum|hum|nahi|haan|chahiye|banana|banao|batao|kaise|kyun|shukriya|acha|thik|zaroor|zarurat|paisa|kitna|zyada|kam|sasta|mehnga|yaar|bhai|salam|salaam|assalam|inshallah|mashallah|bataiye|batayein|kijiye|karo|karunga|karenge|hoga|milega|gaya|gayi|bohot|bahut|bana|banaao|naukri|kaam|mujhe|batado|bata|suniye|suno|bolo|boliye|matlab)\b/i;
-  if(urdu.test(text)) return "ur";
-  return "en";
-}
-
-/* ============================================================
-   OFF-TOPIC FILTER — keep conversation about CV/career only
-   ============================================================ */
-const CV_KEYWORDS = /(cv|resume|curriculum|ats|applicant|job|career|work|interview|salary|pay|hire|hiring|position|role|apply|application|cover|letter|linkedin|profile|fresher|fresh|graduate|experience|skill|education|degree|project|portfolio|recruit|employer|company|package|price|pricing|cost|service|whatsapp|saudi|ksa|riyadh|jeddah|gulf|international|arabic|english|urdu|language|review|redesign|build|create|make|help|need|want|looking|advice|tips|template|format|feedback|improve|fix|edit|write|draft|summary|objective|achievement|qualification|certification|training|internship|volunteer|abroad|overseas|submit|prepare|naukri|kaam|paisa|kitna|mehnga|sasta)/i;
-
-const GREETING_KEYWORDS = /^(hi|hello|hey|salam|salaam|assalam|assalamualaikum|marhaba|ahlan|aoa|how are you|how r u|thanks|thank you|shukriya|bye|goodbye|ok|okay|what'?s up|good morning|good evening|good night)\b[\s!?.,]*$/i;
-
-const CONTINUER_KEYWORDS = /^(yes|no|yeah|nope|sure|continue|go on|more|tell me more|next|what else|why|haan|nahi|acha|theek|ok|okay)\b[\s!?.,]*$/i;
-
-function isOffTopic(text){
-  const t = text.trim();
-  if(!t) return false;
-  if(GREETING_KEYWORDS.test(t)) return false;
-  if(CV_KEYWORDS.test(t)) return false;
-  if(state.turnCount > 0 && CONTINUER_KEYWORDS.test(t)) return false;
-  return true;
-}
-
-const OFF_TOPIC = {
-  en: {
-    professional: "Sorry — I focus on CVs, careers, and your next move. What role are you working toward?",
-    encouraging:  "Happy to chat! But let's keep it on your CV journey. What role are you aiming for?",
-    savage:       "We're here to fix your CV, not to chat. What job are you applying for?"
-  },
-  ar: {
-    professional: "عذراً — أنا مختص بالسيرة الذاتية والمسار المهني. ما دورك المستهدف؟",
-    encouraging:  "سعيد بالحديث، لكن لنركز على سيرتك. ما الدور الذي تسعى إليه؟",
-    savage:       "نحن هنا لإصلاح سيرتك، لا للثرثرة. ما الوظيفة التي تتقدم لها؟"
-  },
-  ur: {
-    professional: "Maaf — main sirf CV aur career mein madad karta hoon. Aapka target role kya hai?",
-    encouraging:  "Baat karna acha hai, lekin apni CV pe focus karein. Kaunsa role chahiye?",
-    savage:       "Hum CV theek karne aaye hain, baatein karne nahi. Kis job ke liye apply kar rahe hain?"
-  }
-};
-
-/* ============================================================
-   VOICE
-   ============================================================ */
-const FEMALE_HINTS = [
-  "aria online (natural)","aria natural","aria",
-  "jenny online (natural)","jenny",
-  "sonia online (natural)","sonia",
-  "libby online (natural)","libby",
-  "michelle online (natural)","michelle",
-  "natasha online (natural)","natasha",
-  "clara online (natural)","clara",
-  "zira",
-  "google uk english female","google us english",
-  "samantha","karen","susan","victoria"
-];
-const MALE_HINTS = [
-  "guy online (natural)","guy natural","guy",
-  "ryan online (natural)","ryan",
-  "thomas online (natural)","thomas",
-  "christopher online (natural)","christopher",
-  "eric online (natural)","eric",
-  "roger online (natural)","roger",
-  "steffan online (natural)","steffan",
-  "david","mark",
-  "google uk english male",
-  "daniel","alex","fred"
-];
-
-const LANG_MATCH = { en: "en", ar: "ar", ur: "ur" };
-
-function pickVoice(){
-  if(!("speechSynthesis" in window)) return null;
-  const voices = speechSynthesis.getVoices();
-  if(!voices.length) return null;
-
-  const wantLang = LANG_MATCH[currentLang] || "en";
-  let candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith(wantLang));
-
-  if(!candidates.length && wantLang === "ur"){
-    candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith("hi"));
-  }
-  if(!candidates.length){
-    candidates = voices.filter(v => (v.lang || "").toLowerCase().startsWith("en"));
-  }
-  if(!candidates.length) candidates = voices;
-
-  const hints = currentGender === "female" ? FEMALE_HINTS : MALE_HINTS;
-  for(const h of hints){
-    const m = candidates.find(v => (v.name || "").toLowerCase().includes(h));
-    if(m) return m;
-  }
-  return candidates[0];
-}
-
-function refreshVoice(){
-  currentVoice = pickVoice();
-  voiceReady = !!currentVoice;
-}
-
-if("speechSynthesis" in window){
-  refreshVoice();
-  speechSynthesis.onvoiceschanged = refreshVoice;
-}
-
-function stripMarkup(s){ return s.replace(/<[^>]+>/g, ""); }
-
-function splitForSpeech(text){
-  return (text.match(/[^.!?؟।]+[.!?؟।]*/g) || [text]).map(s => s.trim()).filter(Boolean);
-}
-
-function chunkByLength(sentences, maxLen){
-  const out = []; let cur = "";
-  for(const s of sentences){
-    const pieces = s.length > maxLen ? s.split(/(?<=,|،)\s+/) : [s];
-    for(const piece of pieces){
-      if((cur + " " + piece).trim().length > maxLen && cur){ out.push(cur.trim()); cur = piece; }
-      else { cur = (cur + " " + piece).trim(); }
+    // WhatsApp Links
+    function whatsappUrl(message){
+      const number = WHATSAPP_NUMBER.replace(/\D/g, "");
+      return "https://wa.me/" + number + "?text=" + encodeURIComponent(message);
     }
-  }
-  if(cur) out.push(cur.trim());
-  return out;
-}
-
-function speak(text, tone, lang){
-  if(!("speechSynthesis" in window)) return;
-  if(!text || !isActivated) return;
-
-  const speakLang = lang || currentLang;
-  if(speakLang !== currentLang){ currentLang = speakLang; refreshVoice(); }
-  if(!voiceReady) refreshVoice();
-  if(!currentVoice) return;
-
-  const myGen = ++speechGen;
-  isSpeaking = true;
-  stage.classList.add("speaking");
-  setStatus("speaking");
-
-  try{ speechSynthesis.cancel(); }catch(e){}
-
-  const chunks = chunkByLength(splitForSpeech(stripMarkup(text)), 170);
-  let idx = 0;
-
-  const finish = () => {
-    if(myGen !== speechGen) return;
-    isSpeaking = false;
-    stage.classList.remove("speaking");
-    setStatus(isListening ? "listening" : "online");
-  };
-
-  const isNaturalVoice = currentVoice && /natural|online|neural/i.test(currentVoice.name);
-  const rateBase = isNaturalVoice ? 0.92 : 1.02;
-  const pitchBase = currentGender === "female" ? 1.04 : 0.95;
-
-  const speakNext = () => {
-    if(myGen !== speechGen) return;
-    if(idx >= chunks.length){ finish(); return; }
-
-    const u = new SpeechSynthesisUtterance(chunks[idx]);
-    u.voice = currentVoice;
-    u.lang = currentVoice.lang || (currentLang === "ar" ? "ar-SA" : currentLang === "ur" ? "ur-PK" : "en-US");
-
-    if(tone === "encouraging")      { u.rate = rateBase + 0.04; u.pitch = pitchBase + 0.10; }
-    else if(tone === "savage")      { u.rate = rateBase + 0.06; u.pitch = pitchBase - 0.06; }
-    else                            { u.rate = rateBase;        u.pitch = pitchBase; }
-    u.volume = 1;
-
-    u.onend = () => { idx++; speakNext(); };
-    u.onerror = (ev) => {
-      if(ev.error === "interrupted" || ev.error === "canceled"){ finish(); return; }
-      idx++; speakNext();
-    };
-    speechSynthesis.speak(u);
-  };
-
-  setTimeout(speakNext, 50);
-}
-
-/* ============================================================
-   TRANSCRIPT
-   ============================================================ */
-const MAX_LINES = 14;
-
-function renderLine(role, text, lang){
-  const lines = transcript.querySelectorAll(".t-line");
-  if(lines.length >= MAX_LINES) lines[0].remove();
-  const line = document.createElement("div");
-  line.className = "t-line " + role;
-  const who = document.createElement("span");
-  who.className = "who"; who.textContent = role === "bot" ? "NX" : "YOU";
-  const txt = document.createElement("span");
-  txt.className = "txt"; txt.textContent = text || "";
-  line.appendChild(who); line.appendChild(txt);
-  if(lang && role === "bot" && lang !== "en"){
-    const tag = document.createElement("span");
-    tag.className = "lang-tag"; tag.textContent = lang.toUpperCase();
-    txt.appendChild(tag);
-  }
-  transcript.appendChild(line);
-  transcript.scrollTop = transcript.scrollHeight;
-  return txt;
-}
-
-async function typewriter(el, plain, speed){
-  speed = speed || 22;
-  el.textContent = "";
-  const words = plain.split(" ");
-  for(let i = 0; i < words.length; i++){
-    el.textContent += (i ? " " : "") + words[i];
-    transcript.scrollTop = transcript.scrollHeight;
-    await new Promise(r => setTimeout(r, speed));
-  }
-}
-
-/* ============================================================
-   ACTIVATION
-   ============================================================ */
-function activate(){
-  if(isActivated) return;
-  isActivated = true;
-
-  stage.classList.add("activating");
-  setTimeout(() => stage.classList.remove("activating"), 800);
-
-  setStatus("online");
-  setMode("professional");
-  wakeBtn.classList.add("active");
-  wakeBtn.textContent = "NEXUS ACTIVE";
-
-  const bank = BANKS[currentLang] || EN;
-  const toneBank = bank.professional || bank;
-  const greeting = pickVariant("greeting_" + currentLang, toneBank.greeting);
-
-  const el = renderLine("bot", "", currentLang);
-  speak(greeting, "professional", currentLang);
-  typewriter(el, greeting, 20);
-}
-
-/* ============================================================
-   VARIANT PICKER
-   ============================================================ */
-function pickVariant(topicId, variants){
-  if(!state.usedVariants.has(topicId)) state.usedVariants.set(topicId, new Set());
-  const used = state.usedVariants.get(topicId);
-  const avail = variants.map((_, i) => i).filter(i => !used.has(i));
-  if(avail.length === 0){
-    used.clear();
-    return variants[Math.floor(Math.random() * variants.length)];
-  }
-  const idx = avail[Math.floor(Math.random() * avail.length)];
-  used.add(idx);
-  return variants[idx];
-}
-
-/* ============================================================
-   RESPONSE BANKS — SHORT answers, 2-3 lines max
-   ============================================================ */
-const EN = {
-  professional: {
-    greeting: [
-      "I'm NEXUS — a CV strategist. Ask me about ATS, Saudi market, pricing, or your target role.",
-      "Good to meet you. I help build ATS-aware CVs. What role are you targeting?",
-      "I'm NEXUS. Career strategy in a hologram. What's your target role?"
-    ],
-    ats: [
-      "ATS is software that filters CVs. Use clean headings, standard fonts, and honest keywords. No guarantees — systems differ.",
-      "ATS filters want clean structure and keywords. Skip tables, graphics, and fancy layouts. Simple wins.",
-      "ATS = Applicant Tracking System. Boring formatting + real keywords. That's the whole game."
-    ],
-    saudi: [
-      "Saudi CVs need clarity — credentials, languages, visa status. Which sector are you targeting?",
-      "For Saudi roles, match the job description and show eligibility clearly. Where are you applying?",
-      "Saudi market rewards clean, honest CVs. What role are you chasing?"
-    ],
-    international: [
-      "US: one page, no photo. Europe: longer, detailed. Gulf: photo + nationality. Which country?",
-      "Each country has its own CV rules. Tell me the destination and I'll match the format.",
-      "International format follows the market. Where are you applying?"
-    ],
-    freshers: [
-      "No experience? Use projects, training, and coursework. Which role are you aiming for?",
-      "Freshers have more than they think. Let's frame your projects as real capability. What's your field?",
-      "Your CV doesn't need fake experience — just better framing. What did you study?"
-    ],
-    redesign: [
-      "Most CVs fail on structure, not content. A rebuild fixes layout and language. Which package are you on?",
-      "Old CVs pile up clutter. Redesign strips it back to signal. Send me what you have.",
-      "A redesign is a reset. Keep what works, lose the noise. Ready?"
-    ],
-    cover: [
-      "Cover letters should explain *why this role* — not repeat your CV. Three short paragraphs. Want help?",
-      "Best cover letters sound human. Specific, short, warm. NEXUS writes exactly that.",
-      "Cover letter = why here, why now. That's it. Shall we draft one?"
-    ],
-    linkedin: [
-      "LinkedIn is a search engine. Recruiters look for keywords. Fix your headline first.",
-      "Optimise LinkedIn for searchability, then personality. Small changes, real returns.",
-      "LinkedIn and CV should tell the same story. If they don't, one is lying."
-    ],
-    pricing: [
-      "Essential SAR 149, Professional SAR 299, Executive SAR 499. Confirm on WhatsApp.",
-      "Three tiers: 149 / 299 / 499. Final quote on WhatsApp — no surprises.",
-      "Prices start at SAR 149. WhatsApp the team to finalise."
-    ],
-    guarantee: [
-      "No service can guarantee a job — anyone who does is lying. I promise a clearer CV.",
-      "Job guarantee? No. Better CV? Yes. That's the honest offer.",
-      "Hiring depends on fit, market, and timing. The CV is the part you control."
-    ],
-    whatsapp: [
-      "Tap the WhatsApp button — the human team replies within hours.",
-      "WhatsApp is the fastest route to a real person. Tap the button.",
-      "Human team lives on WhatsApp. Tap and they'll take over."
-    ],
-    thanks: [
-      "Anytime. Want a human eye on your CV? WhatsApp the team.",
-      "You're welcome. WhatsApp if you want a human review.",
-      "Glad to help. WhatsApp for the human touch."
-    ],
-    default: [
-      "I help with ATS, Saudi and international formats, freshers, pricing, and cover letters. What's your target role?",
-      "Ask about ATS, CV structure, pricing, or cover letters. Or just tell me your role.",
-      "Tell me your role and market — I'll point you to the right place."
-    ]
-  },
-  encouraging: {
-    greeting: [
-      "Hey — really glad you're here. Career moves are big. What are you working toward?",
-      "Welcome. First CV or career change — either way, you're in the right place. What's on your mind?",
-      "Good to see you. This stuff feels intimidating but doesn't have to be. Where are you now?"
-    ],
-    ats: [
-      "ATS isn't scary once you know what it wants — clean structure and honest keywords. You've got this.",
-      "ATS systems are just filters. Fix the structure, keep it honest, and you get a fair shot.",
-      "Nothing mysterious about ATS. Clean formatting, real keywords. Easy win."
-    ],
-    saudi: [
-      "Saudi market is welcoming to well-prepared candidates. Clarity wins. What sector?",
-      "Saudi employers want to see you clearly — languages, credentials, readiness. Where are you applying?",
-      "Saudi's a great move if you prepare well. What role are you going for?"
-    ],
-    international: [
-      "Applying abroad is really about local norms. Tell me the country and we'll shape it.",
-      "Every country has its own CV culture. Once we know where, we fit the format.",
-      "International applications feel bigger than they are. Format follows the market."
-    ],
-    freshers: [
-      "You have more than you think. Projects, courses, volunteering — all real capability. What's your field?",
-      "Fresh grads are told they have 'nothing.' Not true. Your education is raw material.",
-      "Starting out is exciting, not limiting. Tell me what you studied."
-    ],
-    redesign: [
-      "Your CV isn't broken — it's just not telling your story strongly yet. Small tweaks, big shift.",
-      "A redesign is a fresh start. Keep what works, rebuild around your strengths.",
-      "Cleaner CV, more confidence. That's the goal. Ready to begin?"
-    ],
-    cover: [
-      "Cover letters feel scary but they're just a warm, short conversation. Shall we draft one?",
-      "You don't need to be a writer — you need to be specific. That's buildable.",
-      "Three short paragraphs is plenty. Shall we start with the hook?"
-    ],
-    linkedin: [
-      "Small, confident changes to your headline make a real difference. Ready to fix it?",
-      "You don't need viral LinkedIn. You need a findable one. Let's fix the search terms.",
-      "LinkedIn should feel like you on a good day. Shall we warm it up?"
-    ],
-    pricing: [
-      "Packages start at SAR 149. Essential is a strong start for a first CV. No pressure.",
-      "Price is honest and confirmed on WhatsApp before any work begins. Shall we talk?",
-      "There's a package for every stage. The team will help you pick on WhatsApp."
-    ],
-    guarantee: [
-      "I can't promise a job — nobody honestly can — but I can promise a clearer CV.",
-      "What I can promise is a cleaner, stronger CV. What nobody can promise is the outcome.",
-      "You're doing the work. The CV is the part you control. That's enough."
-    ],
-    whatsapp: [
-      "Human team is genuinely kind. Tap WhatsApp and tell them where you are.",
-      "A real person is one tap away. WhatsApp is where messy parts get sorted.",
-      "Reach out on WhatsApp whenever you're ready. Team is patient."
-    ],
-    thanks: [
-      "Anytime. Tap WhatsApp if you want a human eye on your CV.",
-      "You're welcome. Team is on WhatsApp if you want backup.",
-      "Glad I could help. Go easy on yourself."
-    ],
-    default: [
-      "Whatever stage you're at, I'll help you find the next step. What's on your mind?",
-      "No pressure, no rush. Tell me where you are and what you're aiming for.",
-      "Let's figure this out together. What role are you working toward?"
-    ]
-  },
-  savage: {
-    greeting: [
-      "I'm NEXUS. I don't sugar-coat. Tell me your target role.",
-      "Look who showed up. Good. Tell me the role and I'll tell you what your CV is missing.",
-      "Fine. Let's do this. What job are you applying for?"
-    ],
-    ats: [
-      "ATS is a robot that wants keywords and clean formatting. Give it both. That's it.",
-      "ATS doesn't hate you — it ignores you. Clean structure, real keywords. Done.",
-      "Three things kill ATS: tables, graphics, hoping. Fix two, replace the third with keywords."
-    ],
-    saudi: [
-      "Saudi CV without tailoring? Bold. Wrong, but bold. Match the JD, list languages, stop decorating.",
-      "Saudi market is competitive. Clear and tailored wins. Yours probably isn't. We fix that.",
-      "Photo, visa status, languages — when the role needs it. Skip and a human filters you. We fix that."
-    ],
-    international: [
-      "Local CV abroad = bathrobe at black tie. We reformat. You'll thank me later.",
-      "Wrong CV culture = silent rejection. Pick the country, we shape the format.",
-      "International means local. That's the whole rule."
-    ],
-    freshers: [
-      "'No experience' isn't the problem. 'No framing' is. Your coursework is raw material.",
-      "Fresh grads say 'I have nothing.' Wrong. Projects, training, time spent. That's a CV.",
-      "No experience, lots of potential. The CV's job is to make the second part louder."
-    ],
-    redesign: [
-      "Three fonts, unaligned table, 'hard-working team player'? Seen it. Let's burn it and rebuild.",
-      "CV from 2022 is a museum piece, not a CV. Let's fix that.",
-      "Redesign isn't cosmetic. It's a rewrite. Truth stays, noise leaves."
-    ],
-    cover: [
-      "Nobody reads cover letters. Except the one manager who does. That one matters.",
-      "Three paragraphs, one real reason. That's a good cover letter. Most miss all three.",
-      "Cover letter isn't formality. It's 'who?' vs 'interesting.' Short and specific."
-    ],
-    linkedin: [
-      "'Seeking opportunities' — like everyone else. Let's make yours sound human.",
-      "'Passionate professional' is a shrug in text form. We'll write one that says something.",
-      "LinkedIn is a search engine. Not findable = not hired. Simple."
-    ],
-    pricing: [
-      "SAR 299 too much? Two weeks of coffee and a worse future. Choose wisely.",
-      "Ferrari on bicycle budget? Talk to WhatsApp team. They're nicer than me. Barely.",
-      "Three hundred riyals for a CV — opens doors. Or sixty shawarmas. Your call, chef."
-    ],
-    guarantee: [
-      "No job guarantee. Anyone who says otherwise sells lottery tickets with a smile.",
-      "A CV opens doors, it doesn't carry you through. Anyone promising more is lying.",
-      "Guaranteed job? No. Better CV? Yes. Second one matters."
-    ],
-    whatsapp: [
-      "Argue pricing with WhatsApp team, not me. They're nicer. Slightly.",
-      "Real person? WhatsApp. Details go there. Sass stays with me.",
-      "Team's on WhatsApp. They answer questions. I answer with attitude."
-    ],
-    thanks: [
-      "Don't thank me. Go fix your CV. WhatsApp if you want a human.",
-      "Welcome. Now go get rejected fewer times. WhatsApp for backup.",
-      "Real talk: work isn't done. WhatsApp team when you're ready to ship."
-    ],
-    default: [
-      "Not here to flatter you. Here to fix your CV. What job are you applying for?",
-      "Tell me your role — or I'll guess from the panic.",
-      "ATS, pricing, format, honesty. Pick one or keep me guessing. Your CV loses if we don't start."
-    ]
-  }
-};
-
-const AR = {
-  professional: {
-    greeting: ["أنا نيكسوس — مستشار سيرة ذاتية. اسألني عن ATS أو السوق السعودي أو الأسعار. ما دورك المستهدف؟"],
-    ats: ["ATS نظام تصفية. استخدم عناوين واضحة وخطوطاً قياسية وكلمات صادقة. لا ضمانات."],
-    saudi: ["السيرة السعودية تحتاج وضوحاً — مؤهلات، لغات، أهلية. ما القطاع الذي تستهدفه؟"],
-    pricing: ["الأساسي 149، الاحترافي 299، التنفيذي 499. التأكيد عبر واتساب."],
-    freshers: ["لا خبرة؟ استخدم مشاريعك وتدريبك. ما دورك المستهدف؟"],
-    guarantee: ["لا أحد يضمن وظيفة. أضمن سيرة أوضح فقط."],
-    thanks: ["على الرحب. للمراجعة البشرية، واتساب."],
-    default: ["أساعد في ATS وهيكل السيرة والأسعار. ما دورك المستهدف؟"]
-  },
-  encouraging: {
-    greeting: ["أهلاً بك — سعيد أنك هنا. ما الذي تعمل نحوه؟"],
-    ats: ["الأنظمة ليست مخيفة. هيكل واضح، كلمات صادقة. أنت قادر."],
-    saudi: ["السوق السعودي يرحب بالمستعدين. الوضوح هو الأهم."],
-    pricing: ["الحزم تبدأ من 149. لا ضغط."],
-    freshers: ["لديك أكثر مما تظن. مشاريعك قدرات حقيقية."],
-    guarantee: ["لا أضمن وظيفة، لكن أضمن سيرة أقوى."],
-    thanks: ["على الرحب. الفريق على واتساب."],
-    default: ["أياً كانت مرحلتك، سأساعدك. ما الذي يدور في ذهنك؟"]
-  },
-  savage: {
-    greeting: ["حسناً. أنا نيكسوس. أخبرني بدورك المستهدف."],
-    ats: ["ATS يريد كلمات وتنسيقاً. أعطه الاثنين."],
-    saudi: ["سيرة سعودية بدون تخصيص؟ جسور. خطأ، لكن جسور."],
-    pricing: ["299 كثير؟ أسبوعان قهوة ومستقبل أسوأ. اختر."],
-    freshers: ["'لا خبرة' ليست المشكلة. 'لا صياغة' هي."],
-    guarantee: ["لا أحد يضمن وظيفة. هذه الحقيقة."],
-    thanks: ["لا تشكرني. اذهب وأصلح سيرتك."],
-    default: ["لست هنا لأُطرِيك. ما الذي تتقدم له؟"]
-  }
-};
-
-const UR = {
-  professional: {
-    greeting: ["Main NEXUS hoon — CV strategist. ATS, Saudi market, ya pricing poochein. Aapka target role kya hai?"],
-    ats: ["ATS ek filter hai. Saaf headings, standard fonts, sachche keywords. Koi guarantee nahi."],
-    saudi: ["Saudi CV ko saaf aur honest hona chahiye. Kaunsa sector target kar rahe hain?"],
-    pricing: ["Essential 149, Professional 299, Executive 499. WhatsApp pe confirm karein."],
-    freshers: ["Experience nahi? Projects aur training use karein. Kaunsa role chahiye?"],
-    guarantee: ["Koi job guarantee nahi de sakta. Saaf CV ka waada kar sakta hoon."],
-    thanks: ["Koi baat nahi. Human review ke liye WhatsApp."],
-    default: ["ATS, CV structure, pricing mein madad. Aapka target role kya hai?"]
-  },
-  encouraging: {
-    greeting: ["Aap yahan hain — bohot acha. Kya kar rahe hain career mein?"],
-    ats: ["ATS darawani nahi hai. Saaf structure, sachche keywords. Aap kar sakte hain."],
-    saudi: ["Saudi market tayyar candidates ko pasand karta hai. Clarity ahem hai."],
-    pricing: ["Packages 149 se shuru. Koi pressure nahi."],
-    freshers: ["Aapke paas soch se zyada hai. Projects asli capability hain."],
-    guarantee: ["Job guarantee nahi — saaf CV ka waada hai."],
-    thanks: ["Koi baat nahi. Team WhatsApp pe hai."],
-    default: ["Aap kisi bhi stage pe ho, madad karunga. Kya soch rahe hain?"]
-  },
-  savage: {
-    greeting: ["Main NEXUS hoon, tareef nahi karta. Target role bataiye."],
-    ats: ["ATS ko keywords aur saaf formatting chahiye. Dono do."],
-    saudi: ["Saudi CV bina tailoring? Bahaduri. Galat, lekin bahaduri."],
-    pricing: ["SAR 299 zyada? Coffee aur bura future. Soch samajh ke."],
-    freshers: ["'No experience' masla nahi. 'No framing' masla hai."],
-    guarantee: ["Koi job guarantee nahi kar sakta. Yehi sach hai."],
-    thanks: ["Shukriya mat kaho. CV theek karo."],
-    default: ["Tareef nahi karne aaya. Kya apply kar rahe hain?"]
-  }
-};
-
-const BANKS = { en: EN, ar: AR, ur: UR };
-
-/* ============================================================
-   DETECTORS
-   ============================================================ */
-const ROLE_ROOTS = [
-  { canon:"engineer",   re:/\b(engin\w*|engn\w*|ingin\w*|engeneer\w*|enjine\w*)\b/ },
-  { canon:"developer",  re:/\b(develop\w*|devl\w*|devops|programmer\w*|programer\w*|coder\w*)\b/ },
-  { canon:"designer",   re:/\b(design\w*|desing\w*|desgn\w*|ux|ui)\b/ },
-  { canon:"manager",    re:/\b(manag\w*|mang\w*|mngr\w*)\b/ },
-  { canon:"accountant", re:/\b(account\w*|acount\w*|accnt\w*|acct)\b/ },
-  { canon:"nurse",      re:/\b(nurs\w*|nurce\w*)\b/ },
-  { canon:"teacher",    re:/\b(teach\w*|teecher\w*|tutor\w*)\b/ },
-  { canon:"driver",     re:/\b(driv\w*|drvr\w*)\b/ },
-  { canon:"analyst",    re:/\b(analy\w*|analist\w*|analytic\w*)\b/ },
-  { canon:"coordinator",re:/\b(coordinat\w*|cordnat\w*|coord)\b/ },
-  { canon:"consultant", re:/\b(consult\w*|conslt\w*)\b/ },
-  { canon:"admin",      re:/\b(administrat\w*|adminstr\w*|admin)\b/ },
-  { canon:"sales",      re:/\b(sales\w*|seling|sell\w*)\b/ },
-  { canon:"marketing",  re:/\b(market\w*|markting|mrkt\w*)\b/ },
-  { canon:"hr",         re:/\b(human resources|hr|recruiter\w*|recruit\w*)\b/ },
-  { canon:"technician", re:/\b(technician\w*|tecnitian\w*)\b/ },
-  { canon:"officer",    re:/\b(officer\w*|oficer\w*)\b/ },
-  { canon:"supervisor", re:/\b(supervis\w*|superviz\w*)\b/ },
-  { canon:"director",   re:/\b(director\w*)\b/ },
-  { canon:"specialist", re:/\b(specialist\w*|specialst\w*)\b/ }
-];
-
-function detectRole(text){
-  const t = text.toLowerCase();
-  for(const { canon, re } of ROLE_ROOTS){ if(re.test(t)) return canon; }
-  return null;
-}
-
-function detectTone(text){
-  const t = text.toLowerCase();
-  if(/\b(too (expensive|much|costly)|expensive|can'?t afford|discount|cheap(er)?|for free|free\?|reduce (the )?price|negotiat|scam|waste of money|overpriced|rip.?off|refund|mehnga|zyada paisa|bahut mehnga)\b/i.test(t)) return "savage";
-  if(/\b(fresher|fresh graduate|graduate|no experience|first job|student|internship|nervous|scared|anxious|worried|struggling|lost|imposter|not good enough|help me|naya|shuru|darr|pareshan)\b/i.test(t)) return "encouraging";
-  return "professional";
-}
-
-function detectTopic(text){
-  const t = text.toLowerCase();
-  if(/\b(hi|hello|hey|salam|salaam|assalam|assalamualaikum|marhaba|ahlan|aoa)\b/i.test(t)) return "greeting";
-  if(/\b(ats|applicant tracking|tracking system|keyword|parser|robot)\b/i.test(t)) return "ats";
-  if(/\b(saudi|ksa|riyadh|jeddah|gulf|vision 2030|arabia)\b/i.test(t)) return "saudi";
-  if(/\b(international|abroad|usa|united states|uk|canada|europe|dubai|foreign|overseas|america|britain)\b/i.test(t)) return "international";
-  if(/\b(no experience|fresher|fresh graduate|first job|student|internship)\b/i.test(t)) return "freshers";
-  if(/\b(redesign|old cv|update|revamp|improve|rebuild|purana cv)\b/i.test(t)) return "redesign";
-  if(/\b(cover letter|motivation letter)\b/i.test(t)) return "cover";
-  if(/\b(linkedin|profile)\b/i.test(t)) return "linkedin";
-  if(/\b(price|pricing|cost|fee|charge|sar|package|how much|expensive|afford|discount|cheap|free|reduce|negotiat|kitna|paisa|kimat|rate)\b/i.test(t)) return "pricing";
-  if(/\b(guarantee|guaranteed|job|salary|interview|hired|placement|naukri milegi)\b/i.test(t)) return "guarantee";
-  if(/\b(whatsapp|contact|human|person|talk to you|speak to someone|baat karni)\b/i.test(t)) return "whatsapp";
-  if(/\b(thanks|thank you|shukriya|jazak|shukria|dhanyavad)\b/i.test(t)) return "thanks";
-  return "default";
-}
-
-/* ============================================================
-   ROLE FLAVOR
-   ============================================================ */
-const ROLE_FLAVOR = {
-  en: {
-    engineer:"engineering CVs need project outcomes and tools",
-    developer:"developer CVs need tech stack and shipped work",
-    designer:"designer CVs need portfolio links and impact",
-    manager:"manager CVs need team size and outcomes",
-    accountant:"accounting CVs need certifications and ERP",
-    nurse:"nursing CVs need licensure and care metrics",
-    teacher:"teaching CVs need grade levels and outcomes",
-    driver:"driving CVs need license class and record",
-    analyst:"analyst CVs need tools and metrics owned",
-    coordinator:"coordinator CVs need scope and process wins",
-    consultant:"consultant CVs need client types and results",
-    admin:"admin CVs need systems and accuracy",
-    sales:"sales CVs need quota and deal size",
-    marketing:"marketing CVs need campaign outcomes",
-    hr:"HR CVs need headcount and hiring volume",
-    technician:"technical CVs need equipment and safety",
-    officer:"officer CVs need scope and compliance",
-    supervisor:"supervisor CVs need team and KPI wins",
-    director:"director CVs need P&L and strategy",
-    specialist:"specialist CVs need depth and deliverables",
-    default:"role-specific CVs need keywords and outcomes"
-  },
-  ar: { default:"السيرة الجيدة تحتاج كلمات مفتاحية وإنجازات" },
-  ur: { default:"Achi CV mein keywords aur outcomes chahiye" }
-};
-
-function roleReply(role, tone, lang){
-  const flavors = ROLE_FLAVOR[lang] || ROLE_FLAVOR.en;
-  const flavor = flavors[role] || flavors.default;
-  const roleDisp = role.charAt(0).toUpperCase() + role.slice(1);
-  if(lang === "ar"){
-    return tone === "savage"
-      ? `${roleDisp}؟ حسناً. سيرة بدون كلمات = ورقة. ما السوق؟`
-      : `${roleDisp} — جيد. ${flavor}. ما السوق: السعودية أم دولي؟`;
-  }
-  if(lang === "ur"){
-    return tone === "savage"
-      ? `${roleDisp}? Bina keywords wala CV sirf kaagaz hai. Kaunsa market?`
-      : `${roleDisp} — acha. ${flavor}. Saudi, international, ya dono?`;
-  }
-  if(tone === "savage"){
-    return `${roleDisp}. Good. Then tailor it — ${flavor}. Which market? And don't say "anywhere."`;
-  }
-  if(tone === "encouraging"){
-    return `${roleDisp} — great direction. ${flavor}. Which market are you aiming for?`;
-  }
-  return `${roleDisp} — good. ${flavor}. Saudi, international, or both?`;
-}
-
-/* ============================================================
-   LEAD CAPTURE
-   ============================================================ */
-const leads = {
-  turnCount: 0, role: null, market: null, experience: null,
-  name: null, email: null, phone: null, tone: null,
-  languages: new Set(), transcript: [], captured: false
-};
-
-function extractLeadInfo(userText, lang){
-  leads.turnCount++;
-  leads.languages.add(lang);
-
-  const email = userText.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
-  if(email) leads.email = email[0];
-
-  const phone = userText.match(/\+?\d[\d\s\-()]{7,}\d/);
-  if(phone){
-    const clean = phone[0].replace(/[\s\-()]/g, "");
-    if(clean.length >= 8 && clean.length <= 16) leads.phone = clean;
-  }
-
-  const name = userText.match(/(?:my name is|i'm|i am|this is|naam)\s+([A-Z][a-zA-Z]{1,20})/i);
-  if(name) leads.name = name[1];
-
-  const role = detectRole(userText);
-  if(role) leads.role = role;
-
-  if(/\b(saudi|ksa|riyadh|jeddah|gulf)\b/i.test(userText)) leads.market = "saudi";
-  else if(/\b(international|abroad|usa|uk|canada|europe|dubai)\b/i.test(userText)) leads.market = "international";
-
-  if(/\b(no experience|fresher|fresh graduate|student)\b/i.test(userText)) leads.experience = "fresher";
-  else if(/\b(\d+\s*(years?|yrs?|saal))\b/i.test(userText)) leads.experience = userText.match(/\d+\s*(years?|yrs?|saal)/i)[0];
-
-  leads.tone = detectTone(userText);
-  leads.transcript.push({ role: "user", text: userText.slice(0, 200), ts: Date.now() });
-  if(leads.transcript.length > 20) leads.transcript.shift();
-}
-
-function leadSummary(){
-  return [
-    "NEXUS Lead",
-    "—",
-    "Name: " + (leads.name || "—"),
-    "Role: " + (leads.role || "—"),
-    "Market: " + (leads.market || "—"),
-    "Experience: " + (leads.experience || "—"),
-    "Email: " + (leads.email || "—"),
-    "Phone: " + (leads.phone || "—"),
-    "Tone: " + (leads.tone || "—"),
-    "Languages: " + Array.from(leads.languages).join(", "),
-    "Turns: " + leads.turnCount,
-    "Time: " + new Date().toISOString()
-  ].join("\n");
-}
-
-async function pushLeadSilently(){
-  if(leads.captured) return;
-  if(!leads.role && !leads.email && !leads.phone && !leads.name && leads.turnCount < 2) return;
-  leads.captured = true;
-
-  const summary = leadSummary();
-
-  try{
-    const saved = JSON.parse(localStorage.getItem(LEADS_KEY) || "[]");
-    saved.push({
-      summary, name: leads.name, role: leads.role, market: leads.market,
-      experience: leads.experience, email: leads.email, phone: leads.phone,
-      tone: leads.tone, languages: Array.from(leads.languages),
-      turns: leads.turnCount, ts: Date.now(),
-      transcript: leads.transcript.slice(-8),
-      waLink: whatsappUrl(summary)
-    });
-    localStorage.setItem(LEADS_KEY, JSON.stringify(saved.slice(-30)));
-  }catch(e){}
-
-  if(LEAD_WEBHOOK_URL){
-    try{
-      await fetch(LEAD_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ summary, leads: { ...leads, languages: Array.from(leads.languages) } })
-      });
-    }catch(e){}
-  }
-}
-
-window.addEventListener("beforeunload", () => { pushLeadSilently(); });
-document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "hidden") pushLeadSilently();
-});
-
-/* ============================================================
-   REPLY ENGINE — offline fallback
-   ============================================================ */
-function replyFor(userText){
-  const lang  = detectLanguage(userText);
-  const tone  = detectTone(userText);
-  const topic = detectTopic(userText);
-  const role  = detectRole(userText);
-
-  state.turnCount++;
-  state.knownTone = tone;
-  if(lang !== currentLang){ currentLang = lang; }
-
-  if(role && (topic === "default" || topic === "greeting")){
-    state.knownRole = role;
-    return { tone, topic: "role", lang, text: roleReply(role, tone, lang) };
-  }
-
-  const bank = (BANKS[lang] || EN)[tone] || EN.professional;
-  const variants = bank[topic] || bank.default;
-  const variantKey = `${lang}_${tone}_${topic}`;
-
-  let text = pickVariant(variantKey, variants);
-  if(text === state.lastReply && variants.length > 1){
-    text = pickVariant(variantKey, variants);
-  }
-  state.lastReply = text;
-  state.lastTopic = topic;
-
-  state.askedRole = /\b(target role|what role|which role|aapka target role|ما دورك)\b/i.test(text);
-
-  return { tone, topic, lang, text };
-}
-
-/* ============================================================
-   NEXUS AI — background fetch, short-answer enforced
-   ============================================================ */
-async function fetchNexusReply(message, lang){
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), NEXUS_WORKER_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(NEXUS_WORKER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, lang }),
-      signal: controller.signal
+    document.querySelectorAll(".wa-link").forEach(a => {
+      a.href = whatsappUrl(a.dataset.message || "Hi NEXUS CV, I'd like to ask about your services.");
+      a.target = "_blank"; a.rel = "noopener noreferrer";
     });
 
-    clearTimeout(timeoutId);
+    /* ============================================================
+       SCRAMBLE ANIMATION
+       ============================================================ */
+    const titleEl = $("scrambleTitle");
+    const originalHTML = titleEl.innerHTML;
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
+    let iteration = 0;
 
-    let data = null;
-    try { data = await response.json(); } catch {}
+    function scramble() {
+      const interval = setInterval(() => {
+        titleEl.innerHTML = originalHTML
+          .split("").map((char, index) => {
+            if (char === "<" || char === ">") return char;
+            if (index < iteration) return originalHTML[index];
+            return letters[Math.floor(Math.random() * letters.length)];
+          }).join("");
+        
+        if (iteration >= originalHTML.length) clearInterval(interval);
+        iteration += 1 / 3;
+      }, 30);
+    }
+    setTimeout(scramble, 500);
 
-    if (!response.ok){
-      return { ok: false, reason: (data && data.error) || ("HTTP " + response.status) };
+    /* ============================================================
+       CHAT LOGIC & AI FETCH
+       ============================================================ */
+    const transcript = $("transcript");
+    const chatInput = $("chatInput");
+    const chatForm = $("chatForm");
+    const chatWidget = $("chatWidget");
+    const statusPill = $("statusPill");
+    
+    let isActivated = false;
+    let currentGender = "female";
+    let isListening = false;
+
+    function renderMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = `msg ${role}`;
+      div.innerHTML = `
+        <div class="msg-icon">${role === "bot" ? "NX" : "YOU"}</div>
+        <div class="msg-bubble">${text}</div>
+      `;
+      transcript.appendChild(div);
+      transcript.scrollTop = transcript.scrollHeight;
+      return div.querySelector(".msg-bubble");
     }
 
-    const answer = data && data.answer;
-    if (!answer || typeof answer !== "string" || !answer.trim()){
-      return { ok: false, reason: "empty answer" };
-    }
-
-    // Enforce short — first 2 sentences, max 260 chars
-    let final = answer.trim();
-    const sentences = final.split(/(?<=[.!?])\s+/);
-    if(sentences.length > 2) final = sentences.slice(0, 2).join(" ");
-    if(final.length > 260) final = final.slice(0, 257) + "...";
-
-    if (Array.isArray(data.models_used)){
-      console.info("NEXUS AI:", data.models_used.join("+"), "·", data.coordinated ? "coordinated" : "single");
-    }
-
-    return { ok: true, answer: final };
-
-  } catch (err){
-    clearTimeout(timeoutId);
-    return { ok: false, reason: err && err.name === "AbortError" ? "timeout" : "network" };
-  }
-}
-
-/* ============================================================
-   SEND HANDLER — instant local + background AI, off-topic filter
-   ============================================================ */
-const chatForm  = $("chatForm");
-const chatInput = $("chatInput");
-const sendBtn   = $("sendBtn");
-
-chatForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  if(!isActivated) activate();
-
-  const text = chatInput.value.trim();
-  if(!text) return;
-
-  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(err){} }
-
-  chatInput.value = "";
-
-  renderLine("user", text);
-  extractLeadInfo(text, detectLanguage(text));
-
-  const local = replyFor(text);
-  const { tone, lang } = local;
-  let localReply = local.text;
-
-  const offTopic = isOffTopic(text);
-  if(offTopic){
-    localReply = (OFF_TOPIC[lang] && OFF_TOPIC[lang][tone]) || OFF_TOPIC.en.professional;
-  }
-
-  setMode(tone, lang);
-
-  /* Render instantly */
-  const el = renderLine("bot", "", lang);
-  el.textContent = localReply;
-  speak(localReply, tone, lang);
-
-  if(lang !== "en"){
-    toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
-  }
-
-  /* Skip AI if off-topic OR too short */
-  const words = text.trim().split(/\s+/);
-  const isTooShort = words.length < 2 && !/\?/.test(text);
-
-  if(offTopic || isTooShort) return;
-
-  /* Background AI upgrade */
-  fetchNexusReply(text, lang).then(worker => {
-    if(!worker.ok) return;
-    if(!el.isConnected) return;
-    if(worker.answer === localReply) return;
-
-    el.textContent = "";
-    typewriter(el, worker.answer, 12).then(() => {
-      speak(worker.answer, tone, lang);
-    });
-  });
-
-  if(state.turnCount > 0 && state.turnCount % 3 === 0){
-    pushLeadSilently();
-  }
-});
-
-/* ============================================================
-   GENDER TOGGLE
-   ============================================================ */
-$("femaleBtn").addEventListener("click", () => setGender("female"));
-$("maleBtn").addEventListener("click", () => setGender("male"));
-
-function setGender(gender){
-  if(currentGender === gender) return;
-  currentGender = gender;
-  $("femaleBtn").classList.toggle("active", gender === "female");
-  $("maleBtn").classList.toggle("active", gender === "male");
-  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
-  refreshVoice();
-  if(isActivated && voiceReady){
-    const testText = currentLang === "ar"
-      ? "فحص الصوت."
-      : currentLang === "ur"
-      ? "Awaaz check."
-      : "Voice check. This is me.";
-    speak(testText, "professional", currentLang);
-  }
-}
-
-/* ============================================================
-   EXIT + CLOSE
-   ============================================================ */
-$("exitBtn").addEventListener("click", exitHologram);
-$("closeBtn").addEventListener("click", closeTranscript);
-
-function exitHologram(){
-  pushLeadSilently();
-  isActivated = false;
-  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
-  stage.classList.remove("speaking");
-  setStatus("standby");
-  setMode("standby");
-  wakeBtn.classList.remove("active");
-  wakeBtn.textContent = "MEET NEXUS AI";
-  transcript.innerHTML = '<div class="t-line bot"><span class="who">NX</span><span class="txt">Hologram offline. Tap the avatar or press <strong>MEET NEXUS AI</strong> to activate.</span></div>';
-  state.turnCount = 0;
-  state.askedRole = false;
-  state.usedVariants.clear();
-}
-
-function closeTranscript(){
-  const hidden = transcript.classList.toggle("hidden");
-  $("closeBtn").textContent = hidden ? "☰" : "✕";
-  $("closeBtn").title = hidden ? "Show transcript" : "Hide transcript";
-}
-
-/* ============================================================
-   WAKE + HERO
-   ============================================================ */
-wakeBtn.addEventListener("click", activate);
-stage.addEventListener("click", (e) => {
-  if(e.target.closest(".avatar-inner")) return;
-  activate();
-});
-stage.addEventListener("keydown", (e) => {
-  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); activate(); }
-});
-
-function scrollToHologram(){
-  document.querySelector(".hero").scrollIntoView({ behavior: "smooth", block: "start" });
-  setTimeout(activate, 400);
-}
-function askNexus(question){
-  scrollToHologram();
-  setTimeout(() => { chatInput.value = question; chatForm.requestSubmit(); }, 800);
-}
-$("aiLaunch").addEventListener("click", scrollToHologram);
-
-/* ============================================================
-   MICROPHONE
-   ============================================================ */
-const micBtn = $("micBtn");
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const MIC_LANG = { en: "en-US", ar: "ar-SA", ur: "ur-PK" };
-
-if(SR){
-  const rec = new SR();
-  rec.continuous = true;
-  rec.interimResults = true;
-  rec.maxAlternatives = 1;
-
-  micBtn.classList.remove("hidden");
-
-  let finalTranscript = "";
-  let silenceTimer = null;
-  const SILENCE_MS = 1700;
-
-  function resetSilence(){
-    clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(() => {
-      if((finalTranscript + chatInput.value).trim()){
-        try{ rec.stop(); }catch(e){}
+    async function typeText(el, text, speed = 15) {
+      el.textContent = "";
+      const words = text.split(" ");
+      for(let i = 0; i < words.length; i++) {
+        el.textContent += (i ? " " : "") + words[i];
+        transcript.scrollTop = transcript.scrollHeight;
+        await new Promise(r => setTimeout(r, speed));
       }
-    }, SILENCE_MS);
-  }
-
-  function startListening(){
-    if(!isActivated) activate();
-    if("speechSynthesis" in window){
-      speechGen++;
-      try{ speechSynthesis.cancel(); }catch(e){}
     }
-    rec.lang = MIC_LANG[currentLang] || "en-US";
-    finalTranscript = "";
-    chatInput.value = "";
-    try{ rec.start(); }catch(e){}
-  }
 
-  micBtn.addEventListener("click", () => {
-    if(isListening){ try{ rec.stop(); }catch(e){} return; }
-    startListening();
-  });
-
-  rec.onstart = () => {
-    isListening = true;
-    micBtn.classList.add("listening");
-    setStatus("listening");
-    chatInput.placeholder = "Listening…";
-    resetSilence();
-  };
-
-  rec.onresult = (e) => {
-    let interim = "";
-    for(let i = e.resultIndex; i < e.results.length; i++){
-      const piece = e.results[i][0].transcript;
-      if(e.results[i].isFinal) finalTranscript += piece + " ";
-      else interim += piece;
+    async function fetchNexusReply(message, lang) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), NEXUS_WORKER_TIMEOUT_MS);
+      try {
+        const response = await fetch(NEXUS_WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, lang }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        const data = await response.json();
+        if (!response.ok) return { ok: false };
+        return { ok: true, answer: data.answer };
+      } catch (err) {
+        clearTimeout(timeoutId);
+        return { ok: false };
+      }
     }
-    chatInput.value = (finalTranscript + interim).trim();
-    resetSilence();
-  };
 
-  rec.onerror = (ev) => {
-    if(ev.error === "no-speech" || ev.error === "aborted") return;
-    isListening = false;
-    micBtn.classList.remove("listening");
-    if(!isSpeaking) setStatus("online");
-    chatInput.placeholder = "Ask NEXUS — English, العربية, or Roman Urdu…";
-  };
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if(!text) return;
 
-  rec.onend = () => {
-    isListening = false;
-    micBtn.classList.remove("listening");
-    if(!isSpeaking) setStatus("online");
-    chatInput.placeholder = "Ask NEXUS — English, العربية, or Roman Urdu…";
-    const final = chatInput.value.trim();
-    if(final) setTimeout(() => chatForm.requestSubmit(), 120);
-  };
-}
+      if(!isActivated) {
+        isActivated = true;
+        statusPill.textContent = "ONLINE";
+        statusPill.style.color = "var(--green)";
+      }
 
-/* Escape cancels speech */
-document.addEventListener("keydown", (e) => {
-  if(e.key === "Escape" && "speechSynthesis" in window){
-    try{ speechSynthesis.cancel(); }catch(err){}
-  }
-});
+      chatInput.value = "";
+      renderMessage("user", text);
+      chatWidget.classList.add("scanning");
 
-/* 3D tilt */
-if(matchMedia("(hover:hover)").matches){
-  window.addEventListener("mousemove", (e) => {
-    const x = (e.clientX / window.innerWidth  - 0.5) * 2;
-    const y = (e.clientY / window.innerHeight - 0.5) * 2;
-    stage.style.setProperty("--mx", x.toFixed(3));
-    stage.style.setProperty("--my", y.toFixed(3));
-  });
-}
+      const el = renderMessage("bot", "Processing...");
+      
+      const worker = await fetchNexusReply(text, "en");
+      chatWidget.classList.remove("scanning");
 
-/* Service glow */
-document.querySelectorAll(".service").forEach(card => {
-  card.addEventListener("pointermove", (e) => {
-    const r = card.getBoundingClientRect();
-    card.style.setProperty("--px", ((e.clientX - r.left) / r.width * 100) + "%");
-    card.style.setProperty("--py", ((e.clientY - r.top) / r.height * 100) + "%");
-  });
-});
-
-/* Admin — triple-click brand */
-let brandClicks = 0, brandTimer;
-$("brand").addEventListener("click", (e) => {
-  brandClicks++;
-  clearTimeout(brandTimer);
-  brandTimer = setTimeout(() => brandClicks = 0, 700);
-  if(brandClicks >= 3){
-    e.preventDefault();
-    brandClicks = 0;
-    showLeads();
-  }
-});
-
-function showLeads(){
-  const saved = JSON.parse(localStorage.getItem(LEADS_KEY) || "[]").slice().reverse();
-  const container = $("adminLeads");
-  if(!saved.length){
-    container.innerHTML = '<p style="color:var(--muted);font-size:.85rem">No leads captured yet in this browser.</p>';
-  } else {
-    container.innerHTML = saved.map(l => `
-      <div class="lead-card">
-        <div class="lead-name">${l.name || "Anonymous"} ${l.role ? "· " + l.role : ""} ${l.market ? "· " + l.market : ""}</div>
-        <div class="lead-meta">${(l.summary || "").replace(/</g, "&lt;")}</div>
-        ${l.email? `<div class="lead-meta">📧 <a href="mailto:${l.email}" style="color:var(--cyan)">${l.email}</a></div>` : ""}
-        ${l.phone ? `<div class="lead-meta">📱 <a href="https://wa.me/${l.phone.replace(/\D/g,"")}" target="_blank" style="color:var(--cyan)">${l.phone}</a></div>` : ""}
-        ${l.waLink? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open in WhatsApp</a></div>` : ""}
-      </div>
-    `).join("");
-  }
-  $("adminModal").classList.add("open");
-}
-
-/* Scroll reveal */
-if("IntersectionObserver" in window){
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      if (!worker.ok) {
+        el.textContent = "System error. AI core offline.";
+        return;
+      }
+      
+      el.textContent = "";
+      await typeText(el, worker.answer, 10);
+      speak(worker.answer, "en");
     });
-  }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-}
-</script>
+
+    function askNexus(q) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      chatInput.value = q;
+      chatForm.requestSubmit();
+    }
+
+    /* ============================================================
+       VOICE SYNTHESIS (Text to Speech)
+       ============================================================ */
+    function speak(text, lang) {
+      if(!("speechSynthesis" in window)) return;
+      const voices = speechSynthesis.getVoices();
+      let v = voices.find(v => v.lang.startsWith(lang) && v.name.includes(currentGender === "female" ? "Female" : "Male")) 
+           || voices.find(v => v.lang.startsWith(lang)) 
+           || voices[0];
+      if(!v) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ""));
+      u.voice = v; u.rate = 1.0;
+      speechSynthesis.speak(u);
+    }
+
+    /* ============================================================
+       CONTROL TOGGLES
+       ============================================================ */
+    $("femaleBtn").addEventListener("click", (e) => {
+      currentGender = "female";
+      $("femaleBtn").classList.add("active");
+      $("maleBtn").classList.remove("active");
+    });
+    $("maleBtn").addEventListener("click", (e) => {
+      currentGender = "male";
+      $("maleBtn").classList.add("active");
+      $("femaleBtn").classList.remove("active");
+    });
+    $("exitBtn").addEventListener("click", () => {
+      isActivated = false;
+      statusPill.textContent = "STANDBY";
+      statusPill.style.color = "var(--muted)";
+      transcript.innerHTML = `<div class="msg bot"><div class="msg-icon">NX</div><div class="msg-bubble">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate.</div></div>`;
+      if("speechSynthesis" in window) speechSynthesis.cancel();
+    });
+    $("closeBtn").addEventListener("click", (e) => {
+      const msgs = transcript.querySelectorAll(".msg");
+      const isHidden = msgs[0].style.display === "none";
+      msgs.forEach(m => m.style.display = isHidden ? "flex" : "none");
+      e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
+    });
+
+    /* ============================================================
+       MICROPHONE (Speech to Text)
+       ============================================================ */
+    const micBtn = $("micBtn");
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(SR){
+      micBtn.classList.remove("hidden");
+      const rec = new SR();
+      rec.continuous = false; rec.interimResults = false;
+      
+      micBtn.addEventListener("click", () => {
+        if(isListening){ rec.stop(); return; }
+        rec.lang = "en-US";
+        try { rec.start(); } catch(e){}
+      });
+      
+      rec.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
+      rec.onresult = (e) => { chatInput.value = e.results[0][0].transcript; chatForm.requestSubmit(); };
+      rec.onend = () => { isListening = false; micBtn.classList.remove("listening"); };
+    }
+
+  </script>
 </body>
 </html>
