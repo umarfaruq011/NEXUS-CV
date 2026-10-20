@@ -1129,10 +1129,7 @@ footer .foot-row{display:flex;justify-content:space-between;gap:24px;flex-wrap:w
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
-/* ============================================================
-   <script>
 /* ============================================================
    CONFIG
    ============================================================ */
@@ -1143,7 +1140,7 @@ const LEAD_WEBHOOK_URL = "";
 
 /* NEXUS AI Worker (Cloudflare) */
 const NEXUS_WORKER_URL = "https://quiet-snowflake-4c02.umaremotions.workers.dev/";
-const NEXUS_WORKER_TIMEOUT_MS = 8000;
+const NEXUS_WORKER_TIMEOUT_MS = 30000;   // safety net only — does NOT block UI
 
 const $ = (id) => document.getElementById(id);
 $("year").textContent = new Date().getFullYear();
@@ -1496,7 +1493,7 @@ function pickVariant(topicId, variants){
 }
 
 /* ============================================================
-   RESPONSE BANKS (offline fallback)
+   RESPONSE BANKS
    ============================================================ */
 const EN = {
   professional: {
@@ -2022,7 +2019,7 @@ function replyFor(userText){
 }
 
 /* ============================================================
-   NEXUS AI — Worker fetch with timeout + local fallback
+   NEXUS AI — Background fetch (does not block UI)
    ============================================================ */
 async function fetchNexusReply(message, lang){
   const controller = new AbortController();
@@ -2042,45 +2039,36 @@ async function fetchNexusReply(message, lang){
     try { data = await response.json(); } catch {}
 
     if (!response.ok){
-      const reason = (data && data.error) || ("AI request failed (" + response.status + ")");
+      const reason = (data && data.error) || ("HTTP " + response.status);
       console.warn("NEXUS AI worker error:", reason);
       return { ok: false, reason };
     }
 
     const answer = data && data.answer;
     if (!answer || typeof answer !== "string" || !answer.trim()){
-      console.warn("NEXUS AI: worker returned empty answer");
       return { ok: false, reason: "empty answer" };
     }
 
     if (Array.isArray(data.models_used)){
-      console.info(
-        "NEXUS AI models:", data.models_used.join(" + "),
-        "· coordinated:", !!data.coordinated
-      );
+      console.info("NEXUS AI models:", data.models_used.join(" + "), "· coordinated:", !!data.coordinated);
     }
 
     return { ok: true, answer: answer.trim() };
 
   } catch (err){
     clearTimeout(timeoutId);
-    if (err && err.name === "AbortError"){
-      console.warn("NEXUS AI: request timed out");
-      return { ok: false, reason: "timeout" };
-    }
-    console.error("NEXUS AI network error:", err);
-    return { ok: false, reason: "network" };
+    return { ok: false, reason: err && err.name === "AbortError" ? "timeout" : "network" };
   }
 }
 
 /* ============================================================
-   SEND HANDLER
+   SEND HANDLER — instant local answer + background AI upgrade
    ============================================================ */
 const chatForm  = $("chatForm");
 const chatInput = $("chatInput");
 const sendBtn   = $("sendBtn");
 
-chatForm.addEventListener("submit", async (e) => {
+chatForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if(!isActivated) activate();
 
@@ -2089,43 +2077,38 @@ chatForm.addEventListener("submit", async (e) => {
 
   if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(err){} }
 
-  isBusy = true;
-  sendBtn.disabled = true;
   chatInput.value = "";
 
   renderLine("user", text);
   extractLeadInfo(text, detectLanguage(text));
 
-  await new Promise(r => setTimeout(r, 320));
-
   const local = replyFor(text);
   const { tone, lang } = local;
   const localReply = local.text;
 
-  const worker = await fetchNexusReply(text, lang);
-  const reply = worker.ok ? worker.answer : localReply;
-
-  if (!worker.ok){
-    console.info("NEXUS AI falling back to local bank —", worker.reason);
-  }
-
   setMode(tone, lang);
 
-  if (lang !== "en") {
-    toast(
-      lang === "ar"
-        ? "🌐 Replying in Arabic"
-        : "🌐 Replying in Roman Urdu"
-    );
+  // === Instant local answer — 0ms ===
+  const el = renderLine("bot", "", lang);
+  el.textContent = localReply;
+  speak(localReply, tone, lang);
+
+  if(lang !== "en"){
+    toast(lang === "ar" ? "🌐 Replying in Arabic" : "🌐 Replying in Roman Urdu");
   }
 
-  const el = renderLine("bot", "", lang);
-  speak(reply, tone, lang);
-  await typewriter(el, reply, 22);
+  // === Fire AI request in background — does not block user ===
+  fetchNexusReply(text, lang).then(worker => {
+    if(!worker.ok) return;
+    if(!el.isConnected) return;            // user already navigated / line trimmed
+    if(worker.answer === localReply) return;
 
-  isBusy = false;
-  sendBtn.disabled = false;
-  chatInput.focus();
+    // Replace with real AI answer — typewriter for nice effect
+    el.textContent = "";
+    typewriter(el, worker.answer, 12).then(() => {
+      speak(worker.answer, tone, lang);
+    });
+  });
 
   if(state.turnCount > 0 && state.turnCount % 3 === 0){
     pushLeadSilently();
@@ -2335,9 +2318,9 @@ function showLeads(){
       <div class="lead-card">
         <div class="lead-name">${l.name || "Anonymous"} ${l.role ? "· " + l.role : ""} ${l.market ? "· " + l.market : ""}</div>
         <div class="lead-meta">${(l.summary || "").replace(/</g, "&lt;")}</div>
-        ${l.email ? `<div class="lead-meta">📧 <a href="mailto:${l.email}" style="color:var(--cyan)">${l.email}</a></div>` : ""}
+        ${l.email? `<div class="lead-meta">📧 <a href="mailto:${l.email}" style="color:var(--cyan)">${l.email}</a></div>` : ""}
         ${l.phone ? `<div class="lead-meta">📱 <a href="https://wa.me/${l.phone.replace(/\D/g,"")}" target="_blank" style="color:var(--cyan)">${l.phone}</a></div>` : ""}
-        ${l.waLink ? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open summary in WhatsApp</a></div>` : ""}
+        ${l.waLink? `<div style="margin-top:8px"><a href="${l.waLink}" target="_blank" style="color:var(--gold);font-size:.75rem">→ Open summary in WhatsApp</a></div>` : ""}
       </div>
     `).join("");
   }
