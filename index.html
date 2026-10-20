@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- 3D Avatar Libraries (Three.js & TalkingHead) -->
+  <!-- 3D Avatar Libraries -->
   <script type="importmap">
     {
       "imports": {
@@ -22,9 +22,7 @@
   </script>
 
   <style>
-    /* ============================================================
-       2080 CYBERPUNK THEME
-       ============================================================ */
+    /* 2080 CYBERPUNK THEME (Same as before) */
     :root {
       --bg: #0D0D11;
       --bg-2: #050508;
@@ -47,9 +45,7 @@
       font-family: "Inter", sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 132, 255, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(255, 0, 234, 0.06) 0%, transparent 40%);
+      background-image: radial-gradient(circle at 50% 0%, rgba(0, 132, 255, 0.12) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255, 0, 234, 0.06) 0%, transparent 40%);
       background-attachment: fixed;
     }
 
@@ -62,7 +58,6 @@
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; outline: none; }
 
-    /* NAVBAR */
     .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo-icon { font: 900 1.8rem "Orbitron", sans-serif; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
@@ -74,7 +69,6 @@
     .btn-wa { background: transparent; border: 1px solid var(--pink); color: var(--pink); padding: 10px 20px; border-radius: 4px; font: 700 0.75rem "Orbitron"; letter-spacing: 1px; cursor: pointer; transition: 0.3s; }
     .btn-wa:hover { background: rgba(255, 0, 234, 0.1); box-shadow: 0 0 20px rgba(255, 0, 234, 0.4); }
 
-    /* HERO & AVATAR */
     .hero { min-height: 100vh; padding: 120px 40px 60px; display: flex; align-items: center; justify-content: space-between; gap: clamp(20px, 4vw, 50px); max-width: 1400px; margin: 0 auto; flex-wrap: wrap; }
     .hero-left { flex: 1 1 300px; max-width: 450px; }
     .hero-subtitle { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 16px; text-shadow: 0 0 8px var(--pink); text-transform: uppercase; }
@@ -98,7 +92,6 @@
     .agent-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.8s infinite ease-in-out; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } }
 
-    /* 3D AVATAR CONTAINER */
     .avatar-3d-wrap { width: 85%; aspect-ratio: 1/1; border-radius: 50%; background: #060913; border: 2px solid rgba(0, 243, 255, 0.5); position: relative; z-index: 10; overflow: hidden; box-shadow: 0 0 35px rgba(0, 243, 255, 0.3); }
     .avatar-3d-wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.1) 3px), linear-gradient(180deg, transparent 50%, rgba(0, 243, 255, 0.4) 100%); mix-blend-mode: overlay; }
     .avatar-base { position: absolute; bottom: 5px; width: 85%; height: 40px; background: radial-gradient(ellipse at center, rgba(0, 243, 255, 0.4) 0%, transparent 75%); border-radius: 50%; border: 1px solid var(--cyan); box-shadow: 0 0 30px var(--cyan); transform: rotateX(75deg); }
@@ -108,7 +101,6 @@
     .ctrl-btn.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
     .ctrl-btn.danger:hover { border-color: var(--pink); color: var(--pink); }
 
-    /* CHAT */
     .hero-right { flex: 1 1 350px; max-width: 420px; width: 100%; }
     .chat-widget { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; backdrop-filter: blur(25px); position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); height: 520px; display: flex; flex-direction: column; }
     .laser-line { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); box-shadow: 0 0 12px var(--cyan); opacity: 0; top: -10px; z-index: 10; }
@@ -138,7 +130,6 @@
     .ibtn { width: 36px; height: 36px; border-radius: 4px; background: transparent; border: 1px solid var(--border); color: var(--cyan); display: grid; place-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
     .ibtn:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--cyan); }
 
-    /* OTHER SECTIONS */
     .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); }
     .section-header { text-align: center; margin-bottom: 50px; }
     .section-kicker { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
@@ -188,6 +179,7 @@
     .pkg-list li::before { content: "＋"; color: var(--cyan); }
     .btn-pkg { width: 100%; padding: 12px; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 4px; font-family: "Orbitron"; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; display: block; text-decoration: none; }
     .btn-pkg:hover, .price-card.featured .btn-pkg { border-color: var(--cyan); background: rgba(0, 243, 255, 0.1); color: var(--cyan); }
+    
     .final-cta { text-align: center; padding: 60px 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; margin: 40px auto; max-width: 800px; }
     .final-cta h2 { font: 700 2rem "Orbitron"; margin-bottom: 16px; }
     .final-cta p { color: var(--muted); margin-bottom: 24px; }
@@ -241,17 +233,13 @@
       </div>
     </section>
 
-    <!-- CENTER (3D AVATAR) -->
     <section class="hero-center">
       <div class="avatar-container">
         <div class="ring-1"></div>
         <div class="ring-2"></div>
         <div class="ring-3"></div>
         <div class="agent-badge">AI AGENT ONLINE</div>
-        
-        <!-- 3D Canvas Replaces Image -->
         <div class="avatar-3d-wrap" id="avatar3DContainer"></div>
-        
         <div class="avatar-base"></div>
       </div>
       <div class="avatar-controls">
@@ -262,7 +250,6 @@
       </div>
     </section>
 
-    <!-- RIGHT (Chat) -->
     <section class="hero-right" id="assistant">
       <div class="chat-widget" id="chatWidget">
         <div class="laser-line"></div>
@@ -289,7 +276,7 @@
     </section>
   </main>
 
-  <!-- SERVICES -->
+  <!-- SECTIONS (Services, CV, Packages) Remains the same as your previous file -->
   <section class="section" id="services">
     <div class="section-header">
       <p class="section-kicker">Built around your next step</p>
@@ -306,7 +293,6 @@
     </div>
   </section>
 
-  <!-- STANDARD -->
   <section class="section" id="standard">
     <div class="split">
       <div class="split-copy">
@@ -318,7 +304,7 @@
           <div class="feature"><span class="feature-icon">✦</span><div><b>Role-focused wording</b><span>Relevant keywords drawn from your experience and target job description.</span></div></div>
           <div class="feature"><span class="feature-icon">✦</span><div><b>Human review</b><span>We confirm your details with you instead of inventing achievements.</span></div></div>
         </div>
-        <button class="btn-primary" onclick="askNexus('What makes a CV ATS-aware?')" style="border-color: var(--cyan); color: var(--cyan);">Ask NEXUS how it works ↗</button>
+        <button class="btn-primary" onclick="window.askNexus('What makes a CV ATS-aware?')" style="border-color: var(--cyan); color: var(--cyan);">Ask NEXUS how it works ↗</button>
       </div>
 
       <div class="cv-card">
@@ -364,7 +350,6 @@
     </div>
   </section>
 
-  <!-- PACKAGES -->
   <section class="section" id="packages">
     <div class="section-header">
       <p class="section-kicker">Straightforward packages</p>
@@ -415,7 +400,6 @@
     <p class="fineprint">Prices are illustrative starting points and must be confirmed with the owner. No job placement, interview, or ATS pass is guaranteed.</p>
   </section>
 
-  <!-- FINAL CTA -->
   <section class="section">
     <div class="final-cta">
       <p class="section-kicker">Meet the guide</p>
@@ -425,7 +409,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-brand">NEXUS CV</div>
     <div>Built for clarity. Designed for momentum.</div>
@@ -440,42 +423,37 @@
     import { TalkingHead } from "talkinghead";
 
     /* ============================================================
-       1. INITIALIZE 3D AVATAR
+       1. INITIALIZE 3D AVATAR (FIXED)
        ============================================================ */
     const avatarContainer = document.getElementById('avatar3DContainer');
-    
-    // Add your Google TTS API key here for the best lip-sync. 
-    // Leave blank to use the browser's built-in voice (free).
-    const GOOGLE_TTS_API_KEY = ""; 
+    let head;
 
-    const head = new TalkingHead(avatarContainer, {
-      ttsEndpoint: "https://eu-texttospeech.googleapis.com/v1beta1/text:synthesize",
-      ttsApikey: GOOGLE_TTS_API_KEY,
-      lipsyncModules: ["en"],
-      cameraView: "upper" 
-    });
+    try {
+      head = new TalkingHead(avatarContainer, {
+        // No API key means it uses the browser's free voice.
+        lipsyncModules: [], // Removed to fix the 404 CDN error
+        cameraView: "upper"
+      });
 
-    // Load the Demo Avatar (You can replace the URL with your own Ready Player Me .glb link)
-    async function loadAvatar() {
-      try {
-        await head.showAvatar({
-          url: 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934a6.glb?morphTargets=ARKit,Oculus+Visemes,mouthOpen,mouthSmile,eyesClosed,eyesLookUp,eyesLookDown&textureSizeLimit=1024&textureFormat=png',
-          body: 'F', 
-          avatarMood: 'neutral',
-          ttsLang: "en-GB",
-          ttsVoice: "en-GB-Standard-A",
-          lipsyncLang: 'en'
-        }, (ev) => {
-          if (ev.lengthComputable) {
-            let val = Math.min(100, Math.round(ev.loaded / ev.total * 100));
-            console.log("Avatar Loading: " + val + "%");
-          }
-        });
-      } catch (error) {
-        console.error("Error loading avatar:", error);
+      async function loadAvatar() {
+        try {
+          await head.showAvatar({
+            // ✅ Reliable, working CDN avatar URL
+            url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
+            body: 'F', 
+            avatarMood: 'neutral',
+            ttsLang: "en-GB",
+            ttsVoice: "en-GB-Standard-A"
+          });
+          console.log("Avatar loaded successfully!");
+        } catch (error) {
+          console.error("Failed to load 3D avatar:", error);
+        }
       }
+      loadAvatar();
+    } catch(e) {
+      console.error("TalkingHead initialization failed:", e);
     }
-    loadAvatar();
 
     /* ============================================================
        2. CHAT LOGIC & SESSION MEMORY
@@ -591,36 +569,43 @@
       saveMemory();
     });
 
-    function askNexus(q) {
+    // ✅ FIXED: Attached to window so HTML buttons can find it
+    window.askNexus = function(q) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       chatInput.value = q;
       chatForm.requestSubmit();
-    }
+    };
 
     /* ============================================================
-       3. AVATAR MOODS & GESTURES
+       3. AVATAR MOODS & GESTURES (SAFE CALLS)
        ============================================================ */
     function triggerAvatarSpeech(text) {
+      if (!head || !head.body) {
+        console.warn("Avatar not ready yet. Skipping animation.");
+        return;
+      }
+
       const lowerText = text.toLowerCase();
 
-      // Detect Mood
-      if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome")) {
-        head.setMood("happy");
-        head.playGesture("thumbup", 2);
-      } 
-      else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("unfortunately") || lowerText.includes("cannot")) {
-        head.setMood("sad");
+      try {
+        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome")) {
+          head.setMood("happy");
+          head.playGesture("thumbup", 2);
+        } 
+        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("unfortunately") || lowerText.includes("cannot")) {
+          head.setMood("sad");
+        }
+        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("bad")) {
+          head.setMood("angry");
+          head.playGesture("shrug", 2);
+        }
+        else {
+          head.setMood("neutral");
+        }
+        head.speakText(text);
+      } catch (err) {
+        console.error("Avatar animation error:", err);
       }
-      else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("bad")) {
-        head.setMood("angry");
-        head.playGesture("shrug", 2);
-      }
-      else {
-        head.setMood("neutral");
-      }
-
-      // Speak
-      head.speakText(text);
     }
 
     /* ============================================================
@@ -638,7 +623,7 @@
       sessionStorage.removeItem("nexus_facts");
       
       if("speechSynthesis" in window) speechSynthesis.cancel();
-      head.stopSpeaking();
+      if (head && head.stopSpeaking) head.stopSpeaking();
     });
     
     $("closeBtn").addEventListener("click", (e) => {
