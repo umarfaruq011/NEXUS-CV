@@ -474,9 +474,8 @@
     };
 
     try {
-      // ✅ FIX: dummy ttsEndpoint add kiya, taaki constructor error na de
+      // ✅ ttsEndpoint hata diya, kyunki hum speakAudio use karenge
       head = new TalkingHead(avatarContainer, {
-        ttsEndpoint: "https://example.com", 
         lipsyncModules: ["en"],
         cameraView: "upper"
       });
@@ -539,7 +538,10 @@
 
       } catch (error) {
         console.error("Audio play error:", error);
-        head.speakText("Hello, main NEXUS hoon. Kaise hain aap?");
+        // Fallback to browser TTS if audio file fails
+        const utterance = new SpeechSynthesisUtterance("Hello, main NEXUS hoon. Kaise hain aap?");
+        utterance.lang = 'en-IN';
+        speechSynthesis.speak(utterance);
       }
     }
 
@@ -652,7 +654,8 @@
       
       el.textContent = worker.answer;
       
-      triggerAvatarSpeech(worker.answer);
+      // ✅ Ab speakText ki jagah browser TTS use karenge
+      speakWithBrowser(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
       chatHistory.push({ role: "bot", text: worker.answer });
@@ -666,59 +669,32 @@
       chatForm.requestSubmit();
     };
 
-    function triggerAvatarSpeech(text) {
-      if (!head || !isAvatarReady) {
-        console.warn("Avatar not ready yet. Skipping animation.");
+    // ✅ Browser ka built-in TTS (free)
+    function speakWithBrowser(text) {
+      if (!("speechSynthesis" in window)) {
+        console.warn("Browser TTS not supported.");
         return;
       }
-
-      const lowerText = text.toLowerCase();
-
-      try {
-        if (currentGender === "male") {
-          head.ttsVoice = "en-IN-Standard-B";
-        } else {
-          head.ttsVoice = "en-IN-Standard-A";
-        }
-
-        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("khush")) {
-          head.setMood("happy");
-          head.playGesture("thumbup", 2);
-        } 
-        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("maaf")) {
-          head.setMood("sad");
-        }
-        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("gussa")) {
-          head.setMood("angry");
-          head.playGesture("shrug", 2);
-        }
-        else {
-          head.setMood("neutral");
-        }
-        head.speakText(text);
-      } catch (err) {
-        console.error("Avatar animation error:", err);
-      }
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.9;
+      utterance.pitch = currentGender === 'female' ? 1.1 : 0.9;
+      speechSynthesis.speak(utterance);
     }
 
     $("femaleBtn").addEventListener("click", () => {
       currentGender = "female";
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
-      if (head && isAvatarReady) {
-        head.ttsVoice = "en-IN-Standard-A";
-        head.speakText("Hello, I am NEXUS.");
-      }
+      speakWithBrowser("Hello, I am NEXUS.");
     });
 
     $("maleBtn").addEventListener("click", () => {
       currentGender = "male";
       $("maleBtn").classList.add("active");
       $("femaleBtn").classList.remove("active");
-      if (head && isAvatarReady) {
-        head.ttsVoice = "en-IN-Standard-B";
-        head.speakText("Hello, I am NEXUS.");
-      }
+      speakWithBrowser("Hello, I am NEXUS.");
     });
 
     $("exitBtn").addEventListener("click", () => {
