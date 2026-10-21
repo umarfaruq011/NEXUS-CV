@@ -45,7 +45,7 @@
       overflow-x: hidden;
     }
 
-    /* Cinematic Canvas */
+    /* Cinematic Background */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -84,8 +84,14 @@
     .btn-primary:hover { background: rgba(0, 255, 136, 0.1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.35); }
 
     .hero-center { display: flex; flex-direction: column; align-items: center; flex: 1 1 350px; position: relative; }
+    
+    /* Avatar Animation */
     @keyframes floatHologram { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-    .avatar-container { width: min(100%, 400px); aspect-ratio: 1/1; position: relative; display: flex; justify-content: center; align-items: center; margin: 20px 0; animation: floatHologram 4s ease-in-out infinite; }
+    @keyframes speakBounce { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.02) translateY(-5px); } }
+    
+    .avatar-container { width: min(100%, 400px); aspect-ratio: 1/1; position: relative; display: flex; justify-content: center; align-items: center; margin: 20px 0; animation: floatHologram 4s ease-in-out infinite; transition: filter 0.3s; }
+    .avatar-container.speaking { animation: speakBounce 0.4s ease-in-out infinite; filter: drop-shadow(0 0 30px var(--green)); }
+    
     .ring-1, .ring-2, .ring-3 { position: absolute; border-radius: 50%; }
     .ring-1 { inset: -10px; border: 1px dashed rgba(0, 243, 255, 0.3); animation: spin 30s linear infinite; }
     .ring-2 { inset: 15px; border: 2px solid transparent; border-top-color: var(--cyan); border-bottom-color: var(--pink); animation: spinRev 12s linear infinite; }
@@ -259,7 +265,7 @@
     </section>
 
     <section class="hero-center">
-      <div class="avatar-container">
+      <div class="avatar-container" id="avatarContainer">
         <div class="ring-1"></div>
         <div class="ring-2"></div>
         <div class="ring-3"></div>
@@ -512,35 +518,17 @@
 
     /* --- AVATAR SETUP --- */
     const avatarContainer = document.getElementById('avatar3DContainer');
+    const avatarWrapper = document.getElementById('avatarContainer');
     let head;
     let isAvatarReady = false;
     let currentGender = "female";
 
-    // Custom Audio JSON
-    const myCustomJSON = {
-      "audio_url": "./my-voice.mp3", 
-      "words": [
-        { "text": "ہائی", "start": 1229, "end": 1709 },
-        { "text": "السلام", "start": 2189, "end": 2689 },
-        { "text": "علیکم", "start": 2689, "end": 3469 },
-        { "text": "میرا", "start": 4389, "end": 4569 },
-        { "text": "نام", "start": 4569, "end": 4849 },
-        { "text": "عمر", "start": 4849, "end": 5269 },
-        { "text": "ہے", "start": 5269, "end": 5549 },
-        { "text": "اور", "start": 5549, "end": 6409 },
-        { "text": "میں", "start": 6409, "end": 6609 },
-        { "text": "سی", "start": 6609, "end": 6949 },
-        { "text": "وی", "start": 6949, "end": 7069 },
-        { "text": "بناتا", "start": 7069, "end": 7709 },
-        { "text": "ہوں", "start": 7709, "end": 9409 }
-      ]
-    };
-
     try {
+      // Dummy endpoint just to pass the constructor check. We won't use speakText.
       head = new TalkingHead(avatarContainer, {
         ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize",
         ttsApikey: "dummy_key", 
-        lipsyncModules: ["en"],
+        lipsyncModules: [],
         cameraView: "upper"
       });
 
@@ -582,48 +570,54 @@
       if (state === 'listening') {
         pillEl.textContent = "LISTENING";
         pillEl.style.color = "var(--pink)";
-        head.setMood('neutral');
       } else if (state === 'processing') {
         pillEl.textContent = "PROCESSING";
         pillEl.style.color = "var(--cyan)";
-        head.setMood('neutral');
       } else if (state === 'speaking') {
         pillEl.textContent = "SPEAKING";
         pillEl.style.color = "var(--green)";
-        head.setMood('happy');
+        avatarWrapper.classList.add('speaking');
       } else if (state === 'standby') {
         pillEl.textContent = "ONLINE";
         pillEl.style.color = "var(--green)";
         statusEl.className = 'avatar-status';
         labelEl.textContent = "STANDBY";
+        avatarWrapper.classList.remove('speaking');
       }
     }
 
-    /* --- CUSTOM VOICE PLAYER --- */
-    async function playMyVoice() {
-      if (!head || !isAvatarReady) return;
-      try {
-        const audioResponse = await fetch(myCustomJSON.audio_url);
-        const audioData = await audioResponse.arrayBuffer();
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioContext.decodeAudioData(audioData);
-
-        const words = myCustomJSON.words.map(w => w.text);
-        const wtimes = myCustomJSON.words.map(w => w.start);
-        const wdurations = myCustomJSON.words.map(w => w.end - w.start);
-
-        const audioObject = { audio: audioBuffer, words, wtimes, wdurations };
-        
+    /* --- BROWSER TTS (AUDIO ONLY) --- */
+    function speakWithBrowser(text) {
+      if (!("speechSynthesis" in window)) {
+        console.warn("Browser TTS not supported.");
+        return;
+      }
+      
+      speechSynthesis.cancel(); // Stop any previous speech
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-IN';
+      utterance.rate = 0.95;
+      utterance.pitch = currentGender === 'female' ? 1.1 : 0.9;
+      
+      utterance.onstart = () => {
         setAvatarState('speaking');
-        head.playGesture("thumbup", 2);
-        await head.speakAudio(audioObject);
+      };
+      
+      utterance.onend = () => {
         setAvatarState('standby');
-      } catch (error) {
-        console.error("Audio play error:", error);
-      }
+      };
+      
+      utterance.onerror = () => {
+        setAvatarState('standby');
+      };
+
+      speechSynthesis.speak(utterance);
     }
 
-    document.getElementById('activateBtn').addEventListener('click', playMyVoice);
+    document.getElementById('activateBtn').addEventListener('click', () => {
+      speakWithBrowser("Hello! I am NEXUS, your AI career strategist. How can I help you today?");
+    });
 
     /* --- CHAT & MEMORY LOGIC --- */
     const WHATSAPP_NUMBER = "966563468307"; 
@@ -721,16 +715,13 @@
       
       el.textContent = worker.answer;
       
-      setAvatarState('speaking');
-      const voiceToUse = (currentGender === 'male') ? "en-IN-Standard-B" : "en-IN-Standard-A";
-      head.speakText(worker.answer, { ttsVoice: voiceToUse });
+      // Speak using browser TTS
+      speakWithBrowser(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
       chatHistory.push({ role: "bot", text: worker.answer });
       if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
       saveMemory();
-      
-      setTimeout(() => setAvatarState('standby'), 5000); // Reset state after 5s
     });
 
     window.askNexus = function(q) {
@@ -743,22 +734,14 @@
       currentGender = "female";
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
-      if (head && isAvatarReady) {
-        setAvatarState('speaking');
-        head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-A" });
-        setTimeout(() => setAvatarState('standby'), 3000);
-      }
+      speakWithBrowser("Hello, I am NEXUS.");
     });
 
     $("maleBtn").addEventListener("click", () => {
       currentGender = "male";
       $("maleBtn").classList.add("active");
       $("femaleBtn").classList.remove("active");
-      if (head && isAvatarReady) {
-        setAvatarState('speaking');
-        head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-B" });
-        setTimeout(() => setAvatarState('standby'), 3000);
-      }
+      speakWithBrowser("Hello, I am NEXUS.");
     });
 
     $("exitBtn").addEventListener("click", () => {
