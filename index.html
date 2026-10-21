@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0D0D11">
-  <title>NEXUS CV — 3D Holographic Avatar</title>
+  <title>NEXUS CV — 2100 Cinematic AI</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,12 +43,19 @@
       font-family: "Inter", sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
-      background-image: radial-gradient(circle at 50% 0%, rgba(0, 132, 255, 0.12) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(255, 0, 234, 0.06) 0%, transparent 40%);
-      background-attachment: fixed;
+    }
+
+    /* Cinematic Canvas */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -2;
+      pointer-events: none;
     }
 
     body::after {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
       background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.02) 3px);
       opacity: 0.8;
     }
@@ -85,6 +92,22 @@
     .ring-3 { inset: 35px; border: 1px solid rgba(255, 0, 234, 0.15); animation: spin 20s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spinRev { 100% { transform: rotate(-360deg); } }
+
+    /* Avatar States */
+    .avatar-status {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
+      padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 8px;
+      font: 700 0.65rem "Orbitron"; letter-spacing: 1.5px; z-index: 30; transition: 0.3s;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+    .avatar-status.listening { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 15px rgba(255,0,234,0.3); }
+    .avatar-status.listening .status-dot { background: var(--pink); animation: pulse 1s infinite; }
+    .avatar-status.processing { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0,243,255,0.3); }
+    .avatar-status.processing .status-dot { background: var(--cyan); animation: blink 0.5s infinite; }
+    .avatar-status.speaking { border-color: var(--green); color: var(--green); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+    .avatar-status.speaking .status-dot { background: var(--green); animation: pulse 0.8s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     .agent-badge { position: absolute; top: 0px; background: var(--bg-2); border: 1px solid var(--green); padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif; color: var(--green); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); text-transform: uppercase; }
     .agent-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.8s infinite ease-in-out; }
@@ -127,8 +150,9 @@
     .chat-input-area input::placeholder { color: var(--muted); }
     .ibtn { width: 36px; height: 36px; border-radius: 4px; background: transparent; border: 1px solid var(--border); color: var(--cyan); display: grid; place-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
     .ibtn:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--cyan); }
+    .ibtn.listening { border-color: var(--pink); color: var(--pink); animation: pulse 1s infinite; }
 
-    .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); }
+    .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); position: relative; z-index: 2; }
     .section-header { text-align: center; margin-bottom: 50px; }
     .section-kicker { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
     .section-title { font: 700 clamp(1.8rem, 3vw, 2.5rem) "Orbitron"; margin-bottom: 16px; }
@@ -136,7 +160,7 @@
     .section-sub { color: var(--muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto; }
 
     .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .service-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; transition: 0.3s; }
+    .service-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; transition: 0.3s; backdrop-filter: blur(10px); }
     .service-card:hover { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); transform: translateY(-4px); }
     .service-icon { font-size: 1.5rem; color: var(--cyan); margin-bottom: 16px; }
     .service-card h3 { font: 600 1.1rem "Orbitron"; margin-bottom: 8px; }
@@ -152,7 +176,7 @@
     .feature b { display: block; font-size: 0.9rem; margin-bottom: 2px; }
     .feature span { color: var(--muted); font-size: 0.8rem; }
 
-    .cv-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+    .cv-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; backdrop-filter: blur(10px); }
     .cv-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--pink)); }
     .cv-name { font: 700 1.3rem "Orbitron"; }
     .cv-role { color: var(--cyan); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin: 4px 0; }
@@ -164,7 +188,7 @@
     .cv-footer { font-size: 0.65rem; color: var(--muted); text-align: center; margin-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; }
 
     .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .price-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 30px; display: flex; flex-direction: column; transition: 0.3s; }
+    .price-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 30px; display: flex; flex-direction: column; transition: 0.3s; backdrop-filter: blur(10px); }
     .price-card:hover { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); transform: translateY(-4px); }
     .price-card.featured { border-color: var(--pink); box-shadow: 0 0 20px rgba(255, 0, 234, 0.1); }
     .price-card.featured .pkg-label { color: var(--pink); }
@@ -178,11 +202,11 @@
     .btn-pkg { width: 100%; padding: 12px; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 4px; font-family: "Orbitron"; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; display: block; text-decoration: none; }
     .btn-pkg:hover, .price-card.featured .btn-pkg { border-color: var(--cyan); background: rgba(0, 243, 255, 0.1); color: var(--cyan); }
     
-    .final-cta { text-align: center; padding: 60px 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; margin: 40px auto; max-width: 800px; }
+    .final-cta { text-align: center; padding: 60px 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; margin: 40px auto; max-width: 800px; backdrop-filter: blur(10px); }
     .final-cta h2 { font: 700 2rem "Orbitron"; margin-bottom: 16px; }
     .final-cta p { color: var(--muted); margin-bottom: 24px; }
 
-    footer { border-top: 1px solid var(--border); padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-2); font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 16px; }
+    footer { border-top: 1px solid var(--border); padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-2); font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 16px; position: relative; z-index: 2; }
     .footer-brand { color: var(--cyan); font-family: "Orbitron"; font-size: 1rem; }
     .footer-disclaimer { max-width: 600px; font-size: 0.7rem; opacity: 0.7; margin-top: 16px; text-align: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; }
 
@@ -203,6 +227,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Cinematic Background -->
+  <canvas id="bgCanvas"></canvas>
 
   <!-- NAVBAR -->
   <nav class="navbar">
@@ -239,7 +266,14 @@
         <div class="agent-badge">AI AGENT ONLINE</div>
         <div class="avatar-3d-wrap" id="avatar3DContainer"></div>
         <div class="avatar-base"></div>
+        
+        <!-- Avatar Status Badge -->
+        <div class="avatar-status" id="avatarStatus">
+          <span class="status-dot"></span>
+          <span id="statusLabel">STANDBY</span>
+        </div>
       </div>
+      
       <div class="avatar-controls">
         <button class="ctrl-btn active" id="femaleBtn">♀ Female</button>
         <button class="ctrl-btn" id="maleBtn">♂ Male</button>
@@ -418,18 +452,73 @@
     </div>
   </footer>
 
-  <!-- 3D AVATAR & CHAT SCRIPT -->
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
+    /* --- CINEMATIC BACKGROUND --- */
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * width, y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 1.5 + 1, alpha: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function drawCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#0D0D11';
+      ctx.fillRect(0, 0, width, height);
+      
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 - dist / 1000})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 243, 255, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(drawCanvas);
+    }
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    drawCanvas();
+
+    /* --- AVATAR SETUP --- */
     const avatarContainer = document.getElementById('avatar3DContainer');
     let head;
     let isAvatarReady = false;
     let currentGender = "female";
 
-    // 👇 AAPKA ASSEMBLY AI JSON YAHAN HAI 👇
+    // Custom Audio JSON
     const myCustomJSON = {
-      "audio_url": "./my-voice.mp3", // Aapko apni audio file isi naam se GitHub par upload karni hai
+      "audio_url": "./my-voice.mp3", 
       "words": [
         { "text": "ہائی", "start": 1229, "end": 1709 },
         { "text": "السلام", "start": 2189, "end": 2689 },
@@ -443,37 +532,14 @@
         { "text": "سی", "start": 6609, "end": 6949 },
         { "text": "وی", "start": 6949, "end": 7069 },
         { "text": "بناتا", "start": 7069, "end": 7709 },
-        { "text": "ہوں", "start": 7709, "end": 9409 },
-        { "text": "کیا", "start": 9889, "end": 10069 },
-        { "text": "آپ", "start": 10069, "end": 10249 },
-        { "text": "کے", "start": 10249, "end": 11559 },
-        { "text": "حال", "start": 11559, "end": 12869 },
-        { "text": "ہیں", "start": 12869, "end": 13949 },
-        { "text": "یہ", "start": 13949, "end": 14249 },
-        { "text": "میرا", "start": 14249, "end": 14609 },
-        { "text": "بوئش", "start": 14609, "end": 15029 },
-        { "text": "ہے", "start": 15029, "end": 15309 },
-        { "text": "یہ", "start": 16049, "end": 16249 },
-        { "text": "سی", "start": 16249, "end": 16569 },
-        { "text": "وی", "start": 16569, "end": 16689 },
-        { "text": "بنانا", "start": 16689, "end": 17169 },
-        { "text": "آتا", "start": 17169, "end": 17669 },
-        { "text": "ہے", "start": 17669, "end": 17929 },
-        { "text": "میں", "start": 18729, "end": 18869 },
-        { "text": "عمر", "start": 18869, "end": 19469 },
-        { "text": "فاروق", "start": 19469, "end": 19969 },
-        { "text": "ہوں", "start": 19969, "end": 20509 },
-        { "text": "نیکسس", "start": 20829, "end": 21449 },
-        { "text": "اے", "start": 21449, "end": 21769 },
-        { "text": "آئی", "start": 21769, "end": 22029 },
-        { "text": "کا", "start": 22029, "end": 22249 },
-        { "text": "مالک", "start": 22249, "end": 23009 },
-        { "text": "ہوں", "start": 23009, "end": 23329 }
+        { "text": "ہوں", "start": 7709, "end": 9409 }
       ]
     };
 
     try {
       head = new TalkingHead(avatarContainer, {
+        ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize",
+        ttsApikey: "dummy_key", 
         lipsyncModules: ["en"],
         cameraView: "upper"
       });
@@ -504,12 +570,38 @@
       }
     }, { once: true });
 
-    async function playMyVoice() {
-      if (!head || !isAvatarReady) {
-        console.warn("Avatar load nahi hua.");
-        return;
+    /* --- STATE MANAGEMENT --- */
+    function setAvatarState(state) {
+      const statusEl = document.getElementById('avatarStatus');
+      const labelEl = document.getElementById('statusLabel');
+      const pillEl = document.getElementById('statusPill');
+      
+      statusEl.className = 'avatar-status ' + state;
+      labelEl.textContent = state.toUpperCase();
+      
+      if (state === 'listening') {
+        pillEl.textContent = "LISTENING";
+        pillEl.style.color = "var(--pink)";
+        head.setMood('neutral');
+      } else if (state === 'processing') {
+        pillEl.textContent = "PROCESSING";
+        pillEl.style.color = "var(--cyan)";
+        head.setMood('neutral');
+      } else if (state === 'speaking') {
+        pillEl.textContent = "SPEAKING";
+        pillEl.style.color = "var(--green)";
+        head.setMood('happy');
+      } else if (state === 'standby') {
+        pillEl.textContent = "ONLINE";
+        pillEl.style.color = "var(--green)";
+        statusEl.className = 'avatar-status';
+        labelEl.textContent = "STANDBY";
       }
+    }
 
+    /* --- CUSTOM VOICE PLAYER --- */
+    async function playMyVoice() {
+      if (!head || !isAvatarReady) return;
       try {
         const audioResponse = await fetch(myCustomJSON.audio_url);
         const audioData = await audioResponse.arrayBuffer();
@@ -520,31 +612,20 @@
         const wtimes = myCustomJSON.words.map(w => w.start);
         const wdurations = myCustomJSON.words.map(w => w.end - w.start);
 
-        const audioObject = {
-          audio: audioBuffer,
-          words: words,
-          wtimes: wtimes,
-          wdurations: wdurations
-        };
-
-        head.setMood("happy");
-        head.playGesture("thumbup", 2);
+        const audioObject = { audio: audioBuffer, words, wtimes, wdurations };
         
+        setAvatarState('speaking');
+        head.playGesture("thumbup", 2);
         await head.speakAudio(audioObject);
-        console.log("Custom voice played successfully!");
-
+        setAvatarState('standby');
       } catch (error) {
         console.error("Audio play error:", error);
-        const utterance = new SpeechSynthesisUtterance("Hello, main NEXUS hoon. Kaise hain aap?");
-        utterance.lang = 'en-IN';
-        speechSynthesis.speak(utterance);
       }
     }
 
-    document.getElementById('activateBtn').addEventListener('click', () => {
-      playMyVoice();
-    });
+    document.getElementById('activateBtn').addEventListener('click', playMyVoice);
 
+    /* --- CHAT & MEMORY LOGIC --- */
     const WHATSAPP_NUMBER = "966563468307"; 
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
@@ -560,17 +641,13 @@
     const chatInput = $("chatInput");
     const chatForm = $("chatForm");
     const chatWidget = $("chatWidget");
-    const statusPill = $("statusPill");
+    const micBtn = $("micBtn");
     
-    let isActivated = false;
     let chatHistory = JSON.parse(sessionStorage.getItem("nexus_history")) || [];
     let knownFacts = JSON.parse(sessionStorage.getItem("nexus_facts")) || {};
 
     if (chatHistory.length > 0) {
       chatHistory.forEach(msg => renderMessage(msg.role, msg.text));
-      isActivated = true;
-      statusPill.textContent = "ONLINE";
-      statusPill.style.color = "var(--green)";
     }
 
     function saveMemory() {
@@ -625,29 +702,26 @@
       const text = chatInput.value.trim();
       if(!text) return;
 
-      if(!isActivated) {
-        isActivated = true;
-        statusPill.textContent = "ONLINE";
-        statusPill.style.color = "var(--green)";
-      }
-
       chatInput.value = "";
       renderMessage("user", text);
       chatWidget.classList.add("scanning");
       extractFacts(text);
 
       const el = renderMessage("bot", "Processing...");
+      setAvatarState('processing');
+
       const worker = await fetchNexusReply(text);
       chatWidget.classList.remove("scanning");
 
       if (!worker.ok) {
         el.textContent = "System error. AI core offline.";
+        setAvatarState('standby');
         return;
       }
       
       el.textContent = worker.answer;
       
-      // ✅ UPDATED: Pass the correct voice as an option to speakText
+      setAvatarState('speaking');
       const voiceToUse = (currentGender === 'male') ? "en-IN-Standard-B" : "en-IN-Standard-A";
       head.speakText(worker.answer, { ttsVoice: voiceToUse });
 
@@ -655,6 +729,8 @@
       chatHistory.push({ role: "bot", text: worker.answer });
       if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
       saveMemory();
+      
+      setTimeout(() => setAvatarState('standby'), 5000); // Reset state after 5s
     });
 
     window.askNexus = function(q) {
@@ -668,7 +744,9 @@
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
       if (head && isAvatarReady) {
+        setAvatarState('speaking');
         head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-A" });
+        setTimeout(() => setAvatarState('standby'), 3000);
       }
     });
 
@@ -677,21 +755,19 @@
       $("maleBtn").classList.add("active");
       $("femaleBtn").classList.remove("active");
       if (head && isAvatarReady) {
+        setAvatarState('speaking');
         head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-B" });
+        setTimeout(() => setAvatarState('standby'), 3000);
       }
     });
 
     $("exitBtn").addEventListener("click", () => {
-      isActivated = false;
-      statusPill.textContent = "STANDBY";
-      statusPill.style.color = "var(--muted)";
       transcript.innerHTML = `<div class="msg bot"><div class="msg-icon">NX</div><div class="msg-bubble">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate.</div></div>`;
-      
       chatHistory = [];
       knownFacts = {};
       sessionStorage.removeItem("nexus_history");
       sessionStorage.removeItem("nexus_facts");
-      
+      setAvatarState('standby');
       if("speechSynthesis" in window) speechSynthesis.cancel();
       if (head && head.stopSpeaking) head.stopSpeaking();
     });
@@ -703,6 +779,7 @@
       e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
     });
 
+    /* --- SCRAMBLE ANIMATION --- */
     const titleEl = $("scrambleTitle");
     const originalHTML = titleEl.innerHTML;
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
@@ -717,22 +794,50 @@
       iteration += 1 / 3;
     }, 30);
 
-    const micBtn = $("micBtn");
+    /* --- MICROPHONE --- */
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(SR){
       micBtn.classList.remove("hidden");
       const rec = new SR();
-      rec.continuous = false; rec.interimResults = false;
+      rec.continuous = true; 
+      rec.interimResults = true;
       let isListening = false;
       
       micBtn.addEventListener("click", () => {
-        if(isListening){ rec.stop(); return; }
+        if(isListening){ 
+          rec.stop(); 
+          return; 
+        }
         rec.lang = "en-IN"; 
         try { rec.start(); } catch(e){}
       });
-      rec.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
-      rec.onresult = (e) => { chatInput.value = e.results[0][0].transcript; chatForm.requestSubmit(); };
-      rec.onend = () => { isListening = false; micBtn.classList.remove("listening"); };
+      
+      rec.onstart = () => { 
+        isListening = true; 
+        micBtn.classList.add("listening"); 
+        setAvatarState('listening');
+      };
+      
+      rec.onresult = (e) => { 
+        let finalTranscript = '';
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            finalTranscript += e.results[i][0].transcript;
+          }
+        }
+        if(finalTranscript) {
+          chatInput.value = finalTranscript;
+          chatForm.requestSubmit();
+        }
+      };
+      
+      rec.onend = () => { 
+        isListening = false; 
+        micBtn.classList.remove("listening"); 
+        if(chatInput.value.trim() === '') {
+          setAvatarState('standby');
+        }
+      };
     }
   </script>
 </body>
