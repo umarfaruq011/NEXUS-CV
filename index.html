@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0D0D11">
+  <meta name="theme-color" content="#050508">
   <title>NEXUS CV — 2100 Cinematic AI</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +22,7 @@
 
   <style>
     :root {
-      --bg: #0D0D11;
-      --bg-2: #050508;
+      --bg: #050508;
       --panel: rgba(11, 11, 15, 0.75);
       --cyan: #00f3ff;
       --pink: #ff00ea;
@@ -45,6 +44,7 @@
       overflow-x: hidden;
     }
 
+    /* Premium Gaming Background Canvas */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -53,16 +53,17 @@
       pointer-events: none;
     }
 
+    /* CRT Scanline Overlay */
     body::after {
       content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
-      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.02) 3px);
+      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.03) 3px);
       opacity: 0.8;
     }
 
     a { color: inherit; text-decoration: none; }
     button, input { font: inherit; outline: none; }
 
-    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo-icon { font: 900 1.8rem "Orbitron", sans-serif; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
     .logo-text { font: 700 1rem "Orbitron", sans-serif; letter-spacing: 2px; line-height: 1; }
@@ -84,6 +85,7 @@
 
     .hero-center { display: flex; flex-direction: column; align-items: center; flex: 1 1 350px; position: relative; }
     
+    /* Avatar Animations */
     @keyframes floatHologram { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
     @keyframes speakBounce { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.02) translateY(-5px); } }
     
@@ -97,6 +99,7 @@
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
+    /* Avatar States */
     .avatar-status {
       position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
       background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
@@ -112,7 +115,7 @@
     .avatar-status.speaking .status-dot { background: var(--green); animation: pulse 0.8s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .agent-badge { position: absolute; top: 0px; background: var(--bg-2); border: 1px solid var(--green); padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif; color: var(--green); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); text-transform: uppercase; }
+    .agent-badge { position: absolute; top: 0px; background: rgba(5,5,8,0.9); border: 1px solid var(--green); padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif; color: var(--green); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); text-transform: uppercase; }
     .agent-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.8s infinite ease-in-out; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } }
 
@@ -148,7 +151,7 @@
     .msg-bubble { background: rgba(0, 243, 255, 0.05); border: 1px solid rgba(0, 243, 255, 0.2); padding: 10px 12px; border-radius: 4px; font-size: 0.85rem; color: var(--text); }
     .msg.user .msg-bubble { background: rgba(255, 0, 234, 0.05); border-color: rgba(255, 0, 234, 0.2); }
 
-    .chat-input-area { display: flex; gap: 6px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
+    .chat-input-area { display: flex; gap: 6px; background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
     .chat-input-area input { flex: 1; background: transparent; border: none; color: var(--text); padding: 8px 10px; font-size: 0.85rem; }
     .chat-input-area input::placeholder { color: var(--muted); }
     .ibtn { width: 36px; height: 36px; border-radius: 4px; background: transparent; border: 1px solid var(--border); color: var(--cyan); display: grid; place-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
@@ -231,6 +234,7 @@
 </head>
 <body>
 
+  <!-- Premium Gaming Background Canvas -->
   <canvas id="bgCanvas"></canvas>
 
   <nav class="navbar">
@@ -250,7 +254,8 @@
   <main class="hero">
     <section class="hero-left">
       <p class="hero-subtitle">Career technology, reimagined</p>
-      <h1 class="hero-title" id="scrambleTitle">YOUR STORY.<br><span>YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
+      <!-- Removed the scramble title ID here so it loads instantly -->
+      <h1 class="hero-title">YOUR STORY.<br><span>YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
       <p class="hero-desc">A sharper CV starts with a better story. Meet a holographic strategist that speaks, listens, and adapts — in English, Arabic, or Roman Urdu — then delivers a clear, ATS-aware professional profile.</p>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
         <a href="#" class="btn-primary wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV ↗</a>
@@ -451,79 +456,97 @@
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* --- CINEMATIC FUTURE CITY BACKGROUND --- */
+    /* --- PREMIUM BGMI / CYBERPUNK 3D GRID BACKGROUND --- */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let width, height, particles = [], buildings = [];
+    let width, height;
+    
+    // 3D Perspective Grid Parameters
+    const fov = 300;
+    const gridSpeed = 1.5;
+    const gridZ = 1000;
+    let offsetY = 0;
+    let particles = [];
 
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      
+      // Create glowing energy particles
       particles = [];
-      buildings = [];
-      
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 50; i++) {
         particles.push({
-          x: Math.random() * width, y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
-          radius: Math.random() * 1.5 + 1, alpha: Math.random() * 0.5 + 0.2
-        });
-      }
-      
-      for (let i = 0; i < 25; i++) {
-        buildings.push({
-          x: (i / 25) * width,
-          w: width / 20 + Math.random() * 20,
-          h: Math.random() * height * 0.4 + height * 0.1,
-          color: Math.random() > 0.8 ? '#00f3ff' : (Math.random() > 0.5 ? '#ff00ea' : '#0084ff')
+          x: Math.random() * width,
+          y: Math.random() * height,
+          z: Math.random() * 1000 + 100, // Depth
+          size: Math.random() * 2 + 1,
+          speed: Math.random() * 1 + 0.5
         });
       }
     }
 
     function drawCanvas() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = '#0D0D11';
+      // Clear with a deep dark gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, '#050508');
+      grad.addColorStop(1, '#0D0D11');
+      ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
-      
-      ctx.globalAlpha = 0.15;
-      buildings.forEach(b => {
-        ctx.fillStyle = b.color;
-        ctx.fillRect(b.x, height - b.h, b.w, b.h);
-        ctx.fillStyle = '#fff';
-        for (let wy = height - b.h + 10; wy < height; wy += 15) {
-          for (let wx = b.x + 5; wx < b.x + b.w - 5; wx += 10) {
-            if (Math.random() > 0.7) ctx.fillRect(wx, wy, 2, 3);
-          }
-        }
-      });
-      ctx.globalAlpha = 1.0;
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 - dist / 1000})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
+      // Draw 3D Grid (Synthwave style)
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.15)'; // Neon cyan
+      ctx.lineWidth = 1.5;
       
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+      const horizon = height / 2;
+      
+      // Moving horizontal lines
+      offsetY = (offsetY + gridSpeed) % 100;
+      
+      for (let z = 0; z < gridZ; z += 50) {
+        const zAdjusted = z + offsetY;
+        if (zAdjusted === 0) continue;
+        
+        const y = horizon + (fov * 300) / zAdjusted;
+        if (y > height) continue;
+        
+        // Fade lines as they get further away
+        ctx.globalAlpha = Math.max(0, 1 - zAdjusted / gridZ);
         
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 243, 255, ${p.alpha})`;
-        ctx.fill();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // Vertical perspective lines
+      for (let x = -width; x <= width * 2; x += 100) {
+        ctx.globalAlpha = 0.3;
+        ctx.beginPath();
+        ctx.moveTo(width / 2, horizon);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1.0;
+
+      // Draw floating energy particles
+      particles.forEach(p => {
+        p.z -= p.speed; // Move towards viewer
+        if (p.z <= 0) p.z = 1000; // Reset
+
+        // Project 3D coordinates to 2D
+        const scale = fov / p.z;
+        const x2d = (p.x - width / 2) * scale + width / 2;
+        const y2d = (p.y - height / 2) * scale + height / 2;
+        const size2d = p.size * scale;
+
+        if (x2d > 0 && x2d < width && y2d > 0 && y2d < height) {
+          ctx.beginPath();
+          ctx.arc(x2d, y2d, size2d, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 0, 234, ${scale * 1.5})`; // Neon pink
+          ctx.fill();
+        }
       });
+
       requestAnimationFrame(drawCanvas);
     }
     window.addEventListener('resize', initCanvas);
@@ -599,15 +622,14 @@
       }
     }
 
-    /* --- BROWSER TTS WITH VOICE SELECTION --- */
+    /* --- SMART BROWSER TTS --- */
     let availableVoices = [];
     
-    // Load voices asynchronously
     function loadVoices() {
       availableVoices = speechSynthesis.getVoices();
     }
     speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices(); // Try immediately
+    loadVoices();
 
     function speakWithBrowser(text) {
       if (!("speechSynthesis" in window)) return;
@@ -621,24 +643,24 @@
       let selectedVoice = null;
 
       if (availableVoices.length > 0) {
+        // Prefer high-quality Natural/Neural voices if available
+        const highQualityVoices = availableVoices.filter(v => 
+          v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google')
+        );
+
         if (currentGender === 'female') {
-          // Look for common female voice names
-          selectedVoice = availableVoices.find(v => 
-            v.name.includes('Female') || 
-            v.name.includes('Samantha') || 
-            v.name.includes('Zira') || 
-            v.name.includes('Google US English') ||
-            v.name.includes('Victoria') ||
-            v.name.includes('Karen')
+          selectedVoice = highQualityVoices.find(v => 
+            v.name.includes('Female') || v.name.includes('Aria') || 
+            v.name.includes('Zira') || v.name.includes('Samantha')
+          ) || availableVoices.find(v => 
+            v.name.includes('Female') || v.name.includes('Samantha')
           );
         } else {
-          // Look for common male voice names
-          selectedVoice = availableVoices.find(v => 
-            v.name.includes('Male') || 
-            v.name.includes('David') || 
-            v.name.includes('Alex') || 
-            v.name.includes('Mark') ||
-            v.name.includes('Daniel')
+          selectedVoice = highQualityVoices.find(v => 
+            v.name.includes('Male') || v.name.includes('Guy') || 
+            v.name.includes('David') || v.name.includes('Alex')
+          ) || availableVoices.find(v => 
+            v.name.includes('Male') || v.name.includes('David')
           );
         }
       }
@@ -646,7 +668,6 @@
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       } else {
-        // Fallback: change pitch if specific voice not found
         utterance.pitch = currentGender === 'female' ? 1.2 : 0.8;
       }
       
@@ -658,8 +679,7 @@
     }
 
     document.getElementById('activateBtn').addEventListener('click', () => {
-      // Force voices to load on first click (Safari requires this)
-      loadVoices();
+      loadVoices(); // Safari iOS fix
       speakWithBrowser("Hello! I am NEXUS, your AI career strategist. How can I help you today?");
     });
 
@@ -801,20 +821,7 @@
       e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
     });
 
-    const titleEl = $("scrambleTitle");
-    const originalHTML = titleEl.innerHTML;
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
-    let iteration = 0;
-    setInterval(() => {
-      titleEl.innerHTML = originalHTML.split("").map((char, index) => {
-        if (char === "<" || char === ">") return char;
-        if (index < iteration) return originalHTML[index];
-        return letters[Math.floor(Math.random() * letters.length)];
-      }).join("");
-      if (iteration >= originalHTML.length) return;
-      iteration += 1 / 3;
-    }, 30);
-
+    /* --- MICROPHONE --- */
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(SR){
       micBtn.classList.remove("hidden");
