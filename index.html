@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- 3D Avatar Libraries -->
   <script type="importmap">
     {
       "imports": {
@@ -22,7 +21,6 @@
   </script>
 
   <style>
-    /* 2080 CYBERPUNK THEME (Same as before) */
     :root {
       --bg: #0D0D11;
       --bg-2: #050508;
@@ -229,7 +227,7 @@
       <p class="hero-desc">A sharper CV starts with a better story. Meet a holographic strategist that speaks, listens, and adapts — in English, Arabic, or Roman Urdu — then delivers a clear, ATS-aware professional profile.</p>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
         <a href="#" class="btn-primary wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV ↗</a>
-        <button class="btn-primary" onclick="document.getElementById('chatInput').focus()">MEET NEXUS AI ✧</button>
+        <button class="btn-primary" id="activateBtn" onclick="document.getElementById('chatInput').focus()">MEET NEXUS AI ✧</button>
       </div>
     </section>
 
@@ -276,7 +274,6 @@
     </section>
   </main>
 
-  <!-- SECTIONS (Services, CV, Packages) Remains the same as your previous file -->
   <section class="section" id="services">
     <div class="section-header">
       <p class="section-kicker">Built around your next step</p>
@@ -310,7 +307,7 @@
       <div class="cv-card">
         <div class="cv-name">UMAR FARUQ</div>
         <div class="cv-role">Senior Business Operations Specialist</div>
-        <div class="cv-meta">Dammam, Saudi Arabia · umar.faruq@nexuscv.co · +966 56 346 8309</div>
+        <div class="cv-meta">Dammam, Saudi Arabia · umaremotions@gmail.com · +966 563468307</div>
         <div class="cv-sec">
           <h4>Professional Summary</h4>
           <p>Results-driven operations specialist with 7+ years delivering process improvements across logistics, project coordination, and cross-functional leadership. Recognized for translating complex requirements into measurable outcomes — including 32% efficiency gains and SAR 1.2M in annual savings. Fluent in Arabic, English, and Urdu.</p>
@@ -422,29 +419,26 @@
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* ============================================================
-       1. INITIALIZE 3D AVATAR (FIXED)
-       ============================================================ */
     const avatarContainer = document.getElementById('avatar3DContainer');
     let head;
+    let isAvatarReady = false;
 
     try {
       head = new TalkingHead(avatarContainer, {
-        // No API key means it uses the browser's free voice.
-        lipsyncModules: [], // Removed to fix the 404 CDN error
+        lipsyncModules: [],
         cameraView: "upper"
       });
 
       async function loadAvatar() {
         try {
           await head.showAvatar({
-            // ✅ Reliable, working CDN avatar URL
             url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
             body: 'F', 
             avatarMood: 'neutral',
-            ttsLang: "en-GB",
-            ttsVoice: "en-GB-Standard-A"
+            ttsLang: "en-IN", 
+            ttsVoice: "en-IN-Standard-A"
           });
+          isAvatarReady = true;
           console.log("Avatar loaded successfully!");
         } catch (error) {
           console.error("Failed to load 3D avatar:", error);
@@ -455,9 +449,13 @@
       console.error("TalkingHead initialization failed:", e);
     }
 
-    /* ============================================================
-       2. CHAT LOGIC & SESSION MEMORY
-       ============================================================ */
+    document.addEventListener('click', () => {
+      if (head && head.audioCtx && head.audioCtx.state === 'suspended') {
+        head.audioCtx.resume();
+      }
+    }, { once: true });
+
+    // ✅ UPDATED WHATSAPP NUMBER HERE
     const WHATSAPP_NUMBER = "966563468307"; 
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
@@ -520,7 +518,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
             message: message, 
-            lang: "en",
+            lang: "hinglish",
             history: chatHistory.slice(-14),
             facts: knownFacts
           })
@@ -560,7 +558,6 @@
       
       el.textContent = worker.answer;
       
-      // ✅ MAKE 3D AVATAR SPEAK & REACT
       triggerAvatarSpeech(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
@@ -569,18 +566,14 @@
       saveMemory();
     });
 
-    // ✅ FIXED: Attached to window so HTML buttons can find it
     window.askNexus = function(q) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       chatInput.value = q;
       chatForm.requestSubmit();
     };
 
-    /* ============================================================
-       3. AVATAR MOODS & GESTURES (SAFE CALLS)
-       ============================================================ */
     function triggerAvatarSpeech(text) {
-      if (!head || !head.body) {
+      if (!head || !isAvatarReady) {
         console.warn("Avatar not ready yet. Skipping animation.");
         return;
       }
@@ -588,14 +581,14 @@
       const lowerText = text.toLowerCase();
 
       try {
-        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome")) {
+        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome") || lowerText.includes("khush")) {
           head.setMood("happy");
           head.playGesture("thumbup", 2);
         } 
-        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("unfortunately") || lowerText.includes("cannot")) {
+        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("unfortunately") || lowerText.includes("cannot") || lowerText.includes("maaf") || lowerText.includes("dukhi")) {
           head.setMood("sad");
         }
-        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("bad")) {
+        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("bad") || lowerText.includes("gussa")) {
           head.setMood("angry");
           head.playGesture("shrug", 2);
         }
@@ -608,9 +601,6 @@
       }
     }
 
-    /* ============================================================
-       4. CONTROLS & UI
-       ============================================================ */
     $("exitBtn").addEventListener("click", () => {
       isActivated = false;
       statusPill.textContent = "STANDBY";
@@ -633,7 +623,6 @@
       e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
     });
 
-    // Scramble Animation
     const titleEl = $("scrambleTitle");
     const originalHTML = titleEl.innerHTML;
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
@@ -648,7 +637,6 @@
       iteration += 1 / 3;
     }, 30);
 
-    // Mic
     const micBtn = $("micBtn");
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(SR){
@@ -659,7 +647,7 @@
       
       micBtn.addEventListener("click", () => {
         if(isListening){ rec.stop(); return; }
-        rec.lang = "en-US";
+        rec.lang = "en-IN"; 
         try { rec.start(); } catch(e){}
       });
       rec.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
