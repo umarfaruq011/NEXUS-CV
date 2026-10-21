@@ -422,6 +422,7 @@
     const avatarContainer = document.getElementById('avatar3DContainer');
     let head;
     let isAvatarReady = false;
+    let currentGender = "female"; // Default gender
 
     try {
       head = new TalkingHead(avatarContainer, {
@@ -435,8 +436,8 @@
             url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
             body: 'F', 
             avatarMood: 'neutral',
-            ttsLang: "en-IN", 
-            ttsVoice: "en-IN-Standard-A"
+            ttsLang: "en-IN",
+            ttsVoice: "en-IN-Standard-A" // Default female voice
           });
           isAvatarReady = true;
           console.log("Avatar loaded successfully!");
@@ -455,7 +456,6 @@
       }
     }, { once: true });
 
-    // ✅ UPDATED WHATSAPP NUMBER HERE
     const WHATSAPP_NUMBER = "966563468307"; 
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
@@ -581,6 +581,14 @@
       const lowerText = text.toLowerCase();
 
       try {
+        // ✅ Set Voice based on Gender
+        if (currentGender === "male") {
+          head.ttsVoice = "en-IN-Standard-B"; // Male voice
+        } else {
+          head.ttsVoice = "en-IN-Standard-A"; // Female voice
+        }
+
+        // Set Mood
         if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome") || lowerText.includes("khush")) {
           head.setMood("happy");
           head.playGesture("thumbup", 2);
@@ -600,6 +608,27 @@
         console.error("Avatar animation error:", err);
       }
     }
+
+    // ✅ GENDER TOGGLE BUTTONS (FIXED)
+    $("femaleBtn").addEventListener("click", () => {
+      currentGender = "female";
+      $("femaleBtn").classList.add("active");
+      $("maleBtn").classList.remove("active");
+      if (head && isAvatarReady) {
+        head.ttsVoice = "en-IN-Standard-A";
+        head.speakText("Hello, I am NEXUS. How can I help you?"); // Quick test
+      }
+    });
+
+    $("maleBtn").addEventListener("click", () => {
+      currentGender = "male";
+      $("maleBtn").classList.add("active");
+      $("femaleBtn").classList.remove("active");
+      if (head && isAvatarReady) {
+        head.ttsVoice = "en-IN-Standard-B";
+        head.speakText("Hello, I am NEXUS. How can I help you?"); // Quick test
+      }
+    });
 
     $("exitBtn").addEventListener("click", () => {
       isActivated = false;
