@@ -227,7 +227,7 @@
       <p class="hero-desc">A sharper CV starts with a better story. Meet a holographic strategist that speaks, listens, and adapts — in English, Arabic, or Roman Urdu — then delivers a clear, ATS-aware professional profile.</p>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
         <a href="#" class="btn-primary wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV ↗</a>
-        <button class="btn-primary" id="activateBtn" onclick="document.getElementById('chatInput').focus()">MEET NEXUS AI ✧</button>
+        <button class="btn-primary" id="activateBtn">MEET NEXUS AI ✧</button>
       </div>
     </section>
 
@@ -274,6 +274,7 @@
     </section>
   </main>
 
+  <!-- SERVICES -->
   <section class="section" id="services">
     <div class="section-header">
       <p class="section-kicker">Built around your next step</p>
@@ -290,6 +291,7 @@
     </div>
   </section>
 
+  <!-- STANDARD -->
   <section class="section" id="standard">
     <div class="split">
       <div class="split-copy">
@@ -347,6 +349,7 @@
     </div>
   </section>
 
+  <!-- PACKAGES -->
   <section class="section" id="packages">
     <div class="section-header">
       <p class="section-kicker">Straightforward packages</p>
@@ -422,7 +425,52 @@
     const avatarContainer = document.getElementById('avatar3DContainer');
     let head;
     let isAvatarReady = false;
-    let currentGender = "female"; // Default gender
+    let currentGender = "female";
+
+    // 👇 AAPKA ASSEMBLY AI JSON YAHAN HAI 👇
+    const myCustomJSON = {
+      "audio_url": "./my-voice.mp3", // Aapko apni audio file isi naam se GitHub par upload karni hai
+      "words": [
+        { "text": "ہائی", "start": 1229, "end": 1709 },
+        { "text": "السلام", "start": 2189, "end": 2689 },
+        { "text": "علیکم", "start": 2689, "end": 3469 },
+        { "text": "میرا", "start": 4389, "end": 4569 },
+        { "text": "نام", "start": 4569, "end": 4849 },
+        { "text": "عمر", "start": 4849, "end": 5269 },
+        { "text": "ہے", "start": 5269, "end": 5549 },
+        { "text": "اور", "start": 5549, "end": 6409 },
+        { "text": "میں", "start": 6409, "end": 6609 },
+        { "text": "سی", "start": 6609, "end": 6949 },
+        { "text": "وی", "start": 6949, "end": 7069 },
+        { "text": "بناتا", "start": 7069, "end": 7709 },
+        { "text": "ہوں", "start": 7709, "end": 9409 },
+        { "text": "کیا", "start": 9889, "end": 10069 },
+        { "text": "آپ", "start": 10069, "end": 10249 },
+        { "text": "کے", "start": 10249, "end": 11559 },
+        { "text": "حال", "start": 11559, "end": 12869 },
+        { "text": "ہیں", "start": 12869, "end": 13949 },
+        { "text": "یہ", "start": 13949, "end": 14249 },
+        { "text": "میرا", "start": 14249, "end": 14609 },
+        { "text": "بوئش", "start": 14609, "end": 15029 },
+        { "text": "ہے", "start": 15029, "end": 15309 },
+        { "text": "یہ", "start": 16049, "end": 16249 },
+        { "text": "سی", "start": 16249, "end": 16569 },
+        { "text": "وی", "start": 16569, "end": 16689 },
+        { "text": "بنانا", "start": 16689, "end": 17169 },
+        { "text": "آتا", "start": 17169, "end": 17669 },
+        { "text": "ہے", "start": 17669, "end": 17929 },
+        { "text": "میں", "start": 18729, "end": 18869 },
+        { "text": "عمر", "start": 18869, "end": 19469 },
+        { "text": "فاروق", "start": 19469, "end": 19969 },
+        { "text": "ہوں", "start": 19969, "end": 20509 },
+        { "text": "نیکسس", "start": 20829, "end": 21449 },
+        { "text": "اے", "start": 21449, "end": 21769 },
+        { "text": "آئی", "start": 21769, "end": 22029 },
+        { "text": "کا", "start": 22029, "end": 22249 },
+        { "text": "مالک", "start": 22249, "end": 23009 },
+        { "text": "ہوں", "start": 23009, "end": 23329 }
+      ]
+    };
 
     try {
       head = new TalkingHead(avatarContainer, {
@@ -434,10 +482,10 @@
         try {
           await head.showAvatar({
             url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
-            body: 'F', 
+            body: 'F',
             avatarMood: 'neutral',
             ttsLang: "en-IN",
-            ttsVoice: "en-IN-Standard-A" // Default female voice
+            ttsVoice: "en-IN-Standard-A"
           });
           isAvatarReady = true;
           console.log("Avatar loaded successfully!");
@@ -456,6 +504,51 @@
       }
     }, { once: true });
 
+    // 👇 AAPKI CUSTOM AUDIO PLAY KARNE KA FUNCTION 👇
+    async function playMyVoice() {
+      if (!head || !isAvatarReady) {
+        console.warn("Avatar load nahi hua.");
+        return;
+      }
+
+      try {
+        const audioResponse = await fetch(myCustomJSON.audio_url);
+        const audioData = await audioResponse.arrayBuffer();
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(audioData);
+
+        const words = myCustomJSON.words.map(w => w.text);
+        const wtimes = myCustomJSON.words.map(w => w.start);
+        const wdurations = myCustomJSON.words.map(w => w.end - w.start);
+
+        const audioObject = {
+          audio: audioBuffer,
+          words: words,
+          wtimes: wtimes,
+          wdurations: wdurations
+        };
+
+        head.setMood("happy");
+        head.playGesture("thumbup", 2);
+        
+        await head.speakAudio(audioObject);
+        console.log("Custom voice played successfully!");
+
+      } catch (error) {
+        console.error("Audio play error:", error);
+        // Fallback to text-to-speech if audio file fails
+        head.speakText("Hello, main NEXUS hoon. Kaise hain aap?");
+      }
+    }
+
+    // 👇 BUTTONS SE CONNECT 👇
+    document.getElementById('activateBtn').addEventListener('click', () => {
+      playMyVoice(); // Custom Voice Play Hoga
+    });
+
+    // ==========================================
+    // STANDARD CHAT & MEMORY LOGIC
+    // ==========================================
     const WHATSAPP_NUMBER = "966563468307"; 
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
@@ -558,6 +651,7 @@
       
       el.textContent = worker.answer;
       
+      // For normal chat, use default TTS
       triggerAvatarSpeech(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
@@ -581,22 +675,20 @@
       const lowerText = text.toLowerCase();
 
       try {
-        // ✅ Set Voice based on Gender
         if (currentGender === "male") {
-          head.ttsVoice = "en-IN-Standard-B"; // Male voice
+          head.ttsVoice = "en-IN-Standard-B";
         } else {
-          head.ttsVoice = "en-IN-Standard-A"; // Female voice
+          head.ttsVoice = "en-IN-Standard-A";
         }
 
-        // Set Mood
-        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("congratulations") || lowerText.includes("excellent") || lowerText.includes("welcome") || lowerText.includes("khush")) {
+        if (lowerText.includes("happy") || lowerText.includes("great") || lowerText.includes("khush")) {
           head.setMood("happy");
           head.playGesture("thumbup", 2);
         } 
-        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("unfortunately") || lowerText.includes("cannot") || lowerText.includes("maaf") || lowerText.includes("dukhi")) {
+        else if (lowerText.includes("sorry") || lowerText.includes("sad") || lowerText.includes("maaf")) {
           head.setMood("sad");
         }
-        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("bad") || lowerText.includes("gussa")) {
+        else if (lowerText.includes("angry") || lowerText.includes("frustrated") || lowerText.includes("gussa")) {
           head.setMood("angry");
           head.playGesture("shrug", 2);
         }
@@ -609,14 +701,13 @@
       }
     }
 
-    // ✅ GENDER TOGGLE BUTTONS (FIXED)
     $("femaleBtn").addEventListener("click", () => {
       currentGender = "female";
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
       if (head && isAvatarReady) {
         head.ttsVoice = "en-IN-Standard-A";
-        head.speakText("Hello, I am NEXUS. How can I help you?"); // Quick test
+        head.speakText("Hello, I am NEXUS.");
       }
     });
 
@@ -626,7 +717,7 @@
       $("femaleBtn").classList.remove("active");
       if (head && isAvatarReady) {
         head.ttsVoice = "en-IN-Standard-B";
-        head.speakText("Hello, I am NEXUS. How can I help you?"); // Quick test
+        head.speakText("Hello, I am NEXUS.");
       }
     });
 
