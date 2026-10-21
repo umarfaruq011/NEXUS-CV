@@ -10,12 +10,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
+  <!-- ✅ सही CDN लिंक और लिप-सिंक मॉड्यूल के साथ -->
   <script type="importmap">
     {
       "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js/+esm",
         "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
-        "talkinghead": "https://cdn.jsdelivr.net/npm/@met4citizen/talkinghead@1.7.0/+esm"
+        "talkinghead": "https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.4/modules/talkinghead.mjs"
       }
     }
   </script>
@@ -473,8 +474,9 @@
     };
 
     try {
+      // ✅ lipsyncModules को ["en"] सेट करना ज़रूरी है
       head = new TalkingHead(avatarContainer, {
-        lipsyncModules: [],
+        lipsyncModules: ["en"],
         cameraView: "upper"
       });
 
@@ -498,6 +500,7 @@
       console.error("TalkingHead initialization failed:", e);
     }
 
+    // ✅ AudioContext को यूजर क्लिक पर एक्टिवेट करें
     document.addEventListener('click', () => {
       if (head && head.audioCtx && head.audioCtx.state === 'suspended') {
         head.audioCtx.resume();
