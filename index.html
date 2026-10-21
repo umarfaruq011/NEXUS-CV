@@ -45,7 +45,6 @@
       overflow-x: hidden;
     }
 
-    /* Cinematic Background Canvas */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -85,7 +84,6 @@
 
     .hero-center { display: flex; flex-direction: column; align-items: center; flex: 1 1 350px; position: relative; }
     
-    /* Avatar Animations */
     @keyframes floatHologram { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
     @keyframes speakBounce { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.02) translateY(-5px); } }
     
@@ -99,7 +97,6 @@
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
-    /* Avatar States */
     .avatar-status {
       position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
       background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
@@ -234,10 +231,8 @@
 </head>
 <body>
 
-  <!-- Cinematic Future City Background -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="logo-wrap">
       <div class="logo-icon">N</div>
@@ -252,7 +247,6 @@
     <a href="#packages" class="btn-wa">Explore packages ↗</a>
   </nav>
 
-  <!-- HERO -->
   <main class="hero">
     <section class="hero-left">
       <p class="hero-subtitle">Career technology, reimagined</p>
@@ -273,7 +267,6 @@
         <div class="avatar-3d-wrap" id="avatar3DContainer"></div>
         <div class="avatar-base"></div>
         
-        <!-- Avatar Status Badge -->
         <div class="avatar-status" id="avatarStatus">
           <span class="status-dot"></span>
           <span id="statusLabel">STANDBY</span>
@@ -314,7 +307,6 @@
     </section>
   </main>
 
-  <!-- SERVICES -->
   <section class="section" id="services">
     <div class="section-header">
       <p class="section-kicker">Built around your next step</p>
@@ -331,7 +323,6 @@
     </div>
   </section>
 
-  <!-- STANDARD -->
   <section class="section" id="standard">
     <div class="split">
       <div class="split-copy">
@@ -389,7 +380,6 @@
     </div>
   </section>
 
-  <!-- PACKAGES -->
   <section class="section" id="packages">
     <div class="section-header">
       <p class="section-kicker">Straightforward packages</p>
@@ -461,7 +451,7 @@
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* --- PREMIUM CINEMATIC FUTURE CITY BACKGROUND --- */
+    /* --- CINEMATIC FUTURE CITY BACKGROUND --- */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let width, height, particles = [], buildings = [];
@@ -472,7 +462,6 @@
       particles = [];
       buildings = [];
       
-      // Create floating neon particles
       for (let i = 0; i < 80; i++) {
         particles.push({
           x: Math.random() * width, y: Math.random() * height,
@@ -481,7 +470,6 @@
         });
       }
       
-      // Create a stylized future city skyline
       for (let i = 0; i < 25; i++) {
         buildings.push({
           x: (i / 25) * width,
@@ -497,12 +485,10 @@
       ctx.fillStyle = '#0D0D11';
       ctx.fillRect(0, 0, width, height);
       
-      // Draw City Skyline (Subtle, dark)
       ctx.globalAlpha = 0.15;
       buildings.forEach(b => {
         ctx.fillStyle = b.color;
         ctx.fillRect(b.x, height - b.h, b.w, b.h);
-        // Add tiny lit windows
         ctx.fillStyle = '#fff';
         for (let wy = height - b.h + 10; wy < height; wy += 15) {
           for (let wx = b.x + 5; wx < b.x + b.w - 5; wx += 10) {
@@ -512,7 +498,6 @@
       });
       ctx.globalAlpha = 1.0;
 
-      // Draw Network Lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -529,7 +514,6 @@
         }
       }
       
-      // Draw Particles
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
@@ -554,7 +538,6 @@
     let currentGender = "female";
 
     try {
-      // Dummy endpoint just to pass the constructor check. We won't use speakText.
       head = new TalkingHead(avatarContainer, {
         ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize",
         ttsApikey: "dummy_key", 
@@ -616,36 +599,67 @@
       }
     }
 
-    /* --- BROWSER TTS (FREE VOICE) --- */
+    /* --- BROWSER TTS WITH VOICE SELECTION --- */
+    let availableVoices = [];
+    
+    // Load voices asynchronously
+    function loadVoices() {
+      availableVoices = speechSynthesis.getVoices();
+    }
+    speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices(); // Try immediately
+
     function speakWithBrowser(text) {
-      if (!("speechSynthesis" in window)) {
-        console.warn("Browser TTS not supported.");
-        return;
-      }
+      if (!("speechSynthesis" in window)) return;
       
-      speechSynthesis.cancel(); // Stop any previous speech
+      speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-IN';
       utterance.rate = 0.95;
-      utterance.pitch = currentGender === 'female' ? 1.1 : 0.9;
       
-      utterance.onstart = () => {
-        setAvatarState('speaking');
-      };
+      let selectedVoice = null;
+
+      if (availableVoices.length > 0) {
+        if (currentGender === 'female') {
+          // Look for common female voice names
+          selectedVoice = availableVoices.find(v => 
+            v.name.includes('Female') || 
+            v.name.includes('Samantha') || 
+            v.name.includes('Zira') || 
+            v.name.includes('Google US English') ||
+            v.name.includes('Victoria') ||
+            v.name.includes('Karen')
+          );
+        } else {
+          // Look for common male voice names
+          selectedVoice = availableVoices.find(v => 
+            v.name.includes('Male') || 
+            v.name.includes('David') || 
+            v.name.includes('Alex') || 
+            v.name.includes('Mark') ||
+            v.name.includes('Daniel')
+          );
+        }
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      } else {
+        // Fallback: change pitch if specific voice not found
+        utterance.pitch = currentGender === 'female' ? 1.2 : 0.8;
+      }
       
-      utterance.onend = () => {
-        setAvatarState('standby');
-      };
-      
-      utterance.onerror = () => {
-        setAvatarState('standby');
-      };
+      utterance.onstart = () => setAvatarState('speaking');
+      utterance.onend = () => setAvatarState('standby');
+      utterance.onerror = () => setAvatarState('standby');
 
       speechSynthesis.speak(utterance);
     }
 
     document.getElementById('activateBtn').addEventListener('click', () => {
+      // Force voices to load on first click (Safari requires this)
+      loadVoices();
       speakWithBrowser("Hello! I am NEXUS, your AI career strategist. How can I help you today?");
     });
 
@@ -741,8 +755,6 @@
       }
       
       el.textContent = worker.answer;
-      
-      // Speak using browser TTS
       speakWithBrowser(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
@@ -761,14 +773,14 @@
       currentGender = "female";
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS.");
+      speakWithBrowser("Hello, I am NEXUS. I will speak in a female voice now.");
     });
 
     $("maleBtn").addEventListener("click", () => {
       currentGender = "male";
       $("maleBtn").classList.add("active");
       $("femaleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS.");
+      speakWithBrowser("Hello, I am NEXUS. I will speak in a male voice now.");
     });
 
     $("exitBtn").addEventListener("click", () => {
@@ -789,7 +801,6 @@
       e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
     });
 
-    /* --- SCRAMBLE ANIMATION --- */
     const titleEl = $("scrambleTitle");
     const originalHTML = titleEl.innerHTML;
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*";
@@ -804,7 +815,6 @@
       iteration += 1 / 3;
     }, 30);
 
-    /* --- MICROPHONE --- */
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(SR){
       micBtn.classList.remove("hidden");
