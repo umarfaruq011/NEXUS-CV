@@ -473,10 +473,7 @@
     };
 
     try {
-      // ✅ FIX: Official Google TTS endpoint add kiya, taaki constructor error na de
       head = new TalkingHead(avatarContainer, {
-        ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize",
-        ttsApikey: "dummy_key", 
         lipsyncModules: ["en"],
         cameraView: "upper"
       });
@@ -507,7 +504,6 @@
       }
     }, { once: true });
 
-    // 👇 AAPKI CUSTOM AUDIO PLAY KARNE KA FUNCTION 👇
     async function playMyVoice() {
       if (!head || !isAvatarReady) {
         console.warn("Avatar load nahi hua.");
@@ -539,7 +535,6 @@
 
       } catch (error) {
         console.error("Audio play error:", error);
-        // Fallback to browser TTS if audio file fails
         const utterance = new SpeechSynthesisUtterance("Hello, main NEXUS hoon. Kaise hain aap?");
         utterance.lang = 'en-IN';
         speechSynthesis.speak(utterance);
@@ -550,9 +545,6 @@
       playMyVoice();
     });
 
-    // ==========================================
-    // STANDARD CHAT & MEMORY LOGIC
-    // ==========================================
     const WHATSAPP_NUMBER = "966563468307"; 
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
@@ -655,8 +647,9 @@
       
       el.textContent = worker.answer;
       
-      // ✅ Ab speakText ki jagah browser TTS use karenge
-      speakWithBrowser(worker.answer);
+      // ✅ UPDATED: Pass the correct voice as an option to speakText
+      const voiceToUse = (currentGender === 'male') ? "en-IN-Standard-B" : "en-IN-Standard-A";
+      head.speakText(worker.answer, { ttsVoice: voiceToUse });
 
       chatHistory.push({ role: "user", text: text });
       chatHistory.push({ role: "bot", text: worker.answer });
@@ -670,32 +663,22 @@
       chatForm.requestSubmit();
     };
 
-    // ✅ Browser ka built-in TTS (free)
-    function speakWithBrowser(text) {
-      if (!("speechSynthesis" in window)) {
-        console.warn("Browser TTS not supported.");
-        return;
-      }
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.9;
-      utterance.pitch = currentGender === 'female' ? 1.1 : 0.9;
-      speechSynthesis.speak(utterance);
-    }
-
     $("femaleBtn").addEventListener("click", () => {
       currentGender = "female";
       $("femaleBtn").classList.add("active");
       $("maleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS.");
+      if (head && isAvatarReady) {
+        head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-A" });
+      }
     });
 
     $("maleBtn").addEventListener("click", () => {
       currentGender = "male";
       $("maleBtn").classList.add("active");
       $("femaleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS.");
+      if (head && isAvatarReady) {
+        head.speakText("Hello, I am NEXUS.", { ttsVoice: "en-IN-Standard-B" });
+      }
     });
 
     $("exitBtn").addEventListener("click", () => {
