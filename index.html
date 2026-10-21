@@ -45,7 +45,7 @@
       overflow-x: hidden;
     }
 
-    /* Cinematic Background */
+    /* Cinematic Background Canvas */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -234,7 +234,7 @@
 </head>
 <body>
 
-  <!-- Cinematic Background -->
+  <!-- Cinematic Future City Background -->
   <canvas id="bgCanvas"></canvas>
 
   <!-- NAVBAR -->
@@ -461,20 +461,33 @@
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* --- CINEMATIC BACKGROUND --- */
+    /* --- PREMIUM CINEMATIC FUTURE CITY BACKGROUND --- */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
+    let width, height, particles = [], buildings = [];
 
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
       particles = [];
-      for (let i = 0; i < 60; i++) {
+      buildings = [];
+      
+      // Create floating neon particles
+      for (let i = 0; i < 80; i++) {
         particles.push({
           x: Math.random() * width, y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+          vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
           radius: Math.random() * 1.5 + 1, alpha: Math.random() * 0.5 + 0.2
+        });
+      }
+      
+      // Create a stylized future city skyline
+      for (let i = 0; i < 25; i++) {
+        buildings.push({
+          x: (i / 25) * width,
+          w: width / 20 + Math.random() * 20,
+          h: Math.random() * height * 0.4 + height * 0.1,
+          color: Math.random() > 0.8 ? '#00f3ff' : (Math.random() > 0.5 ? '#ff00ea' : '#0084ff')
         });
       }
     }
@@ -484,6 +497,22 @@
       ctx.fillStyle = '#0D0D11';
       ctx.fillRect(0, 0, width, height);
       
+      // Draw City Skyline (Subtle, dark)
+      ctx.globalAlpha = 0.15;
+      buildings.forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.fillRect(b.x, height - b.h, b.w, b.h);
+        // Add tiny lit windows
+        ctx.fillStyle = '#fff';
+        for (let wy = height - b.h + 10; wy < height; wy += 15) {
+          for (let wx = b.x + 5; wx < b.x + b.w - 5; wx += 10) {
+            if (Math.random() > 0.7) ctx.fillRect(wx, wy, 2, 3);
+          }
+        }
+      });
+      ctx.globalAlpha = 1.0;
+
+      // Draw Network Lines
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -500,6 +529,7 @@
         }
       }
       
+      // Draw Particles
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
@@ -586,7 +616,7 @@
       }
     }
 
-    /* --- BROWSER TTS (AUDIO ONLY) --- */
+    /* --- BROWSER TTS (FREE VOICE) --- */
     function speakWithBrowser(text) {
       if (!("speechSynthesis" in window)) {
         console.warn("Browser TTS not supported.");
@@ -655,9 +685,6 @@
       
       const ageMatch = text.match(/(?:i am|i'm)\s+(\d{1,3})(?:\s|$|years)/i);
       if (ageMatch) knownFacts.age = ageMatch[1];
-      
-      const roleMatch = text.match(/(?:i am|i'm)\s+(?:a|an)\s+([a-z\s]{2,30}?)(?:\.|,|$| in | from )/i);
-      if (roleMatch) knownFacts.role = roleMatch[1].trim();
       
       saveMemory();
     }
