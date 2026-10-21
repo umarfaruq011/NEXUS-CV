@@ -10,7 +10,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- ✅ सही CDN लिंक और लिप-सिंक मॉड्यूल के साथ -->
   <script type="importmap">
     {
       "imports": {
@@ -22,6 +21,7 @@
   </script>
 
   <style>
+    /* CSS same as before */
     :root {
       --bg: #0D0D11;
       --bg-2: #050508;
@@ -474,8 +474,9 @@
     };
 
     try {
-      // ✅ lipsyncModules को ["en"] सेट करना ज़रूरी है
+      // ✅ FIX: dummy ttsEndpoint add kiya, taaki constructor error na de
       head = new TalkingHead(avatarContainer, {
+        ttsEndpoint: "https://example.com", 
         lipsyncModules: ["en"],
         cameraView: "upper"
       });
@@ -500,7 +501,6 @@
       console.error("TalkingHead initialization failed:", e);
     }
 
-    // ✅ AudioContext को यूजर क्लिक पर एक्टिवेट करें
     document.addEventListener('click', () => {
       if (head && head.audioCtx && head.audioCtx.state === 'suspended') {
         head.audioCtx.resume();
@@ -539,14 +539,12 @@
 
       } catch (error) {
         console.error("Audio play error:", error);
-        // Fallback to text-to-speech if audio file fails
         head.speakText("Hello, main NEXUS hoon. Kaise hain aap?");
       }
     }
 
-    // 👇 BUTTONS SE CONNECT 👇
     document.getElementById('activateBtn').addEventListener('click', () => {
-      playMyVoice(); // Custom Voice Play Hoga
+      playMyVoice();
     });
 
     // ==========================================
@@ -654,7 +652,6 @@
       
       el.textContent = worker.answer;
       
-      // For normal chat, use default TTS
       triggerAvatarSpeech(worker.answer);
 
       chatHistory.push({ role: "user", text: text });
