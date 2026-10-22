@@ -38,8 +38,6 @@
     body { background-color: var(--bg); color: var(--text); font-family: "Inter", sans-serif; line-height: 1.6; overflow-x: hidden; }
 
     #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
-    
-    /* Premium aurora overlay — no scanlines, just soft glow */
     body::after { 
       content: ""; 
       position: fixed; 
@@ -216,13 +214,25 @@
     .cv-status { text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 15px; }
     .cv-status.error { color: var(--pink); }
 
+    /* Disclaimer under analyze button */
+    .cv-disclaimer {
+      margin-top: 14px;
+      padding: 10px 12px;
+      background: rgba(255, 184, 77, 0.05);
+      border: 1px solid rgba(255, 184, 77, 0.3);
+      border-radius: 4px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .cv-disclaimer strong { color: var(--warning); }
+
     .analysis-box { background: rgba(0, 243, 255, 0.05); border: 1px solid var(--cyan); border-radius: 4px; padding: 15px; margin-top: 15px; display: none; }
     .analysis-box h4 { color: var(--cyan); font-family: "Orbitron"; font-size: 0.9rem; margin-bottom: 10px; }
     .analysis-box ul { padding-left: 20px; font-size: 0.85rem; color: var(--text); }
     .analysis-box li { margin-bottom: 6px; }
     .analysis-box li strong { color: var(--cyan); }
 
-    /* Warning / Info Box */
     .info-warning {
       background: rgba(255, 184, 77, 0.08);
       border: 1px solid var(--warning);
@@ -240,7 +250,6 @@
     .info-warning ul { padding-left: 18px; margin-top: 8px; }
     .info-warning li { margin-bottom: 4px; }
 
-    /* Download buttons group */
     .download-group { display: none; margin-top: 15px; gap: 10px; flex-direction: column; }
     .download-group.active { display: flex; }
 
@@ -269,7 +278,6 @@
     .btn-pdf { background: rgba(255, 0, 234, 0.08); border-color: var(--pink); color: var(--pink); }
     .btn-pdf:hover { background: rgba(255, 0, 234, 0.15); box-shadow: 0 0 20px rgba(255, 0, 234, 0.3); }
 
-    /* Printable CV — OFFScreen but renderable (PDF fix) */
     #printableCV { 
       position: absolute; 
       top: 0; 
@@ -354,7 +362,7 @@
       <div class="avatar-controls">
         <button class="ctrl-btn active" id="femaleBtn">♀ Female</button>
         <button class="ctrl-btn" id="maleBtn">♂ Male</button>
-        <button class="ctrl-btn" id="exitBtn">⏻ Exit</button>
+        <button class="ctrl-btn danger" id="exitBtn">⏻ Exit</button>
         <button class="ctrl-btn" id="closeBtn">✕ Hide</button>
       </div>
     </section>
@@ -524,13 +532,17 @@
         </div>
         
         <div class="cv-form-group">
-          <label for="cvJobDescription">2. Job Description (Optional)</label>
-          <textarea id="cvJobDescription" rows="3" placeholder="Paste job description for ATS keywords..."></textarea>
+          <label for="cvJobDescription">2. Job Description (Strongly Recommended)</label>
+          <textarea id="cvJobDescription" rows="3" placeholder="Paste the job description here for accurate ATS keyword matching..."></textarea>
         </div>
 
         <button type="submit" class="btn-primary" id="cvAnalyzeBtn" style="width: 100%;">
           <span id="cvBtnText">Step 1: Analyze My CV</span>
         </button>
+
+        <div class="cv-disclaimer">
+          <strong>⚠️ Note:</strong> AI feedback is a <em>guideline</em>, not a guarantee. No real ATS produces a numeric score. Feedback quality improves greatly when you paste the job description. Always verify suggestions against your actual CV before applying.
+        </div>
       </form>
 
       <div class="analysis-box" id="analysisBox">
@@ -582,16 +594,12 @@
     </div>
   </div>
 
-  <!-- Hidden container for PDF Generation -->
   <div id="printableCV"></div>
 
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* ============================================================ */
-    /* PREMIUM BACKGROUND — Aurora + Floating Orbs + Subtle Stars   */
-    /* (No trading chart / no connecting lines / no buildings)      */
-    /* ============================================================ */
+    /* --- PREMIUM AURORA BACKGROUND --- */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let width, height, orbs = [], stars = [];
@@ -600,7 +608,6 @@
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
 
-      // 7 soft glowing orbs in cyan/purple/blue palette
       const palette = [
         'rgba(0, 243, 255, A)',
         'rgba(255, 0, 234, A)',
@@ -621,7 +628,6 @@
         });
       }
 
-      // Subtle twinkling stars
       stars = [];
       const starCount = Math.min(60, Math.floor((width * height) / 25000));
       for (let i = 0; i < starCount; i++) {
@@ -637,7 +643,6 @@
     }
 
     function drawCanvas() {
-      // 1. Deep gradient base
       const bg = ctx.createRadialGradient(width / 2, -height * 0.2, 0, width / 2, -height * 0.2, height * 1.4);
       bg.addColorStop(0, '#0b1020');
       bg.addColorStop(0.35, '#080912');
@@ -645,7 +650,6 @@
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Floating soft orbs (screen blend for glow)
       ctx.globalCompositeOperation = 'screen';
       orbs.forEach(o => {
         const g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.radius);
@@ -666,7 +670,6 @@
       });
       ctx.globalCompositeOperation = 'source-over';
 
-      // 3. Twinkling stars (soft, subtle)
       stars.forEach(s => {
         s.twinkle += s.speed;
         const tw = 0.5 + Math.sin(s.twinkle) * 0.5;
@@ -730,7 +733,7 @@
       }
     }
 
-    /* --- SMART BROWSER TTS --- */
+    /* --- TTS --- */
     let availableVoices = [];
     speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); };
     availableVoices = speechSynthesis.getVoices();
@@ -796,7 +799,7 @@
       });
     });
 
-    /* --- ASK NEXUS HELPER --- */
+    /* --- ASK NEXUS --- */
     window.askNexus = function(text) {
       const chatInput = document.getElementById('chatInput');
       if (chatInput) {
@@ -806,7 +809,7 @@
       }
     };
 
-    /* --- CHAT LOGIC --- */
+    /* --- CHAT --- */
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
     $("year").textContent = new Date().getFullYear();
@@ -876,9 +879,7 @@
       rec.onend = () => { isListening = false; micBtn.classList.remove("listening"); setAvatarState('standby'); };
     }
 
-    /* ============================================================ */
-    /* CV UPGRADE TOOL LOGIC                                         */
-    /* ============================================================ */
+    /* --- CV UPGRADE TOOL --- */
     const cvModal = document.getElementById('cvUpgradeModal');
     const closeCvModal = document.getElementById('closeCvModal');
     const cvUploadForm = document.getElementById('cvUploadForm');
@@ -928,7 +929,6 @@
     closeCvModal.addEventListener('click', () => { cvModal.style.display = 'none'; });
     cvModal.addEventListener('click', (e) => { if (e.target === cvModal) cvModal.style.display = 'none'; });
 
-    // STEP 1: Analyze
     cvUploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const file = document.getElementById('cvFile').files[0];
@@ -989,7 +989,6 @@
       }
     });
 
-    // STEP 2A: Show warning
     cvRebuildBtn.addEventListener('click', () => {
       cvRebuildBtn.style.display = 'none';
       infoWarning.style.display = 'block';
@@ -998,7 +997,6 @@
       cvStatus.className = 'cv-status';
     });
 
-    // STEP 2B: Cancel
     document.getElementById('cvCancelBtn').addEventListener('click', () => {
       infoWarning.style.display = 'none';
       confirmActions.style.display = 'none';
@@ -1007,14 +1005,13 @@
       cvStatus.className = 'cv-status';
     });
 
-    // STEP 2C: Accept → rebuild
     document.getElementById('cvAcceptBtn').addEventListener('click', async () => {
       const jobDesc = document.getElementById('cvJobDescription').value.trim();
       const feedback = analysisList.innerText;
 
       infoWarning.style.display = 'none';
       confirmActions.style.display = 'none';
-      cvStatus.textContent = 'Rebuilding your clean ATS CV... Please wait (this may take 15-30 seconds)...';
+      cvStatus.textContent = 'Rebuilding your clean ATS CV... Please wait (15-30 seconds)...';
       cvStatus.className = 'cv-status';
 
       try {
@@ -1040,7 +1037,6 @@
       }
     });
 
-    // DOCX Download
     document.getElementById('downloadDocxBtn').addEventListener('click', () => {
       try {
         const docxHtml = `
@@ -1085,7 +1081,6 @@
       }
     });
 
-    // PDF Download — FIXED
     document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
       try {
         cvStatus.textContent = 'Generating PDF... Please wait...';
