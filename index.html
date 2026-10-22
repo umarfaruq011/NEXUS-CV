@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   
+  <!-- Libraries for File Reading & PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <script type="importmap">
     {
       "imports": {
@@ -23,7 +28,7 @@
   <style>
     :root {
       --bg: #050508;
-      --panel: rgba(11, 11, 15, 0.75);
+      --panel: rgba(11, 11, 15, 0.85);
       --cyan: #00f3ff;
       --pink: #ff00ea;
       --green: #00ff88;
@@ -44,24 +49,12 @@
       overflow-x: hidden;
     }
 
-    /* Premium Gaming Background Canvas */
-    #bgCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: -2;
-      pointer-events: none;
-    }
-
-    /* CRT Scanline Overlay */
-    body::after {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
-      background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.03) 3px);
-      opacity: 0.8;
-    }
+    /* Premium BGMI / Cyberpunk 3D Grid Background */
+    #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+    body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.03) 3px); opacity: 0.8; }
 
     a { color: inherit; text-decoration: none; }
-    button, input { font: inherit; outline: none; }
+    button, input, textarea { font: inherit; outline: none; }
 
     .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
@@ -82,13 +75,11 @@
     .hero-desc { color: var(--muted); font-size: 1rem; margin-bottom: 32px; }
     .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: transparent; color: var(--green); padding: 14px 24px; border-radius: 4px; font: 700 0.85rem "Orbitron"; border: 1px solid var(--green); cursor: pointer; transition: 0.3s; letter-spacing: 1px; width: 100%; max-width: 250px; }
     .btn-primary:hover { background: rgba(0, 255, 136, 0.1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.35); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .hero-center { display: flex; flex-direction: column; align-items: center; flex: 1 1 350px; position: relative; }
-    
-    /* Avatar Animations */
     @keyframes floatHologram { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
     @keyframes speakBounce { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.02) translateY(-5px); } }
-    
     .avatar-container { width: min(100%, 400px); aspect-ratio: 1/1; position: relative; display: flex; justify-content: center; align-items: center; margin: 20px 0; animation: floatHologram 4s ease-in-out infinite; transition: filter 0.3s; }
     .avatar-container.speaking { animation: speakBounce 0.4s ease-in-out infinite; filter: drop-shadow(0 0 30px var(--green)); }
     
@@ -99,25 +90,19 @@
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spinRev { 100% { transform: rotate(-360deg); } }
 
-    /* Avatar States */
-    .avatar-status {
-      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-      background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
-      padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 8px;
-      font: 700 0.65rem "Orbitron"; letter-spacing: 1.5px; z-index: 30; transition: 0.3s;
-    }
+    .avatar-status { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border); padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 8px; font: 700 0.65rem "Orbitron"; letter-spacing: 1.5px; z-index: 30; transition: 0.3s; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
-    .avatar-status.listening { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 15px rgba(255,0,234,0.3); }
+    .avatar-status.listening { border-color: var(--pink); color: var(--pink); }
     .avatar-status.listening .status-dot { background: var(--pink); animation: pulse 1s infinite; }
-    .avatar-status.processing { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0,243,255,0.3); }
+    .avatar-status.processing { border-color: var(--cyan); color: var(--cyan); }
     .avatar-status.processing .status-dot { background: var(--cyan); animation: blink 0.5s infinite; }
-    .avatar-status.speaking { border-color: var(--green); color: var(--green); box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+    .avatar-status.speaking { border-color: var(--green); color: var(--green); }
     .avatar-status.speaking .status-dot { background: var(--green); animation: pulse 0.8s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    .agent-badge { position: absolute; top: 0px; background: rgba(5,5,8,0.9); border: 1px solid var(--green); padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif; color: var(--green); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; z-index: 20; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); text-transform: uppercase; }
-    .agent-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.8s infinite ease-in-out; }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.8); } }
+
+    .agent-badge { position: absolute; top: 0px; background: rgba(5,5,8,0.9); border: 1px solid var(--green); padding: 6px 14px; border-radius: 4px; font: 700 0.65rem "Orbitron", sans-serif; color: var(--green); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; z-index: 20; text-transform: uppercase; }
+    .agent-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 1.8s infinite ease-in-out; }
 
     .avatar-3d-wrap { width: 85%; aspect-ratio: 1/1; border-radius: 50%; background: #060913; border: 2px solid rgba(0, 243, 255, 0.5); position: relative; z-index: 10; overflow: hidden; box-shadow: 0 0 35px rgba(0, 243, 255, 0.3); }
     .avatar-3d-wrap::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.1) 3px), linear-gradient(180deg, transparent 50%, rgba(0, 243, 255, 0.4) 100%); mix-blend-mode: overlay; }
@@ -126,7 +111,6 @@
     .avatar-controls { display: flex; gap: 10px; margin-top: 20px; z-index: 20; flex-wrap: wrap; justify-content: center; }
     .ctrl-btn { background: rgba(0, 243, 255, 0.05); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 4px; font: 600 0.7rem "Orbitron"; cursor: pointer; transition: 0.3s; }
     .ctrl-btn.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
-    .ctrl-btn.danger:hover { border-color: var(--pink); color: var(--pink); }
 
     .hero-right { flex: 1 1 350px; max-width: 420px; width: 100%; }
     .chat-widget { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; backdrop-filter: blur(25px); position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); height: 520px; display: flex; flex-direction: column; }
@@ -158,6 +142,7 @@
     .ibtn:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--cyan); }
     .ibtn.listening { border-color: var(--pink); color: var(--pink); animation: pulse 1s infinite; }
 
+    /* Sections */
     .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); position: relative; z-index: 2; }
     .section-header { text-align: center; margin-bottom: 50px; }
     .section-kicker { color: var(--pink); font: 700 0.75rem "Orbitron"; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
@@ -216,6 +201,46 @@
     .footer-brand { color: var(--cyan); font-family: "Orbitron"; font-size: 1rem; }
     .footer-disclaimer { max-width: 600px; font-size: 0.7rem; opacity: 0.7; margin-top: 16px; text-align: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; }
 
+    /* --- CV UPGRADE MODAL STYLES --- */
+    .cv-modal-overlay {
+      position: fixed; inset: 0; z-index: 5000;
+      background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(15px);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .cv-modal-content {
+      background: var(--panel); border: 1px solid var(--cyan);
+      border-radius: 8px; padding: 30px; max-width: 500px; width: 100%;
+      position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .cv-modal-close { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--muted); font-size: 1.8rem; cursor: pointer; }
+    .cv-modal-content h2 { font: 700 1.5rem "Orbitron"; color: var(--cyan); margin-bottom: 10px; }
+    .cv-modal-sub { color: var(--muted); margin-bottom: 25px; font-size: 0.9rem; }
+    .cv-form-group { margin-bottom: 20px; }
+    .cv-form-group label { display: block; margin-bottom: 8px; font-size: 0.8rem; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 1px; }
+    .cv-form-group input[type="file"], .cv-form-group textarea {
+      width: 100%; padding: 12px; background: rgba(5, 5, 8, 0.6);
+      border: 1px solid var(--border); border-radius: 4px; color: var(--text);
+      font-family: "Inter", sans-serif; font-size: 0.9rem;
+    }
+    .cv-form-group input[type="file"] { padding: 10px; cursor: pointer; }
+    .cv-form-group input[type="file"]::file-selector-button {
+      background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan);
+      color: var(--cyan); padding: 8px 16px; border-radius: 4px;
+      margin-right: 10px; cursor: pointer;
+    }
+    .cv-form-group textarea { resize: vertical; }
+    .cv-status { text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 15px; }
+    .cv-status.error { color: var(--pink); }
+
+    /* Printable CV Area (Hidden by default) */
+    #printableCV { position: absolute; left: -9999px; top: 0; width: 800px; background: #fff; color: #000; padding: 40px; font-family: 'Arial', sans-serif; }
+    #printableCV h1 { font-size: 28px; margin-bottom: 5px; color: #222; }
+    #printableCV h2 { font-size: 18px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #00f3ff; padding-bottom: 5px; color: #333; }
+    #printableCV p { margin-bottom: 8px; line-height: 1.5; font-size: 14px; color: #444; }
+    #printableCV ul { padding-left: 20px; margin-bottom: 15px; }
+    #printableCV li { margin-bottom: 5px; font-size: 14px; color: #444; }
+
     @media (max-width: 1024px) {
       .hero { flex-direction: column; text-align: center; padding-top: 100px; }
       .hero-left { max-width: 100%; margin-bottom: 20px; }
@@ -234,7 +259,6 @@
 </head>
 <body>
 
-  <!-- Premium Gaming Background Canvas -->
   <canvas id="bgCanvas"></canvas>
 
   <nav class="navbar">
@@ -254,12 +278,12 @@
   <main class="hero">
     <section class="hero-left">
       <p class="hero-subtitle">Career technology, reimagined</p>
-      <!-- Removed the scramble title ID here so it loads instantly -->
       <h1 class="hero-title">YOUR STORY.<br><span>YOUR EDGE.</span><br>YOUR NEXT MOVE.</h1>
       <p class="hero-desc">A sharper CV starts with a better story. Meet a holographic strategist that speaks, listens, and adapts — in English, Arabic, or Roman Urdu — then delivers a clear, ATS-aware professional profile.</p>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
         <a href="#" class="btn-primary wa-link" data-message="Hi NEXUS CV, I'd like to build my CV. Can you help?">BUILD MY CV ↗</a>
         <button class="btn-primary" id="activateBtn">MEET NEXUS AI ✧</button>
+        <button class="btn-primary" onclick="openCvModal()" style="border-color: var(--cyan); color: var(--cyan);">UPGRADE MY CV 📄</button>
       </div>
     </section>
 
@@ -312,6 +336,7 @@
     </section>
   </main>
 
+  <!-- Services Sections (Same as before) -->
   <section class="section" id="services">
     <div class="section-header">
       <p class="section-kicker">Built around your next step</p>
@@ -328,6 +353,7 @@
     </div>
   </section>
 
+  <!-- Standard / CV Sample -->
   <section class="section" id="standard">
     <div class="split">
       <div class="split-copy">
@@ -365,16 +391,6 @@
             <li>Managed scheduling for 40+ field technicians, improving on-time delivery from 76% to 94%.</li>
             <li>Built inventory tracking dashboard adopted by 6 regional branches.</li>
           </ul>
-          <p><b>Junior Business Analyst · Regional Trading Co.</b></p>
-          <p style="font-size:0.7rem; color:var(--muted); margin-bottom:4px;">Dammam, KSA · 2016 — 2018</p>
-          <ul>
-            <li>Supported demand forecasting for an SAR 8M product line, reducing stockouts by 41%.</li>
-            <li>Prepared weekly executive reports on regional sales performance.</li>
-          </ul>
-        </div>
-        <div class="cv-sec">
-          <h4>Certifications</h4>
-          <p>PMP · Six Sigma Green Belt · Advanced Excel · SAP S/4HANA · Power BI</p>
         </div>
         <div class="cv-sec">
           <h4>Core Skills</h4>
@@ -385,6 +401,7 @@
     </div>
   </section>
 
+  <!-- Packages -->
   <section class="section" id="packages">
     <div class="section-header">
       <p class="section-kicker">Straightforward packages</p>
@@ -435,6 +452,7 @@
     <p class="fineprint">Prices are illustrative starting points and must be confirmed with the owner. No job placement, interview, or ATS pass is guaranteed.</p>
   </section>
 
+  <!-- Final CTA -->
   <section class="section">
     <div class="final-cta">
       <p class="section-kicker">Meet the guide</p>
@@ -453,6 +471,38 @@
     </div>
   </footer>
 
+  <!-- ========================================== -->
+  <!-- CV UPGRADE MODAL -->
+  <!-- ========================================== -->
+  <div id="cvUpgradeModal" class="cv-modal-overlay" style="display: none;">
+    <div class="cv-modal-content">
+      <button class="cv-modal-close" id="closeCvModal">×</button>
+      <h2>AI CV Upgrader</h2>
+      <p class="cv-modal-sub">Upload your old CV (PDF or DOCX). Our AI will read it, optimize it for ATS, and generate a new professional PDF.</p>
+      
+      <form id="cvUploadForm">
+        <div class="cv-form-group">
+          <label for="cvFile">1. Upload old CV</label>
+          <input type="file" id="cvFile" accept=".pdf,.docx,.doc" required>
+        </div>
+        
+        <div class="cv-form-group">
+          <label for="cvJobDescription">2. Job Description (Optional)</label>
+          <textarea id="cvJobDescription" rows="3" placeholder="Paste job description here for targeted keywords..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" id="cvUpgradeBtn" style="width: 100%;">
+          <span id="cvBtnText">Analyze & Rebuild My CV</span>
+        </button>
+      </form>
+
+      <div id="cvStatus" class="cv-status"></div>
+    </div>
+  </div>
+
+  <!-- Hidden container for PDF Generation -->
+  <div id="printableCV"></div>
+
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
@@ -460,8 +510,6 @@
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
     let width, height;
-    
-    // 3D Perspective Grid Parameters
     const fov = 300;
     const gridSpeed = 1.5;
     const gridZ = 1000;
@@ -471,82 +519,51 @@
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      
-      // Create glowing energy particles
       particles = [];
       for (let i = 0; i < 50; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          z: Math.random() * 1000 + 100, // Depth
-          size: Math.random() * 2 + 1,
-          speed: Math.random() * 1 + 0.5
-        });
+        particles.push({ x: Math.random() * width, y: Math.random() * height, z: Math.random() * 1000 + 100, size: Math.random() * 2 + 1, speed: Math.random() * 1 + 0.5 });
       }
     }
 
     function drawCanvas() {
-      // Clear with a deep dark gradient
       const grad = ctx.createLinearGradient(0, 0, 0, height);
       grad.addColorStop(0, '#050508');
       grad.addColorStop(1, '#0D0D11');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
 
-      // Draw 3D Grid (Synthwave style)
-      ctx.strokeStyle = 'rgba(0, 243, 255, 0.15)'; // Neon cyan
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.15)';
       ctx.lineWidth = 1.5;
-      
       const horizon = height / 2;
-      
-      // Moving horizontal lines
       offsetY = (offsetY + gridSpeed) % 100;
       
       for (let z = 0; z < gridZ; z += 50) {
         const zAdjusted = z + offsetY;
         if (zAdjusted === 0) continue;
-        
         const y = horizon + (fov * 300) / zAdjusted;
         if (y > height) continue;
-        
-        // Fade lines as they get further away
         ctx.globalAlpha = Math.max(0, 1 - zAdjusted / gridZ);
-        
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
       }
 
-      // Vertical perspective lines
       for (let x = -width; x <= width * 2; x += 100) {
         ctx.globalAlpha = 0.3;
-        ctx.beginPath();
-        ctx.moveTo(width / 2, horizon);
-        ctx.lineTo(x, height);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(width / 2, horizon); ctx.lineTo(x, height); ctx.stroke();
       }
       ctx.globalAlpha = 1.0;
 
-      // Draw floating energy particles
       particles.forEach(p => {
-        p.z -= p.speed; // Move towards viewer
-        if (p.z <= 0) p.z = 1000; // Reset
-
-        // Project 3D coordinates to 2D
+        p.z -= p.speed;
+        if (p.z <= 0) p.z = 1000;
         const scale = fov / p.z;
         const x2d = (p.x - width / 2) * scale + width / 2;
         const y2d = (p.y - height / 2) * scale + height / 2;
         const size2d = p.size * scale;
-
         if (x2d > 0 && x2d < width && y2d > 0 && y2d < height) {
-          ctx.beginPath();
-          ctx.arc(x2d, y2d, size2d, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 0, 234, ${scale * 1.5})`; // Neon pink
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(x2d, y2d, size2d, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 0, 234, ${scale * 1.5})`; ctx.fill();
         }
       });
-
       requestAnimationFrame(drawCanvas);
     }
     window.addEventListener('resize', initCanvas);
@@ -563,262 +580,103 @@
     try {
       head = new TalkingHead(avatarContainer, {
         ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize",
-        ttsApikey: "dummy_key", 
-        lipsyncModules: [],
-        cameraView: "upper"
+        ttsApikey: "dummy_key", lipsyncModules: [], cameraView: "upper"
       });
-
-      async function loadAvatar() {
-        try {
-          await head.showAvatar({
-            url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
-            body: 'F',
-            avatarMood: 'neutral',
-            ttsLang: "en-IN",
-            ttsVoice: "en-IN-Standard-A"
-          });
-          isAvatarReady = true;
-          console.log("Avatar loaded successfully!");
-        } catch (error) {
-          console.error("Failed to load 3D avatar:", error);
-        }
-      }
-      loadAvatar();
-    } catch(e) {
-      console.error("TalkingHead initialization failed:", e);
-    }
+      head.showAvatar({
+        url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb',
+        body: 'F', avatarMood: 'neutral', ttsLang: "en-IN", ttsVoice: "en-IN-Standard-A"
+      }).then(() => { isAvatarReady = true; });
+    } catch(e) { console.error(e); }
 
     document.addEventListener('click', () => {
-      if (head && head.audioCtx && head.audioCtx.state === 'suspended') {
-        head.audioCtx.resume();
-      }
+      if (head && head.audioCtx && head.audioCtx.state === 'suspended') head.audioCtx.resume();
     }, { once: true });
 
-    /* --- STATE MANAGEMENT --- */
     function setAvatarState(state) {
       const statusEl = document.getElementById('avatarStatus');
       const labelEl = document.getElementById('statusLabel');
       const pillEl = document.getElementById('statusPill');
-      
       statusEl.className = 'avatar-status ' + state;
       labelEl.textContent = state.toUpperCase();
       
-      if (state === 'listening') {
-        pillEl.textContent = "LISTENING";
-        pillEl.style.color = "var(--pink)";
-      } else if (state === 'processing') {
-        pillEl.textContent = "PROCESSING";
-        pillEl.style.color = "var(--cyan)";
-      } else if (state === 'speaking') {
-        pillEl.textContent = "SPEAKING";
-        pillEl.style.color = "var(--green)";
-        avatarWrapper.classList.add('speaking');
-      } else if (state === 'standby') {
-        pillEl.textContent = "ONLINE";
-        pillEl.style.color = "var(--green)";
-        statusEl.className = 'avatar-status';
-        labelEl.textContent = "STANDBY";
-        avatarWrapper.classList.remove('speaking');
-      }
+      if (state === 'listening') { pillEl.textContent = "LISTENING"; pillEl.style.color = "var(--pink)"; }
+      else if (state === 'processing') { pillEl.textContent = "PROCESSING"; pillEl.style.color = "var(--cyan)"; }
+      else if (state === 'speaking') { pillEl.textContent = "SPEAKING"; pillEl.style.color = "var(--green)"; avatarWrapper.classList.add('speaking'); }
+      else { pillEl.textContent = "ONLINE"; pillEl.style.color = "var(--green)"; statusEl.className = 'avatar-status'; labelEl.textContent = "STANDBY"; avatarWrapper.classList.remove('speaking'); }
     }
 
     /* --- SMART BROWSER TTS --- */
     let availableVoices = [];
-    
-    function loadVoices() {
-      availableVoices = speechSynthesis.getVoices();
-    }
-    speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
+    speechSynthesis.onvoiceschanged = () => { availableVoices = speechSynthesis.getVoices(); };
+    availableVoices = speechSynthesis.getVoices();
 
     function speakWithBrowser(text) {
       if (!("speechSynthesis" in window)) return;
-      
       speechSynthesis.cancel();
-      
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
-      utterance.rate = 0.95;
+      utterance.lang = 'en-IN'; utterance.rate = 0.95;
       
       let selectedVoice = null;
-
       if (availableVoices.length > 0) {
-        // Prefer high-quality Natural/Neural voices if available
-        const highQualityVoices = availableVoices.filter(v => 
-          v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google')
-        );
-
+        const highQuality = availableVoices.filter(v => v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google'));
         if (currentGender === 'female') {
-          selectedVoice = highQualityVoices.find(v => 
-            v.name.includes('Female') || v.name.includes('Aria') || 
-            v.name.includes('Zira') || v.name.includes('Samantha')
-          ) || availableVoices.find(v => 
-            v.name.includes('Female') || v.name.includes('Samantha')
-          );
+          selectedVoice = highQuality.find(v => v.name.includes('Female') || v.name.includes('Aria') || v.name.includes('Zira') || v.name.includes('Samantha')) || availableVoices.find(v => v.name.includes('Female'));
         } else {
-          selectedVoice = highQualityVoices.find(v => 
-            v.name.includes('Male') || v.name.includes('Guy') || 
-            v.name.includes('David') || v.name.includes('Alex')
-          ) || availableVoices.find(v => 
-            v.name.includes('Male') || v.name.includes('David')
-          );
+          selectedVoice = highQuality.find(v => v.name.includes('Male') || v.name.includes('Guy') || v.name.includes('David') || v.name.includes('Alex')) || availableVoices.find(v => v.name.includes('Male'));
         }
       }
-
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      } else {
-        utterance.pitch = currentGender === 'female' ? 1.2 : 0.8;
-      }
+      if (selectedVoice) utterance.voice = selectedVoice;
+      else utterance.pitch = currentGender === 'female' ? 1.2 : 0.8;
       
       utterance.onstart = () => setAvatarState('speaking');
       utterance.onend = () => setAvatarState('standby');
-      utterance.onerror = () => setAvatarState('standby');
-
       speechSynthesis.speak(utterance);
     }
 
     document.getElementById('activateBtn').addEventListener('click', () => {
-      loadVoices(); // Safari iOS fix
-      speakWithBrowser("Hello! I am NEXUS, your AI career strategist. How can I help you today?");
+      speechSynthesis.getVoices(); // Safari Fix
+      speakWithBrowser("Hello! I am NEXUS. How can I help you today?");
     });
 
-    /* --- CHAT & MEMORY LOGIC --- */
-    const WHATSAPP_NUMBER = "966563468307"; 
+    /* --- CHAT LOGIC --- */
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
     const $ = (id) => document.getElementById(id);
     $("year").textContent = new Date().getFullYear();
 
-    const whatsappUrl = (msg) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    document.querySelectorAll(".wa-link").forEach(a => {
-      a.href = whatsappUrl(a.dataset.message || "Hi NEXUS CV, I'd like to ask about your services.");
-      a.target = "_blank"; a.rel = "noopener noreferrer";
-    });
-
-    const transcript = $("transcript");
-    const chatInput = $("chatInput");
-    const chatForm = $("chatForm");
-    const chatWidget = $("chatWidget");
-    const micBtn = $("micBtn");
-    
+    const transcript = $("transcript"), chatInput = $("chatInput"), chatForm = $("chatForm"), chatWidget = $("chatWidget"), micBtn = $("micBtn");
     let chatHistory = JSON.parse(sessionStorage.getItem("nexus_history")) || [];
-    let knownFacts = JSON.parse(sessionStorage.getItem("nexus_facts")) || {};
-
-    if (chatHistory.length > 0) {
-      chatHistory.forEach(msg => renderMessage(msg.role, msg.text));
-    }
-
-    function saveMemory() {
-      sessionStorage.setItem("nexus_history", JSON.stringify(chatHistory));
-      sessionStorage.setItem("nexus_facts", JSON.stringify(knownFacts));
-    }
-
-    function extractFacts(text) {
-      const nameMatch = text.match(/my name is\s+([A-Za-z]+)/i) || text.match(/i'?m\s+([A-Z][a-z]+)$/i);
-      if (nameMatch && nameMatch[1].length > 1) knownFacts.name = nameMatch[1];
-      
-      const ageMatch = text.match(/(?:i am|i'm)\s+(\d{1,3})(?:\s|$|years)/i);
-      if (ageMatch) knownFacts.age = ageMatch[1];
-      
-      saveMemory();
-    }
-
+    
     function renderMessage(role, text) {
       const div = document.createElement("div");
       div.className = `msg ${role}`;
       div.innerHTML = `<div class="msg-icon">${role === "bot" ? "NX" : "YOU"}</div><div class="msg-bubble">${text}</div>`;
-      transcript.appendChild(div);
-      transcript.scrollTop = transcript.scrollHeight;
+      transcript.appendChild(div); transcript.scrollTop = transcript.scrollHeight;
       return div.querySelector(".msg-bubble");
     }
 
-    async function fetchNexusReply(message) {
-      try {
-        const response = await fetch(NEXUS_WORKER_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            message: message, 
-            lang: "hinglish",
-            history: chatHistory.slice(-14),
-            facts: knownFacts
-          })
-        });
-        const data = await response.json();
-        if (!response.ok) return { ok: false };
-        return { ok: true, answer: data.answer };
-      } catch (err) {
-        return { ok: false };
-      }
-    }
+    if (chatHistory.length > 0) chatHistory.forEach(msg => renderMessage(msg.role, msg.text));
 
     chatForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const text = chatInput.value.trim();
       if(!text) return;
-
-      chatInput.value = "";
-      renderMessage("user", text);
-      chatWidget.classList.add("scanning");
-      extractFacts(text);
-
-      const el = renderMessage("bot", "Processing...");
-      setAvatarState('processing');
-
-      const worker = await fetchNexusReply(text);
-      chatWidget.classList.remove("scanning");
-
-      if (!worker.ok) {
-        el.textContent = "System error. AI core offline.";
-        setAvatarState('standby');
-        return;
-      }
+      chatInput.value = ""; renderMessage("user", text); chatWidget.classList.add("scanning"); setAvatarState('processing');
       
-      el.textContent = worker.answer;
-      speakWithBrowser(worker.answer);
-
-      chatHistory.push({ role: "user", text: text });
-      chatHistory.push({ role: "bot", text: worker.answer });
-      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-      saveMemory();
-    });
-
-    window.askNexus = function(q) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      chatInput.value = q;
-      chatForm.requestSubmit();
-    };
-
-    $("femaleBtn").addEventListener("click", () => {
-      currentGender = "female";
-      $("femaleBtn").classList.add("active");
-      $("maleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS. I will speak in a female voice now.");
-    });
-
-    $("maleBtn").addEventListener("click", () => {
-      currentGender = "male";
-      $("maleBtn").classList.add("active");
-      $("femaleBtn").classList.remove("active");
-      speakWithBrowser("Hello, I am NEXUS. I will speak in a male voice now.");
-    });
-
-    $("exitBtn").addEventListener("click", () => {
-      transcript.innerHTML = `<div class="msg bot"><div class="msg-icon">NX</div><div class="msg-bubble">Hologram offline. Click the avatar or press <strong>MEET NEXUS AI</strong> to activate.</div></div>`;
-      chatHistory = [];
-      knownFacts = {};
-      sessionStorage.removeItem("nexus_history");
-      sessionStorage.removeItem("nexus_facts");
-      setAvatarState('standby');
-      if("speechSynthesis" in window) speechSynthesis.cancel();
-      if (head && head.stopSpeaking) head.stopSpeaking();
-    });
-    
-    $("closeBtn").addEventListener("click", (e) => {
-      const msgs = transcript.querySelectorAll(".msg");
-      const isHidden = msgs[0].style.display === "none";
-      msgs.forEach(m => m.style.display = isHidden ? "flex" : "none");
-      e.target.textContent = isHidden ? "✕ Hide" : "☰ Show";
+      const el = renderMessage("bot", "Processing...");
+      try {
+        const response = await fetch(NEXUS_WORKER_URL, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "chat", message: text, history: chatHistory.slice(-14) })
+        });
+        const data = await response.json();
+        el.textContent = data.result || data.answer;
+        speakWithBrowser(data.result || data.answer);
+        chatHistory.push({ role: "user", text: text }, { role: "bot", text: data.result || data.answer });
+        sessionStorage.setItem("nexus_history", JSON.stringify(chatHistory.slice(-20)));
+      } catch(err) {
+        el.textContent = "Error connecting to AI.";
+      }
+      chatWidget.classList.remove("scanning"); setAvatarState('standby');
     });
 
     /* --- MICROPHONE --- */
@@ -826,46 +684,121 @@
     if(SR){
       micBtn.classList.remove("hidden");
       const rec = new SR();
-      rec.continuous = true; 
-      rec.interimResults = true;
-      let isListening = false;
-      
-      micBtn.addEventListener("click", () => {
-        if(isListening){ 
-          rec.stop(); 
-          return; 
-        }
-        rec.lang = "en-IN"; 
-        try { rec.start(); } catch(e){}
-      });
-      
-      rec.onstart = () => { 
-        isListening = true; 
-        micBtn.classList.add("listening"); 
-        setAvatarState('listening');
-      };
-      
-      rec.onresult = (e) => { 
-        let finalTranscript = '';
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) {
-            finalTranscript += e.results[i][0].transcript;
-          }
-        }
-        if(finalTranscript) {
-          chatInput.value = finalTranscript;
-          chatForm.requestSubmit();
-        }
-      };
-      
-      rec.onend = () => { 
-        isListening = false; 
-        micBtn.classList.remove("listening"); 
-        if(chatInput.value.trim() === '') {
-          setAvatarState('standby');
-        }
-      };
+      rec.continuous = true; rec.interimResults = true; let isListening = false;
+      micBtn.addEventListener("click", () => { if(isListening){ rec.stop(); return; } rec.lang = "en-IN"; try { rec.start(); } catch(e){} });
+      rec.onstart = () => { isListening = true; micBtn.classList.add("listening"); setAvatarState('listening'); };
+      rec.onresult = (e) => { let final = ''; for (let i = e.resultIndex; i < e.results.length; ++i) { if (e.results[i].isFinal) final += e.results[i][0].transcript; } if(final) { chatInput.value = final; chatForm.requestSubmit(); } };
+      rec.onend = () => { isListening = false; micBtn.classList.remove("listening"); setAvatarState('standby'); };
     }
+
+    /* ============================================================ */
+    /* CV UPGRADE TOOL LOGIC                                        */
+    /* ============================================================ */
+    const cvModal = document.getElementById('cvUpgradeModal');
+    const closeCvModal = document.getElementById('closeCvModal');
+    const cvUploadForm = document.getElementById('cvUploadForm');
+    const cvStatus = document.getElementById('cvStatus');
+    const cvUpgradeBtn = document.getElementById('cvUpgradeBtn');
+    const printableCV = document.getElementById('printableCV');
+
+    window.openCvModal = function() {
+      cvModal.style.display = 'flex';
+      cvUploadForm.reset();
+      cvStatus.textContent = '';
+      cvStatus.className = 'cv-status';
+      cvUpgradeBtn.disabled = false;
+      document.getElementById('cvBtnText').textContent = 'Analyze & Rebuild My CV';
+    };
+
+    closeCvModal.addEventListener('click', () => { cvModal.style.display = 'none'; });
+    cvModal.addEventListener('click', (e) => { if (e.target === cvModal) cvModal.style.display = 'none'; });
+
+    cvUploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = document.getElementById('cvFile').files[0];
+      const jobDesc = document.getElementById('cvJobDescription').value.trim();
+      
+      if (!file) return;
+
+      cvUpgradeBtn.disabled = true;
+      document.getElementById('cvBtnText').textContent = 'Reading File...';
+      cvStatus.textContent = 'Extracting text from your document...';
+      cvStatus.className = 'cv-status';
+
+      let extractedText = '';
+
+      try {
+        if (file.name.endsWith('.pdf')) {
+          // PDF Extraction
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          let textContent = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const text = await page.getTextContent();
+            textContent += text.items.map(s => s.str).join(' ') + '\n';
+          }
+          extractedText = textContent;
+
+        } else if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+          // DOCX Extraction
+          const arrayBuffer = await file.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          extractedText = result.value;
+        } else {
+          throw new Error("Unsupported file format. Please upload PDF or DOCX.");
+        }
+
+        if (!extractedText || extractedText.trim().length < 10) {
+          throw new Error("Could not read enough text from the file.");
+        }
+
+        document.getElementById('cvBtnText').textContent = 'AI is Rebuilding...';
+        cvStatus.textContent = 'Applying ATS rules and rewriting content. Please wait (15-20 sec)...';
+
+        // Send to Worker
+        const response = await fetch(NEXUS_WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            action: "upgrade-cv", 
+            cvText: extractedText.slice(0, 6000), // limit text to avoid token limits
+            jobDesc: jobDesc 
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "AI failed to process CV.");
+
+        // AI returns HTML string. Put it in printable div.
+        printableCV.innerHTML = data.result;
+
+        cvStatus.textContent = 'Generating PDF...';
+
+        // Generate PDF
+        const opt = {
+          margin:       0.5,
+          filename:     'Upgraded_CV_NEXUS.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        await html2pdf().set(opt).from(printableCV).save();
+
+        cvStatus.textContent = 'Success! Your PDF has been downloaded.';
+        cvStatus.className = 'cv-status';
+
+      } catch (error) {
+        console.error(error);
+        cvStatus.textContent = "Error: " + error.message;
+        cvStatus.className = 'cv-status error';
+      } finally {
+        cvUpgradeBtn.disabled = false;
+        document.getElementById('cvBtnText').textContent = 'Analyze & Rebuild My CV';
+      }
+    });
+
   </script>
 </body>
 </html>
