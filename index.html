@@ -38,12 +38,23 @@
     body { background-color: var(--bg); color: var(--text); font-family: "Inter", sans-serif; line-height: 1.6; overflow-x: hidden; }
 
     #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
-    body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 243, 255, 0.03) 3px); opacity: 0.8; }
+    
+    /* Premium aurora overlay — no scanlines, just soft glow */
+    body::after { 
+      content: ""; 
+      position: fixed; 
+      inset: 0; 
+      pointer-events: none; 
+      z-index: -1; 
+      background: 
+        radial-gradient(ellipse at 50% -20%, rgba(0, 243, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse at 50% 120%, rgba(255, 0, 234, 0.08), transparent 55%);
+    }
 
     a { color: inherit; text-decoration: none; }
     button, input, textarea { font: inherit; outline: none; }
 
-    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(5, 5, 8, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
     .logo-wrap { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo-icon { font: 900 1.8rem "Orbitron", sans-serif; color: var(--cyan); text-shadow: 0 0 12px var(--cyan); }
     .logo-text { font: 700 1rem "Orbitron", sans-serif; letter-spacing: 2px; line-height: 1; }
@@ -98,6 +109,7 @@
     .avatar-controls { display: flex; gap: 10px; margin-top: 20px; z-index: 20; flex-wrap: wrap; justify-content: center; }
     .ctrl-btn { background: rgba(0, 243, 255, 0.05); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 4px; font: 600 0.7rem "Orbitron"; cursor: pointer; transition: 0.3s; }
     .ctrl-btn.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+    .ctrl-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
     .hero-right { flex: 1 1 350px; max-width: 420px; width: 100%; }
     .chat-widget { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 20px; backdrop-filter: blur(25px); position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); height: 520px; display: flex; flex-direction: column; }
@@ -128,6 +140,7 @@
     .ibtn { width: 36px; height: 36px; border-radius: 4px; background: transparent; border: 1px solid var(--border); color: var(--cyan); display: grid; place-items: center; cursor: pointer; transition: 0.3s; flex-shrink: 0; }
     .ibtn:hover { background: rgba(0, 243, 255, 0.1); border-color: var(--cyan); }
     .ibtn.listening { border-color: var(--pink); color: var(--pink); animation: pulse 1s infinite; }
+    .hidden { display: none !important; }
 
     .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; border-top: 1px solid rgba(0, 243, 255, 0.1); position: relative; z-index: 2; }
     .section-header { text-align: center; margin-bottom: 50px; }
@@ -178,12 +191,13 @@
     .pkg-list li::before { content: "＋"; color: var(--cyan); }
     .btn-pkg { width: 100%; padding: 12px; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 4px; font-family: "Orbitron"; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; display: block; text-decoration: none; }
     .btn-pkg:hover, .price-card.featured .btn-pkg { border-color: var(--cyan); background: rgba(0, 243, 255, 0.1); color: var(--cyan); }
+    .fineprint { text-align: center; color: var(--muted); font-size: 0.75rem; margin-top: 30px; opacity: 0.7; }
     
     .final-cta { text-align: center; padding: 60px 40px; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; margin: 40px auto; max-width: 800px; backdrop-filter: blur(10px); }
     .final-cta h2 { font: 700 2rem "Orbitron"; margin-bottom: 16px; }
     .final-cta p { color: var(--muted); margin-bottom: 24px; }
 
-    footer { border-top: 1px solid var(--border); padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-2); font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 16px; position: relative; z-index: 2; }
+    footer { border-top: 1px solid var(--border); padding: 30px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 8, 0.6); font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; gap: 16px; position: relative; z-index: 2; }
     .footer-brand { color: var(--cyan); font-family: "Orbitron"; font-size: 1rem; }
     .footer-disclaimer { max-width: 600px; font-size: 0.7rem; opacity: 0.7; margin-top: 16px; text-align: center; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; }
 
@@ -206,6 +220,7 @@
     .analysis-box h4 { color: var(--cyan); font-family: "Orbitron"; font-size: 0.9rem; margin-bottom: 10px; }
     .analysis-box ul { padding-left: 20px; font-size: 0.85rem; color: var(--text); }
     .analysis-box li { margin-bottom: 6px; }
+    .analysis-box li strong { color: var(--cyan); }
 
     /* Warning / Info Box */
     .info-warning {
@@ -226,12 +241,7 @@
     .info-warning li { margin-bottom: 4px; }
 
     /* Download buttons group */
-    .download-group {
-      display: none;
-      margin-top: 15px;
-      gap: 10px;
-      flex-direction: column;
-    }
+    .download-group { display: none; margin-top: 15px; gap: 10px; flex-direction: column; }
     .download-group.active { display: flex; }
 
     .btn-download {
@@ -253,27 +263,32 @@
     .btn-download .text-col { display: flex; flex-direction: column; align-items: flex-start; }
     .btn-download .text-col small { font-family: "Inter"; font-weight: 500; font-size: 0.7rem; opacity: 0.75; margin-top: 2px; letter-spacing: 0; text-transform: none; }
 
-    .btn-docx {
-      background: rgba(0, 255, 136, 0.08);
-      border-color: var(--green);
-      color: var(--green);
-    }
+    .btn-docx { background: rgba(0, 255, 136, 0.08); border-color: var(--green); color: var(--green); }
     .btn-docx:hover { background: rgba(0, 255, 136, 0.15); box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
 
-    .btn-pdf {
-      background: rgba(255, 0, 234, 0.08);
-      border-color: var(--pink);
-      color: var(--pink);
-    }
+    .btn-pdf { background: rgba(255, 0, 234, 0.08); border-color: var(--pink); color: var(--pink); }
     .btn-pdf:hover { background: rgba(255, 0, 234, 0.15); box-shadow: 0 0 20px rgba(255, 0, 234, 0.3); }
 
-    /* Printable CV Area (FIXED FOR PDF) */
-    #printableCV { position: absolute; top: 0; left: 0; width: 800px; background: #fff; color: #000; padding: 40px; font-family: 'Arial', sans-serif; z-index: -1; pointer-events: none; }
-    #printableCV h1 { font-size: 28px; margin-bottom: 5px; color: #222; }
-    #printableCV h2 { font-size: 18px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #00f3ff; padding-bottom: 5px; color: #333; }
-    #printableCV p { margin-bottom: 8px; line-height: 1.5; font-size: 14px; color: #444; }
-    #printableCV ul { padding-left: 20px; margin-bottom: 15px; }
-    #printableCV li { margin-bottom: 5px; font-size: 14px; color: #444; }
+    /* Printable CV — OFFScreen but renderable (PDF fix) */
+    #printableCV { 
+      position: absolute; 
+      top: 0; 
+      left: -99999px;
+      width: 800px; 
+      background: #ffffff; 
+      color: #000000; 
+      padding: 40px; 
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    #printableCV h1 { font-size: 26px; margin-bottom: 6px; color: #111; }
+    #printableCV h2 { font-size: 15px; margin-top: 18px; margin-bottom: 8px; border-bottom: 2px solid #0084ff; padding-bottom: 4px; color: #222; }
+    #printableCV h3 { font-size: 13px; margin-top: 10px; margin-bottom: 4px; color: #111; }
+    #printableCV p { margin-bottom: 6px; line-height: 1.5; font-size: 12px; color: #333; }
+    #printableCV ul { padding-left: 20px; margin-bottom: 10px; }
+    #printableCV li { margin-bottom: 4px; font-size: 12px; color: #333; }
+    #printableCV strong { color: #111; }
 
     @media (max-width: 1024px) {
       .hero { flex-direction: column; text-align: center; padding-top: 100px; }
@@ -339,7 +354,7 @@
       <div class="avatar-controls">
         <button class="ctrl-btn active" id="femaleBtn">♀ Female</button>
         <button class="ctrl-btn" id="maleBtn">♂ Male</button>
-        <button class="ctrl-btn danger" id="exitBtn">⏻ Exit</button>
+        <button class="ctrl-btn" id="exitBtn">⏻ Exit</button>
         <button class="ctrl-btn" id="closeBtn">✕ Hide</button>
       </div>
     </section>
@@ -518,12 +533,10 @@
         </button>
       </form>
 
-      <!-- Analysis Result Box -->
       <div class="analysis-box" id="analysisBox">
         <h4>🔍 AI Feedback:</h4>
         <ul id="analysisList"></ul>
 
-        <!-- Warning box — HIDDEN by default, only shows after Rebuild click -->
         <div class="info-warning" id="infoWarning">
           <div class="info-title">⚠️ Important — Please Read Before Rebuilding</div>
           When you click <strong>"Accept & Rebuild"</strong>, NEXUS will create a <strong>NEW clean file</strong> — it will NOT keep your original design (fonts, colors, layout).
@@ -534,23 +547,20 @@
           </ul>
         </div>
 
-        <!-- Accept / Cancel buttons — hidden until warning shown -->
         <div id="confirmActions" style="display: none; gap: 10px; margin-top: 15px;">
-          <button class="btn-primary" id="cvAcceptBtn" style="flex: 1; border-color: var(--green); color: var(--green);">
+          <button class="btn-primary" id="cvAcceptBtn" style="flex: 1; border-color: var(--green); color: var(--green); max-width: none;">
             ✅ Accept & Rebuild
           </button>
-          <button class="btn-primary" id="cvCancelBtn" style="flex: 1; border-color: var(--muted); color: var(--muted);">
+          <button class="btn-primary" id="cvCancelBtn" style="flex: 1; border-color: var(--muted); color: var(--muted); max-width: none;">
             ✕ Cancel
           </button>
         </div>
 
-        <!-- Original rebuild button — hides when warning is shown -->
-        <button class="btn-primary" id="cvRebuildBtn" style="width: 100%; margin-top: 15px; border-color: var(--pink); color: var(--pink);">
+        <button class="btn-primary" id="cvRebuildBtn" style="width: 100%; margin-top: 15px; border-color: var(--pink); color: var(--pink); max-width: none;">
           Step 2: Confirm & Rebuild CV 🔧
         </button>
       </div>
 
-      <!-- Download Options (shown after rebuild) -->
       <div class="download-group" id="downloadGroup">
         <button class="btn-download btn-docx" id="downloadDocxBtn">
           <span class="icon">📝</span>
@@ -578,51 +588,100 @@
   <script type="module">
     import { TalkingHead } from "talkinghead";
 
-    /* --- BACKGROUND --- */
+    /* ============================================================ */
+    /* PREMIUM BACKGROUND — Aurora + Floating Orbs + Subtle Stars   */
+    /* (No trading chart / no connecting lines / no buildings)      */
+    /* ============================================================ */
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    let width, height, particles = [], buildings = [];
+    let width, height, orbs = [], stars = [];
 
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      particles = []; buildings = [];
-      for (let i = 0; i < 80; i++) {
-        particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, radius: Math.random() * 1.5 + 1, alpha: Math.random() * 0.5 + 0.2 });
+
+      // 7 soft glowing orbs in cyan/purple/blue palette
+      const palette = [
+        'rgba(0, 243, 255, A)',
+        'rgba(255, 0, 234, A)',
+        'rgba(0, 132, 255, A)',
+        'rgba(120, 0, 255, A)'
+      ];
+      orbs = [];
+      for (let i = 0; i < 7; i++) {
+        const colorTemplate = palette[i % palette.length];
+        orbs.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: 180 + Math.random() * 220,
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: (Math.random() - 0.5) * 0.18,
+          colorTemplate: colorTemplate,
+          alpha: 0.06 + Math.random() * 0.06
+        });
       }
-      for (let i = 0; i < 25; i++) {
-        buildings.push({ x: (i / 25) * width, w: width / 20 + Math.random() * 20, h: Math.random() * height * 0.4 + height * 0.1, color: Math.random() > 0.8 ? '#00f3ff' : (Math.random() > 0.5 ? '#ff00ea' : '#0084ff') });
+
+      // Subtle twinkling stars
+      stars = [];
+      const starCount = Math.min(60, Math.floor((width * height) / 25000));
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: Math.random() * 1 + 0.3,
+          baseAlpha: 0.15 + Math.random() * 0.35,
+          twinkle: Math.random() * Math.PI * 2,
+          speed: 0.008 + Math.random() * 0.02
+        });
       }
     }
 
     function drawCanvas() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = '#0D0D11'; ctx.fillRect(0, 0, width, height);
-      ctx.globalAlpha = 0.15;
-      buildings.forEach(b => {
-        ctx.fillStyle = b.color; ctx.fillRect(b.x, height - b.h, b.w, b.h);
-        ctx.fillStyle = '#fff';
-        for (let wy = height - b.h + 10; wy < height; wy += 15) {
-          for (let wx = b.x + 5; wx < b.x + b.w - 5; wx += 10) { if (Math.random() > 0.7) ctx.fillRect(wx, wy, 2, 3); }
-        }
+      // 1. Deep gradient base
+      const bg = ctx.createRadialGradient(width / 2, -height * 0.2, 0, width / 2, -height * 0.2, height * 1.4);
+      bg.addColorStop(0, '#0b1020');
+      bg.addColorStop(0.35, '#080912');
+      bg.addColorStop(1, '#050508');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      // 2. Floating soft orbs (screen blend for glow)
+      ctx.globalCompositeOperation = 'screen';
+      orbs.forEach(o => {
+        const g = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.radius);
+        g.addColorStop(0, o.colorTemplate.replace('A', o.alpha.toFixed(3)));
+        g.addColorStop(0.45, o.colorTemplate.replace('A', (o.alpha * 0.35).toFixed(3)));
+        g.addColorStop(1, o.colorTemplate.replace('A', '0'));
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        o.x += o.vx;
+        o.y += o.vy;
+        if (o.x < -o.radius) o.x = width + o.radius;
+        if (o.x > width + o.radius) o.x = -o.radius;
+        if (o.y < -o.radius) o.y = height + o.radius;
+        if (o.y > height + o.radius) o.y = -o.radius;
       });
-      ctx.globalAlpha = 1.0;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) { ctx.beginPath(); ctx.strokeStyle = `rgba(0, 243, 255, ${0.15 - dist / 1000})`; ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke(); }
-        }
-      }
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(0, 243, 255, ${p.alpha})`; ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+
+      // 3. Twinkling stars (soft, subtle)
+      stars.forEach(s => {
+        s.twinkle += s.speed;
+        const tw = 0.5 + Math.sin(s.twinkle) * 0.5;
+        ctx.fillStyle = `rgba(180, 220, 255, ${(s.baseAlpha * tw).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
       });
+
       requestAnimationFrame(drawCanvas);
     }
-    window.addEventListener('resize', initCanvas); initCanvas(); drawCanvas();
+
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    drawCanvas();
 
     /* --- AVATAR SETUP --- */
     const avatarContainer = document.getElementById('avatar3DContainer');
@@ -630,19 +689,45 @@
     let head, isAvatarReady = false, currentGender = "female";
 
     try {
-      head = new TalkingHead(avatarContainer, { ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize", ttsApikey: "dummy_key", lipsyncModules: [], cameraView: "upper" });
-      head.showAvatar({ url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb', body: 'F', avatarMood: 'neutral', ttsLang: "en-IN", ttsVoice: "en-IN-Standard-A" }).then(() => { isAvatarReady = true; });
-    } catch(e) { console.error(e); }
+      head = new TalkingHead(avatarContainer, { 
+        ttsEndpoint: "https://texttospeech.googleapis.com/v1beta1/text:synthesize", 
+        ttsApikey: "dummy_key", 
+        lipsyncModules: [], 
+        cameraView: "upper" 
+      });
+      head.showAvatar({ 
+        url: 'https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@main/avatars/brunette.glb', 
+        body: 'F', 
+        avatarMood: 'neutral', 
+        ttsLang: "en-IN", 
+        ttsVoice: "en-IN-Standard-A" 
+      }).then(() => { isAvatarReady = true; }).catch(err => console.warn('Avatar load:', err));
+    } catch(e) { console.warn('TalkingHead init:', e); }
 
-    document.addEventListener('click', () => { if (head && head.audioCtx && head.audioCtx.state === 'suspended') head.audioCtx.resume(); }, { once: true });
+    document.addEventListener('click', () => { 
+      if (head && head.audioCtx && head.audioCtx.state === 'suspended') head.audioCtx.resume(); 
+    }, { once: true });
 
     function setAvatarState(state) {
-      const statusEl = document.getElementById('avatarStatus'), labelEl = document.getElementById('statusLabel'), pillEl = document.getElementById('statusPill');
-      statusEl.className = 'avatar-status ' + state; labelEl.textContent = state.toUpperCase();
+      const statusEl = document.getElementById('avatarStatus');
+      const labelEl = document.getElementById('statusLabel');
+      const pillEl = document.getElementById('statusPill');
+      statusEl.className = 'avatar-status ' + state;
+      labelEl.textContent = state.toUpperCase();
       if (state === 'listening') { pillEl.textContent = "LISTENING"; pillEl.style.color = "var(--pink)"; }
       else if (state === 'processing') { pillEl.textContent = "PROCESSING"; pillEl.style.color = "var(--cyan)"; }
-      else if (state === 'speaking') { pillEl.textContent = "SPEAKING"; pillEl.style.color = "var(--green)"; avatarWrapper.classList.add('speaking'); }
-      else { pillEl.textContent = "ONLINE"; pillEl.style.color = "var(--green)"; statusEl.className = 'avatar-status'; labelEl.textContent = "STANDBY"; avatarWrapper.classList.remove('speaking'); }
+      else if (state === 'speaking') { 
+        pillEl.textContent = "SPEAKING"; 
+        pillEl.style.color = "var(--green)"; 
+        avatarWrapper.classList.add('speaking'); 
+      }
+      else { 
+        pillEl.textContent = "ONLINE"; 
+        pillEl.style.color = "var(--green)"; 
+        statusEl.className = 'avatar-status'; 
+        labelEl.textContent = "STANDBY"; 
+        avatarWrapper.classList.remove('speaking'); 
+      }
     }
 
     /* --- SMART BROWSER TTS --- */
@@ -654,12 +739,16 @@
       if (!("speechSynthesis" in window)) return;
       speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN'; utterance.rate = 0.95;
+      utterance.lang = 'en-IN'; 
+      utterance.rate = 0.95;
       let selectedVoice = null;
       if (availableVoices.length > 0) {
         const highQuality = availableVoices.filter(v => v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google'));
-        if (currentGender === 'female') selectedVoice = highQuality.find(v => v.name.includes('Female') || v.name.includes('Aria') || v.name.includes('Zira') || v.name.includes('Samantha')) || availableVoices.find(v => v.name.includes('Female'));
-        else selectedVoice = highQuality.find(v => v.name.includes('Male') || v.name.includes('Guy') || v.name.includes('David') || v.name.includes('Alex')) || availableVoices.find(v => v.name.includes('Male'));
+        if (currentGender === 'female') {
+          selectedVoice = highQuality.find(v => v.name.includes('Female') || v.name.includes('Aria') || v.name.includes('Zira') || v.name.includes('Samantha')) || availableVoices.find(v => v.name.includes('Female'));
+        } else {
+          selectedVoice = highQuality.find(v => v.name.includes('Male') || v.name.includes('Guy') || v.name.includes('David') || v.name.includes('Alex')) || availableVoices.find(v => v.name.includes('Male'));
+        }
       }
       if (selectedVoice) utterance.voice = selectedVoice;
       else utterance.pitch = currentGender === 'female' ? 1.2 : 0.8;
@@ -669,7 +758,53 @@
       speechSynthesis.speak(utterance);
     }
 
-    document.getElementById('activateBtn').addEventListener('click', () => { speechSynthesis.getVoices(); speakWithBrowser("Hello! I am NEXUS. How can I help you today?"); });
+    /* --- AVATAR CONTROLS --- */
+    document.getElementById('activateBtn').addEventListener('click', () => { 
+      speechSynthesis.getVoices(); 
+      speakWithBrowser("Hello! I am NEXUS. How can I help you today?"); 
+    });
+
+    document.getElementById('femaleBtn').addEventListener('click', () => {
+      currentGender = 'female';
+      document.getElementById('femaleBtn').classList.add('active');
+      document.getElementById('maleBtn').classList.remove('active');
+    });
+
+    document.getElementById('maleBtn').addEventListener('click', () => {
+      currentGender = 'male';
+      document.getElementById('maleBtn').classList.add('active');
+      document.getElementById('femaleBtn').classList.remove('active');
+    });
+
+    document.getElementById('exitBtn').addEventListener('click', () => {
+      speechSynthesis.cancel();
+      setAvatarState('standby');
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      avatarWrapper.style.display = 'none';
+      setTimeout(() => { avatarWrapper.style.display = 'flex'; }, 3000);
+    });
+
+    /* --- WHATSAPP LINKS --- */
+    document.querySelectorAll('.wa-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const msg = link.dataset.message || "Hi NEXUS CV!";
+        const phone = "966563468307";
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      });
+    });
+
+    /* --- ASK NEXUS HELPER --- */
+    window.askNexus = function(text) {
+      const chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.value = text;
+        chatInput.focus();
+        chatInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
 
     /* --- CHAT LOGIC --- */
     const NEXUS_WORKER_URL = "https://black-river-dbf7.umaremotions.workers.dev/";
@@ -680,40 +815,69 @@
     let chatHistory = JSON.parse(sessionStorage.getItem("nexus_history")) || [];
     
     function renderMessage(role, text) {
-      const div = document.createElement("div"); div.className = `msg ${role}`;
+      const div = document.createElement("div"); 
+      div.className = `msg ${role}`;
       div.innerHTML = `<div class="msg-icon">${role === "bot" ? "NX" : "YOU"}</div><div class="msg-bubble">${text}</div>`;
-      transcript.appendChild(div); transcript.scrollTop = transcript.scrollHeight; return div.querySelector(".msg-bubble");
+      transcript.appendChild(div); 
+      transcript.scrollTop = transcript.scrollHeight; 
+      return div.querySelector(".msg-bubble");
     }
 
     if (chatHistory.length > 0) chatHistory.forEach(msg => renderMessage(msg.role, msg.text));
 
     chatForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); const text = chatInput.value.trim(); if(!text) return;
-      chatInput.value = ""; renderMessage("user", text); chatWidget.classList.add("scanning"); setAvatarState('processing');
+      e.preventDefault(); 
+      const text = chatInput.value.trim(); 
+      if(!text) return;
+      chatInput.value = ""; 
+      renderMessage("user", text); 
+      chatWidget.classList.add("scanning"); 
+      setAvatarState('processing');
       const el = renderMessage("bot", "Processing...");
       try {
-        const response = await fetch(NEXUS_WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "chat", message: text, history: chatHistory.slice(-14) }) });
+        const response = await fetch(NEXUS_WORKER_URL, { 
+          method: "POST", 
+          headers: { "Content-Type": "application/json" }, 
+          body: JSON.stringify({ action: "chat", message: text, history: chatHistory.slice(-14) }) 
+        });
         const data = await response.json();
-        el.textContent = data.result || data.answer; speakWithBrowser(data.result || data.answer);
+        el.textContent = data.result || data.answer; 
+        speakWithBrowser(data.result || data.answer);
         chatHistory.push({ role: "user", text: text }, { role: "bot", text: data.result || data.answer });
         sessionStorage.setItem("nexus_history", JSON.stringify(chatHistory.slice(-20)));
-      } catch(err) { el.textContent = "Error connecting to AI."; }
-      chatWidget.classList.remove("scanning"); setAvatarState('standby');
+      } catch(err) { 
+        el.textContent = "Error connecting to AI."; 
+      }
+      chatWidget.classList.remove("scanning"); 
+      setAvatarState('standby');
     });
 
     /* --- MICROPHONE --- */
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if(SR){
-      micBtn.classList.remove("hidden"); const rec = new SR();
-      rec.continuous = true; rec.interimResults = true; let isListening = false;
-      micBtn.addEventListener("click", () => { if(isListening){ rec.stop(); return; } rec.lang = "en-IN"; try { rec.start(); } catch(e){} });
+      micBtn.classList.remove("hidden"); 
+      const rec = new SR();
+      rec.continuous = true; 
+      rec.interimResults = true; 
+      let isListening = false;
+      micBtn.addEventListener("click", () => { 
+        if(isListening){ rec.stop(); return; } 
+        rec.lang = "en-IN"; 
+        try { rec.start(); } catch(e){} 
+      });
       rec.onstart = () => { isListening = true; micBtn.classList.add("listening"); setAvatarState('listening'); };
-      rec.onresult = (e) => { let final = ''; for (let i = e.resultIndex; i < e.results.length; ++i) { if (e.results[i].isFinal) final += e.results[i][0].transcript; } if(final) { chatInput.value = final; chatForm.requestSubmit(); } };
+      rec.onresult = (e) => { 
+        let final = ''; 
+        for (let i = e.resultIndex; i < e.results.length; ++i) { 
+          if (e.results[i].isFinal) final += e.results[i][0].transcript; 
+        } 
+        if(final) { chatInput.value = final; chatForm.requestSubmit(); } 
+      };
       rec.onend = () => { isListening = false; micBtn.classList.remove("listening"); setAvatarState('standby'); };
     }
 
     /* ============================================================ */
-    /* CV UPGRADE TOOL LOGIC (With PDF + DOCX download)             */
+    /* CV UPGRADE TOOL LOGIC                                         */
     /* ============================================================ */
     const cvModal = document.getElementById('cvUpgradeModal');
     const closeCvModal = document.getElementById('closeCvModal');
@@ -730,17 +894,13 @@
     let extractedTextGlobal = '';
     let finalHtmlGlobal = '';
 
-    // Clean markdown-ish AI text into safe <li> list
     function formatAnalysis(text) {
       if (!text) return '';
       let safe = String(text)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
-
-      // **bold** -> <strong>
       safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
       return safe.split('\n')
         .map(l => l.trim())
         .filter(l => l)
@@ -797,27 +957,28 @@
           const arrayBuffer = await file.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
           extractedText = result.value;
-        } else { throw new Error("Unsupported format."); }
+        } else { 
+          throw new Error("Unsupported format. Use PDF or DOCX."); 
+        }
 
-        if (!extractedText || extractedText.trim().length < 10) throw new Error("Could not read text.");
+        if (!extractedText || extractedText.trim().length < 10) throw new Error("Could not read text from file.");
         extractedTextGlobal = extractedText.slice(0, 6000);
 
         document.getElementById('cvBtnText').textContent = 'Analyzing...';
         cvStatus.textContent = 'AI is reviewing your CV for mistakes...';
 
         const response = await fetch(NEXUS_WORKER_URL, {
-          method: "POST", headers: { "Content-Type": "application/json" },
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "analyze-cv", cvText: extractedTextGlobal, jobDesc: jobDesc })
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "AI failed.");
 
-        // Clean render — warning box HIDDEN for now
         analysisList.innerHTML = formatAnalysis(data.result);
         analysisBox.style.display = 'block';
         cvStatus.textContent = 'Analysis complete. Review the feedback, then click "Confirm & Rebuild" when ready.';
         cvStatus.className = 'cv-status';
-        
         cvAnalyzeBtn.style.display = 'none';
 
       } catch (error) {
@@ -828,7 +989,7 @@
       }
     });
 
-    // STEP 2A: User clicks "Confirm & Rebuild" → show warning + accept/cancel
+    // STEP 2A: Show warning
     cvRebuildBtn.addEventListener('click', () => {
       cvRebuildBtn.style.display = 'none';
       infoWarning.style.display = 'block';
@@ -837,7 +998,7 @@
       cvStatus.className = 'cv-status';
     });
 
-    // STEP 2B: Cancel → hide warning, bring rebuild button back
+    // STEP 2B: Cancel
     document.getElementById('cvCancelBtn').addEventListener('click', () => {
       infoWarning.style.display = 'none';
       confirmActions.style.display = 'none';
@@ -846,19 +1007,20 @@
       cvStatus.className = 'cv-status';
     });
 
-    // STEP 2C: Accept → do the rebuild
+    // STEP 2C: Accept → rebuild
     document.getElementById('cvAcceptBtn').addEventListener('click', async () => {
       const jobDesc = document.getElementById('cvJobDescription').value.trim();
       const feedback = analysisList.innerText;
 
       infoWarning.style.display = 'none';
       confirmActions.style.display = 'none';
-      cvStatus.textContent = 'Rebuilding your clean ATS CV... Please wait...';
+      cvStatus.textContent = 'Rebuilding your clean ATS CV... Please wait (this may take 15-30 seconds)...';
       cvStatus.className = 'cv-status';
 
       try {
         const response = await fetch(NEXUS_WORKER_URL, {
-          method: "POST", headers: { "Content-Type": "application/json" },
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "rebuild-cv", cvText: extractedTextGlobal, jobDesc: jobDesc, feedback: feedback })
         });
         const data = await response.json();
@@ -874,12 +1036,11 @@
       } catch (error) {
         cvStatus.textContent = "Error: " + error.message;
         cvStatus.className = 'cv-status error';
-        // Bring back rebuild button so user can retry
         cvRebuildBtn.style.display = 'block';
       }
     });
 
-    // Download as DOCX (Recommended for ATS)
+    // DOCX Download
     document.getElementById('downloadDocxBtn').addEventListener('click', () => {
       try {
         const docxHtml = `
@@ -891,6 +1052,7 @@
               body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #000; }
               h1 { font-size: 20pt; margin-bottom: 6pt; color: #000; }
               h2 { font-size: 13pt; margin-top: 14pt; margin-bottom: 6pt; border-bottom: 1px solid #999; padding-bottom: 3pt; color: #000; }
+              h3 { font-size: 11pt; margin-top: 8pt; margin-bottom: 3pt; color: #000; }
               p { margin-bottom: 6pt; }
               ul { margin-left: 18pt; margin-bottom: 8pt; }
               li { margin-bottom: 3pt; }
@@ -923,27 +1085,41 @@
       }
     });
 
-    // Download as PDF
+    // PDF Download — FIXED
     document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
       try {
-        cvStatus.textContent = 'Generating PDF...';
+        cvStatus.textContent = 'Generating PDF... Please wait...';
         cvStatus.className = 'cv-status';
 
+        if (!printableCV.innerHTML.trim()) {
+          throw new Error('No CV content. Please rebuild first.');
+        }
+
+        await new Promise(r => setTimeout(r, 300));
+
         const opt = {
-          margin: 0.5,
+          margin: [0.4, 0.4, 0.4, 0.4],
           filename: 'Upgraded_CV_NEXUS.pdf',
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            letterRendering: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            windowWidth: 800,
+            scrollX: 0,
+            scrollY: 0
+          },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] }
         };
 
-        setTimeout(async () => {
-          await html2pdf().set(opt).from(printableCV).save();
-          cvStatus.textContent = '✅ PDF downloaded!';
-          cvStatus.className = 'cv-status';
-        }, 300);
-
+        await html2pdf().set(opt).from(printableCV).save();
+        cvStatus.textContent = '✅ PDF downloaded!';
+        cvStatus.className = 'cv-status';
       } catch (err) {
+        console.error('PDF error:', err);
         cvStatus.textContent = "PDF download failed: " + err.message;
         cvStatus.className = 'cv-status error';
       }
