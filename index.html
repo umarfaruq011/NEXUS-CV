@@ -13,6 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html-docx-js/dist/html-docx.js"></script>
 
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js/+esm", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/", "talkinghead": "https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.4/modules/talkinghead.mjs" } }
@@ -29,6 +30,7 @@
       --text: #e0eaff;
       --muted: #8b9eb3;
       --border: rgba(0, 243, 255, 0.2);
+      --warning: #ffb84d;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -187,7 +189,7 @@
 
     /* --- CV UPGRADE MODAL STYLES --- */
     .cv-modal-overlay { position: fixed; inset: 0; z-index: 5000; background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(15px); display: flex; align-items: center; justify-content: center; padding: 20px; }
-    .cv-modal-content { background: var(--panel); border: 1px solid var(--cyan); border-radius: 8px; padding: 30px; max-width: 500px; width: 100%; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); max-height: 90vh; overflow-y: auto; }
+    .cv-modal-content { background: var(--panel); border: 1px solid var(--cyan); border-radius: 8px; padding: 30px; max-width: 540px; width: 100%; position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8); max-height: 90vh; overflow-y: auto; }
     .cv-modal-close { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--muted); font-size: 1.8rem; cursor: pointer; }
     .cv-modal-content h2 { font: 700 1.5rem "Orbitron"; color: var(--cyan); margin-bottom: 10px; }
     .cv-modal-sub { color: var(--muted); margin-bottom: 25px; font-size: 0.9rem; }
@@ -205,19 +207,67 @@
     .analysis-box ul { padding-left: 20px; font-size: 0.85rem; color: var(--text); }
     .analysis-box li { margin-bottom: 6px; }
 
-    /* Printable CV Area (FIXED FOR PDF) */
-    #printableCV { 
-      position: absolute; 
-      top: 0; 
-      left: 0; 
-      width: 800px; 
-      background: #fff; 
-      color: #000; 
-      padding: 40px; 
-      font-family: 'Arial', sans-serif; 
-      z-index: -1; /* Behind everything, but rendered */
-      pointer-events: none;
+    /* Warning / Info Box */
+    .info-warning {
+      background: rgba(255, 184, 77, 0.08);
+      border: 1px solid var(--warning);
+      border-left: 3px solid var(--warning);
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.6;
+      display: none;
     }
+    .info-warning strong { color: var(--warning); display: block; margin-bottom: 6px; font-size: 0.85rem; }
+    .info-warning ul { padding-left: 18px; margin-top: 8px; }
+    .info-warning li { margin-bottom: 4px; }
+
+    /* Download buttons group */
+    .download-group {
+      display: none;
+      margin-top: 15px;
+      gap: 10px;
+      flex-direction: column;
+    }
+    .download-group.active { display: flex; }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 4px;
+      font: 700 0.85rem "Orbitron";
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 1px solid;
+      width: 100%;
+      text-align: left;
+    }
+    .btn-download .icon { font-size: 1.2rem; }
+    .btn-download .text-col { display: flex; flex-direction: column; align-items: flex-start; }
+    .btn-download .text-col small { font-family: "Inter"; font-weight: 500; font-size: 0.7rem; opacity: 0.75; margin-top: 2px; letter-spacing: 0; text-transform: none; }
+
+    .btn-docx {
+      background: rgba(0, 255, 136, 0.08);
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .btn-docx:hover { background: rgba(0, 255, 136, 0.15); box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+
+    .btn-pdf {
+      background: rgba(255, 0, 234, 0.08);
+      border-color: var(--pink);
+      color: var(--pink);
+    }
+    .btn-pdf:hover { background: rgba(255, 0, 234, 0.15); box-shadow: 0 0 20px rgba(255, 0, 234, 0.3); }
+
+    /* Printable CV Area (FIXED FOR PDF) */
+    #printableCV { position: absolute; top: 0; left: 0; width: 800px; background: #fff; color: #000; padding: 40px; font-family: 'Arial', sans-serif; z-index: -1; pointer-events: none; }
     #printableCV h1 { font-size: 28px; margin-bottom: 5px; color: #222; }
     #printableCV h2 { font-size: 18px; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #00f3ff; padding-bottom: 5px; color: #333; }
     #printableCV p { margin-bottom: 8px; line-height: 1.5; font-size: 14px; color: #444; }
@@ -449,7 +499,7 @@
     <div class="cv-modal-content">
       <button class="cv-modal-close" id="closeCvModal">×</button>
       <h2>AI CV Upgrader</h2>
-      <p class="cv-modal-sub">Upload your old CV. NEXUS will analyze it, tell you what's wrong, and then rebuild it perfectly.</p>
+      <p class="cv-modal-sub">Upload your old CV. NEXUS will analyze it, tell you what's wrong, then rebuild it into a clean, ATS-friendly format.</p>
       
       <form id="cvUploadForm">
         <div class="cv-form-group">
@@ -467,12 +517,42 @@
         </button>
       </form>
 
-      <!-- Analysis Result Box (Hidden initially) -->
+      <!-- Analysis Result Box -->
       <div class="analysis-box" id="analysisBox">
         <h4>🔍 AI Feedback:</h4>
         <ul id="analysisList"></ul>
+
+        <!-- Clear Info Box (Explains what will download) -->
+        <div class="info-warning" id="infoWarning">
+          <strong>⚠️ Important — Please Read</strong>
+          When you click "Fix & Download", NEXUS will create a <strong>NEW clean file</strong> — it will NOT keep your original design (fonts, colors, layout).
+          <ul>
+            <li>✅ <strong>Why?</strong> ATS systems (which companies use to filter CVs) cannot read fancy designs. They reject CVs with tables, columns, and graphics.</li>
+            <li>✅ <strong>Your new file</strong> will be simple, single-column, and 100% ATS-readable — this gives you the best chance of passing automated filters.</li>
+            <li>✅ <strong>You can still edit</strong> the DOCX version in Word after download.</li>
+          </ul>
+        </div>
+
         <button class="btn-primary" id="cvRebuildBtn" style="width: 100%; margin-top: 15px; border-color: var(--pink); color: var(--pink);">
-          Step 2: Fix & Download CV 📄
+          Step 2: Confirm & Rebuild CV 🔧
+        </button>
+      </div>
+
+      <!-- Download Options (shown after rebuild) -->
+      <div class="download-group" id="downloadGroup">
+        <button class="btn-download btn-docx" id="downloadDocxBtn">
+          <span class="icon">📝</span>
+          <span class="text-col">
+            Download as DOCX (Recommended)
+            <small>Editable Word file • 100% ATS-friendly • Best for job portals</small>
+          </span>
+        </button>
+        <button class="btn-download btn-pdf" id="downloadPdfBtn">
+          <span class="icon">📄</span>
+          <span class="text-col">
+            Download as PDF
+            <small>For printing / emailing • Also ATS-friendly</small>
+          </span>
         </button>
       </div>
 
@@ -621,7 +701,7 @@
     }
 
     /* ============================================================ */
-    /* CV UPGRADE TOOL LOGIC (2-Step Flow)                          */
+    /* CV UPGRADE TOOL LOGIC (With PDF + DOCX download)             */
     /* ============================================================ */
     const cvModal = document.getElementById('cvUpgradeModal');
     const closeCvModal = document.getElementById('closeCvModal');
@@ -631,8 +711,11 @@
     const cvRebuildBtn = document.getElementById('cvRebuildBtn');
     const analysisBox = document.getElementById('analysisBox');
     const analysisList = document.getElementById('analysisList');
+    const infoWarning = document.getElementById('infoWarning');
+    const downloadGroup = document.getElementById('downloadGroup');
     const printableCV = document.getElementById('printableCV');
     let extractedTextGlobal = '';
+    let finalHtmlGlobal = '';
 
     window.openCvModal = function() {
       cvModal.style.display = 'flex';
@@ -640,7 +723,13 @@
       cvStatus.textContent = '';
       cvStatus.className = 'cv-status';
       analysisBox.style.display = 'none';
+      infoWarning.style.display = 'none';
+      downloadGroup.classList.remove('active');
+      cvAnalyzeBtn.style.display = 'block';
       cvAnalyzeBtn.disabled = false;
+      cvRebuildBtn.style.display = 'block';
+      cvRebuildBtn.disabled = false;
+      cvRebuildBtn.textContent = 'Step 2: Confirm & Rebuild CV 🔧';
       document.getElementById('cvBtnText').textContent = 'Step 1: Analyze My CV';
     };
 
@@ -691,15 +780,14 @@
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "AI failed.");
 
-        // Show Feedback
+        // Show Feedback + Info Box
         analysisList.innerHTML = data.result.replace(/\n/g, '<br>').replace(/- /g, '<li>');
         analysisBox.style.display = 'block';
-        cvStatus.textContent = 'Analysis complete. Review the feedback above and click "Fix" to proceed.';
+        infoWarning.style.display = 'block';
+        cvStatus.textContent = 'Analysis complete. Review the feedback + important info above.';
         cvStatus.className = 'cv-status';
         
-        // Hide Analyze button, show Rebuild button
         cvAnalyzeBtn.style.display = 'none';
-        cvRebuildBtn.style.display = 'block';
 
       } catch (error) {
         cvStatus.textContent = "Error: " + error.message;
@@ -709,14 +797,14 @@
       }
     });
 
-    // STEP 2: Rebuild & PDF
+    // STEP 2: Rebuild (creates final HTML, then shows download buttons)
     cvRebuildBtn.addEventListener('click', async () => {
       const jobDesc = document.getElementById('cvJobDescription').value.trim();
       const feedback = analysisList.innerText;
 
       cvRebuildBtn.disabled = true;
       cvRebuildBtn.textContent = 'AI is Rebuilding...';
-      cvStatus.textContent = 'Applying fixes and generating new CV. Please wait...';
+      cvStatus.textContent = 'Applying fixes and generating your new clean CV. Please wait...';
 
       try {
         const response = await fetch(NEXUS_WORKER_URL, {
@@ -726,32 +814,90 @@
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Rebuild failed.");
 
-        printableCV.innerHTML = data.result;
-        cvStatus.textContent = 'Generating PDF...';
+        finalHtmlGlobal = data.result;
+        printableCV.innerHTML = finalHtmlGlobal;
 
-        const opt = { margin: 0.5, filename: 'Upgraded_CV_NEXUS.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-        
-        // Small delay ensures DOM updates before capture
-        setTimeout(async () => {
-          await html2pdf().set(opt).from(printableCV).save();
-          cvStatus.textContent = 'Success! Your PDF is downloaded.';
-          cvStatus.className = 'cv-status';
-          cvRebuildBtn.textContent = 'Download Again 📄';
-          cvRebuildBtn.disabled = false;
-          // Reset modal for new uploads
-          setTimeout(() => {
-            cvAnalyzeBtn.style.display = 'block';
-            cvAnalyzeBtn.disabled = false;
-            document.getElementById('cvBtnText').textContent = 'Step 1: Analyze My CV';
-            cvRebuildBtn.style.display = 'none';
-          }, 3000);
-        }, 500);
+        cvStatus.textContent = '✅ Rebuild successful! Choose your download format below.';
+        cvStatus.className = 'cv-status';
+        cvRebuildBtn.style.display = 'none';
+        downloadGroup.classList.add('active');
 
       } catch (error) {
         cvStatus.textContent = "Error: " + error.message;
         cvStatus.className = 'cv-status error';
-        cvRebuildBtn.textContent = 'Step 2: Fix & Download CV 📄';
+        cvRebuildBtn.textContent = 'Step 2: Confirm & Rebuild CV 🔧';
         cvRebuildBtn.disabled = false;
+      }
+    });
+
+    // Download as DOCX (Recommended for ATS)
+    document.getElementById('downloadDocxBtn').addEventListener('click', () => {
+      try {
+        // Build clean HTML for DOCX (no fancy CSS, just simple structure)
+        const docxHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #000; }
+              h1 { font-size: 20pt; margin-bottom: 6pt; color: #000; }
+              h2 { font-size: 13pt; margin-top: 14pt; margin-bottom: 6pt; border-bottom: 1px solid #999; padding-bottom: 3pt; color: #000; }
+              p { margin-bottom: 6pt; }
+              ul { margin-left: 18pt; margin-bottom: 8pt; }
+              li { margin-bottom: 3pt; }
+              strong, b { font-weight: bold; }
+            </style>
+          </head>
+          <body>${finalHtmlGlobal}</body>
+          </html>
+        `;
+
+        const blob = htmlDocx.asBlob(docxHtml, {
+          orientation: 'portrait',
+          margins: { top: 720, right: 720, bottom: 720, left: 720 }
+        });
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Upgraded_CV_NEXUS.docx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        cvStatus.textContent = '✅ DOCX downloaded! Open in Word to review and edit.';
+        cvStatus.className = 'cv-status';
+      } catch (err) {
+        cvStatus.textContent = "DOCX download failed: " + err.message;
+        cvStatus.className = 'cv-status error';
+      }
+    });
+
+    // Download as PDF
+    document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
+      try {
+        cvStatus.textContent = 'Generating PDF...';
+        cvStatus.className = 'cv-status';
+
+        const opt = {
+          margin: 0.5,
+          filename: 'Upgraded_CV_NEXUS.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        setTimeout(async () => {
+          await html2pdf().set(opt).from(printableCV).save();
+          cvStatus.textContent = '✅ PDF downloaded!';
+          cvStatus.className = 'cv-status';
+        }, 300);
+
+      } catch (err) {
+        cvStatus.textContent = "PDF download failed: " + err.message;
+        cvStatus.className = 'cv-status error';
       }
     });
 
