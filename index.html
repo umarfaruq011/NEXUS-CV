@@ -220,7 +220,8 @@
       line-height: 1.6;
       display: none;
     }
-    .info-warning strong { color: var(--warning); display: block; margin-bottom: 6px; font-size: 0.85rem; }
+    .info-warning strong { color: var(--warning); font-weight: 700; }
+    .info-warning .info-title { color: var(--warning); display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 700; }
     .info-warning ul { padding-left: 18px; margin-top: 8px; }
     .info-warning li { margin-bottom: 4px; }
 
@@ -522,17 +523,28 @@
         <h4>🔍 AI Feedback:</h4>
         <ul id="analysisList"></ul>
 
-        <!-- Clear Info Box (Explains what will download) -->
+        <!-- Warning box — HIDDEN by default, only shows after Rebuild click -->
         <div class="info-warning" id="infoWarning">
-          <strong>⚠️ Important — Please Read</strong>
-          When you click "Fix & Download", NEXUS will create a <strong>NEW clean file</strong> — it will NOT keep your original design (fonts, colors, layout).
+          <div class="info-title">⚠️ Important — Please Read Before Rebuilding</div>
+          When you click <strong>"Accept & Rebuild"</strong>, NEXUS will create a <strong>NEW clean file</strong> — it will NOT keep your original design (fonts, colors, layout).
           <ul>
-            <li>✅ <strong>Why?</strong> ATS systems (which companies use to filter CVs) cannot read fancy designs. They reject CVs with tables, columns, and graphics.</li>
-            <li>✅ <strong>Your new file</strong> will be simple, single-column, and 100% ATS-readable — this gives you the best chance of passing automated filters.</li>
+            <li>✅ <strong>Why?</strong> ATS systems cannot read fancy designs — they reject tables, columns, and graphics.</li>
+            <li>✅ <strong>Your new file</strong> will be simple, single-column, 100% ATS-readable — best chance of passing automated filters.</li>
             <li>✅ <strong>You can still edit</strong> the DOCX version in Word after download.</li>
           </ul>
         </div>
 
+        <!-- Accept / Cancel buttons — hidden until warning shown -->
+        <div id="confirmActions" style="display: none; gap: 10px; margin-top: 15px;">
+          <button class="btn-primary" id="cvAcceptBtn" style="flex: 1; border-color: var(--green); color: var(--green);">
+            ✅ Accept & Rebuild
+          </button>
+          <button class="btn-primary" id="cvCancelBtn" style="flex: 1; border-color: var(--muted); color: var(--muted);">
+            ✕ Cancel
+          </button>
+        </div>
+
+        <!-- Original rebuild button — hides when warning is shown -->
         <button class="btn-primary" id="cvRebuildBtn" style="width: 100%; margin-top: 15px; border-color: var(--pink); color: var(--pink);">
           Step 2: Confirm & Rebuild CV 🔧
         </button>
@@ -712,10 +724,29 @@
     const analysisBox = document.getElementById('analysisBox');
     const analysisList = document.getElementById('analysisList');
     const infoWarning = document.getElementById('infoWarning');
+    const confirmActions = document.getElementById('confirmActions');
     const downloadGroup = document.getElementById('downloadGroup');
     const printableCV = document.getElementById('printableCV');
     let extractedTextGlobal = '';
     let finalHtmlGlobal = '';
+
+    // Clean markdown-ish AI text into safe <li> list
+    function formatAnalysis(text) {
+      if (!text) return '';
+      let safe = String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // **bold** -> <strong>
+      safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+      return safe.split('\n')
+        .map(l => l.trim())
+        .filter(l => l)
+        .map(l => `<li>${l.replace(/^[-•*]\s+/, '')}</li>`)
+        .join('');
+    }
 
     window.openCvModal = function() {
       cvModal.style.display = 'flex';
@@ -724,6 +755,7 @@
       cvStatus.className = 'cv-status';
       analysisBox.style.display = 'none';
       infoWarning.style.display = 'none';
+      confirmActions.style.display = 'none';
       downloadGroup.classList.remove('active');
       cvAnalyzeBtn.style.display = 'block';
       cvAnalyzeBtn.disabled = false;
@@ -780,11 +812,10 @@
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "AI failed.");
 
-        // Show Feedback + Info Box
-        analysisList.innerHTML = data.result.replace(/\n/g, '<br>').replace(/- /g, '<li>');
+        // Clean render — warning box HIDDEN for now
+        analysisList.innerHTML = formatAnalysis(data.result);
         analysisBox.style.display = 'block';
-        infoWarning.style.display = 'block';
-        cvStatus.textContent = 'Analysis complete. Review the feedback + important info above.';
+        cvStatus.textContent = 'Analysis complete. Review the feedback, then click "Confirm & Rebuild" when ready.';
         cvStatus.className = 'cv-status';
         
         cvAnalyzeBtn.style.display = 'none';
@@ -797,14 +828,33 @@
       }
     });
 
-    // STEP 2: Rebuild (creates final HTML, then shows download buttons)
-    cvRebuildBtn.addEventListener('click', async () => {
+    // STEP 2A: User clicks "Confirm & Rebuild" → show warning + accept/cancel
+    cvRebuildBtn.addEventListener('click', () => {
+      cvRebuildBtn.style.display = 'none';
+      infoWarning.style.display = 'block';
+      confirmActions.style.display = 'flex';
+      cvStatus.textContent = '⚠️ Please read the warning above and click Accept to continue.';
+      cvStatus.className = 'cv-status';
+    });
+
+    // STEP 2B: Cancel → hide warning, bring rebuild button back
+    document.getElementById('cvCancelBtn').addEventListener('click', () => {
+      infoWarning.style.display = 'none';
+      confirmActions.style.display = 'none';
+      cvRebuildBtn.style.display = 'block';
+      cvStatus.textContent = '';
+      cvStatus.className = 'cv-status';
+    });
+
+    // STEP 2C: Accept → do the rebuild
+    document.getElementById('cvAcceptBtn').addEventListener('click', async () => {
       const jobDesc = document.getElementById('cvJobDescription').value.trim();
       const feedback = analysisList.innerText;
 
-      cvRebuildBtn.disabled = true;
-      cvRebuildBtn.textContent = 'AI is Rebuilding...';
-      cvStatus.textContent = 'Applying fixes and generating your new clean CV. Please wait...';
+      infoWarning.style.display = 'none';
+      confirmActions.style.display = 'none';
+      cvStatus.textContent = 'Rebuilding your clean ATS CV... Please wait...';
+      cvStatus.className = 'cv-status';
 
       try {
         const response = await fetch(NEXUS_WORKER_URL, {
@@ -819,21 +869,19 @@
 
         cvStatus.textContent = '✅ Rebuild successful! Choose your download format below.';
         cvStatus.className = 'cv-status';
-        cvRebuildBtn.style.display = 'none';
         downloadGroup.classList.add('active');
 
       } catch (error) {
         cvStatus.textContent = "Error: " + error.message;
         cvStatus.className = 'cv-status error';
-        cvRebuildBtn.textContent = 'Step 2: Confirm & Rebuild CV 🔧';
-        cvRebuildBtn.disabled = false;
+        // Bring back rebuild button so user can retry
+        cvRebuildBtn.style.display = 'block';
       }
     });
 
     // Download as DOCX (Recommended for ATS)
     document.getElementById('downloadDocxBtn').addEventListener('click', () => {
       try {
-        // Build clean HTML for DOCX (no fancy CSS, just simple structure)
         const docxHtml = `
           <!DOCTYPE html>
           <html>
